@@ -85,10 +85,7 @@ class StatoServizi(Test):
         self.click_first_result()
         self.wait_loader()
 
-        self.wait_for_dropdown_and_select(
-            '//span[@id="select2-id_nazione-container"]',
-            option_text=nazione
-        )
+        self.get_select_search_results("Nazione", nazione)
 
         self._compila_campi_azienda({
             'Partita IVA': piva,

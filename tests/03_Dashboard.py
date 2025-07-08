@@ -26,9 +26,11 @@ class Dashboard(Test):
         self.wait_for_element_and_click('//a[@id="tecnici-sessioni-tab"]')
         self.wait_for_element_and_click('(//div[@id="tab_tecnici_sessioni"]//i[@class="fa fa-plus"])[2]')
         self.wait_loader()
+        technician_modal = self.wait_modal()
 
-        technician_modal = self.driver.find_element(By.XPATH, '//div[@class="modal-dialog modal-lg"]')
-        self.input(technician_modal, 'Denominazione').setValue("Stefano Bianchi")
+        denominazione_input = self.get_input("Denominazione")
+        denominazione_input.send_keys("Stefano Bianchi")
+
         self.wait_for_element_and_click('//div[@class="col-md-12 text-right"]//button[@type="submit"]')
         self.wait_loader()
 
@@ -38,6 +40,11 @@ class Dashboard(Test):
             (By.XPATH, '(//iframe[@class="cke_wysiwyg_frame cke_reset"])[1]')
         ))
         self.send_keys_and_wait(description_field, "Test", wait_modal=False)
+
+        self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+
+        close_toast_button = self.wait_driver.until(EC.element_to_be_clickable((By.CLASS_NAME, "toast-close-button")))
+        close_toast_button.click()
 
         self.wait_for_element_and_click('//div[@class="col-md-12 text-right"]//button[@type="button"]')
         self.wait_loader()
@@ -51,9 +58,9 @@ class Dashboard(Test):
         self.wait_for_element_and_click('//div[@id="dashboard_tecnici"]//button[@class="btn btn-primary btn-sm seleziona_tutto"]')
         self.wait_loader()
 
-        activity_text = self.find(By.XPATH, '//div[@class="fc-event-main"]').text
-        self.assertEqual(activity_text, expected_text)
+        activity = self.wait_driver.until(EC.element_to_be_clickable((By.XPATH, '//div[@class="fc-event-main"]')))
 
+        self.assertEqual(activity.text, expected_text)
         self.verifica_attività()
 
     def verifica_attività(self):

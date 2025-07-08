@@ -46,13 +46,7 @@ class Anagrafiche(Test):
         self.search_entity("Cliente")
         self.click_first_result()
 
-        self.wait_for_element_and_click('//*[@id="select2-tipo-container"]')
-
-        tipo_field = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '(//input[@class="select2-search__field"])[2]'))
-        )
-        self.send_keys_and_wait(tipo_field, tipologia, wait_modal=False)
-        self.wait_loader()
+        self.get_select_search_results("Tipologia", tipologia)
 
         self.input(None, 'Partita IVA').setValue("05024030287")
         self.input(None, 'Codice fiscale').setValue("05024030287")
@@ -104,41 +98,29 @@ class Anagrafiche(Test):
         self.wait_loader()
 
         self.clear_filters()
-
-        self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Tipologia"]/input'))
-        )
-
-        search_input = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Tipologia"]/input'))
-        )
+        
+        search_input = self.find_filter_input("Tipologia")
         search_input.clear()
+
         self.send_keys_and_wait(search_input, "Privato", wait_modal=False)
         self.wait_for_search_results()
 
-        entity_name = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '//tbody//tr//td[2]'))
-        ).text
+        entity_name = self.find_cell(col=2).text
+
         self.assertEqual("Cliente", entity_name)
 
         self.navigateTo("Anagrafiche")
         self.wait_loader()
         self.clear_filters()
 
-        self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Ragione-sociale"]/input'))
-        )
-
-        search_input = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Ragione-sociale"]/input'))
-        )
+        search_input = self.find_filter_input("Ragione sociale")
         search_input.clear()
+
         self.send_keys_and_wait(search_input, "Anagrafica di Prova da Eliminare", wait_modal=False)
         self.wait_for_search_results()
 
-        no_results_message = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '//tbody//tr//td[1]'))
-        ).text
+        no_results_message = self.find_cell(col=1).text
+
         self.assertEqual("La ricerca non ha portato alcun risultato.", no_results_message)
 
         self.clear_filters()
@@ -153,10 +135,11 @@ class Anagrafiche(Test):
         self.wait_for_element_and_click('//button[@class="btn btn-info dropdown-toggle"]')
         self.wait_for_element_and_click('(//a[@class="btn dropdown-item bound clickable"])[1]')
 
-        self.wait_for_dropdown_and_select(
-            '(//form[@id="add-form"]//span[@class="select2-selection select2-selection--single"])[8]',
-            '(//li[@class="select2-results__option"])'
-        )
+        self.wait_modal()
+
+        results = self.get_select_search_results("Tipo")
+        if len(results) > 0:
+            results[0].click()
 
         description_field = self.wait_driver.until(
             EC.visibility_of_element_located((By.XPATH, '(//iframe[@class="cke_wysiwyg_frame cke_reset"])[2]'))
@@ -175,6 +158,7 @@ class Anagrafiche(Test):
         activity_number = self.wait_driver.until(
             EC.visibility_of_element_located((By.XPATH, '//div[@id="tab_28"]//tbody//tr//td[2]'))
         ).text
+
         self.assertEqual("1", activity_number)
 
         self.wait_for_element_and_click('//div[@id="tab_28"]//tbody//td[2]')
@@ -197,15 +181,13 @@ class Anagrafiche(Test):
         self.wait_for_element_and_click('(//a[@class="btn dropdown-item bound clickable"])[2]')
         modal = self.wait_modal()
 
-        self.wait_for_dropdown_and_select(
-            '(//form[@id="add-form"]//span[@class="select2-selection select2-selection--single"])[4]',
-            '(//li[@class="select2-results__option"])'
-        )
+        results = self.get_select_search_results("Tipo di Attività")
+        if len(results) > 0:
+            results[0].click()
 
-        self.wait_for_dropdown_and_select(
-            '(//form[@id="add-form"]//span[@class="select2-selection select2-selection--single"])[5]',
-            '(//li[@class="select2-results__option"])'
-        )
+        results = self.get_select_search_results("Stato")
+        if len(results) > 0:
+            results[0].click()
 
         self.input(modal, 'Nome').setValue("Preventivo di prova anagrafica")
 
@@ -251,10 +233,7 @@ class Anagrafiche(Test):
 
         self.input(modal, 'Nome').setValue("Contratto di prova anagrafica")
 
-        self.wait_for_dropdown_and_select(
-            '(//form[@id="add-form"]//span[@class="select2-selection select2-selection--single"])[2]',
-            '(//li[@class="select2-results__option"])'
-        )
+        results = self.get_select_search_results("Stato", "Bozza")
 
         self.wait_for_element_and_click('(//div[@id="form_31-"]//button[@class="btn btn-primary"])')
 
@@ -318,10 +297,10 @@ class Anagrafiche(Test):
         self.wait_for_element_and_click('(//a[@class="btn dropdown-item bound clickable"])[5]')
         modal = self.wait_modal()
 
-        self.wait_for_dropdown_and_select(
-            '(//form[@id="add-form"]//span[@class="select2-selection select2-selection--single"])[3]',
-            '(//li[@class="select2-results__option"])'
-        )
+        results = self.get_select_search_results("Causale trasporto")
+        
+        if len(results) > 0:
+            results[0].click()
 
         self.wait_for_element_and_click('(//div[@id="form_26-"]//button[@class="btn btn-primary"])')
 

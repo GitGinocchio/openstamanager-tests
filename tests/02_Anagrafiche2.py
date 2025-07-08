@@ -43,6 +43,11 @@ class AnagraficheBis(Test):
         )
         modal = self.send_keys_and_wait(job_title_input, "Segretario")
 
+        results = self.get_select_search_results("Mansione", "Segretario")
+
+        if len(results) > 0:
+            results[0].click()
+
         self.wait_for_element_and_click('//div[@class="modal-footer"]//button[@class="btn btn-primary"]')
         self.wait_loader()
 
@@ -53,7 +58,8 @@ class AnagraficheBis(Test):
         name_input.clear()
         self.send_keys_and_wait(name_input, "Prova", wait_modal=False)
 
-        self.wait_for_element_and_click('//button[@type="submit"]')
+
+        #self.wait_for_element_and_click('//button[@type="submit"]')
         self.wait_loader()
 
         contact_name = self.find(By.XPATH, '//div[@id="tab_3"]//tbody//tr//td[2]').text
@@ -75,10 +81,10 @@ class AnagraficheBis(Test):
         )
         self.send_keys_and_wait(contact_name_input, "Referente di prova", wait_modal=False)
 
-        self.wait_for_dropdown_and_select(
-            '//span[@id="select2-idmansione-container"]',
-            '//ul[@id="select2-idmansione-results"]//li[1]'
-        )
+        results = self.get_select_search_results("Mansione")
+
+        if len(results) > 0:
+            results[0].click()
 
         self.wait_for_element_and_click('(//button[@type="submit"])[3]')
         self.wait_loader()

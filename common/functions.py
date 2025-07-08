@@ -34,9 +34,61 @@ class TestHelperMixin:
         """Wait for filters to be cleared."""
         wait_for_filter_cleared(self.driver, self.wait_driver)
 
+    def find_filter_input(self, name: str) -> WebElement:
+        """Finds and returns the input element associated with the specified filter name.
+
+        The filter is identified by a `<th>` element whose `id` attribute follows the format:
+
+            \t th_[filter-name] (with spaces replaced by hyphens)
+
+        Example:
+            name = "Regione sociale"
+            The function will look for an input inside:
+
+            `<th id="th_Regione-sociale"><input ...></th>`
+
+        Args:
+            name (str): The name of the filter to search for.
+
+        Returns:
+            WebElement: The visible <input> element inside the matching filter.
+        """
+        return find_filter_input(self.driver, self.wait_driver, name)
+
     def clear_filters(self) -> None:
         """Clear all filters."""
         clear_filters(self.driver, self.wait_driver)
+
+    def find_cell(self, row: int | None = None, col: int | None = None) -> WebElement:
+        """
+            Finds one cell (`<td>`) in an HTML table by specifying the row and/or column (1-based).
+
+            :param row: Row number (1-based), or None
+            :param col: Column number (1-based), or None
+            :return: A single WebElement
+        """
+        return find_cells(self.driver, self.wait_driver, row, col, multiple=False)
+
+    def find_cells(self, row: int | None = None, col: int | None = None, multiple : bool = False) -> Union[WebElement, List[WebElement]]:
+        """
+            Finds one or more cells (<td>) in an HTML table by specifying the row and/or column (1-based).
+
+            If multiple is False (default), returns a single element.
+            If multiple is True, returns a list of elements.
+
+            :param wait_driver: WebDriverWait used to wait for the elements
+            :param row: Row number (1-based), or None
+            :param col: Column number (1-based), or None
+            :param multiple: If True, returns multiple elements; otherwise, a single element
+            :return: A single WebElement or a list of WebElements
+        """
+        return find_cells(self.driver, self.wait_driver, row, col, multiple)
+
+    def get_select_search_results(self, field_name : str, search_query : str | None = None) -> list[WebElement]:
+        return get_select_search_results(self.driver, self.wait_driver, field_name, search_query)
+
+    def get_input(self, label : str) -> WebElement:
+        return get_input(self.driver, self.wait_driver, label)
 
     def wait_for_search_results(self) -> None:
         """Wait for search results to load."""
@@ -122,7 +174,7 @@ def safe_path_join(*paths: str) -> str:
 def ensure_directory(path: str) -> None:
     Path(path).mkdir(parents=True, exist_ok=True)
 
-
+#TODO: generalizzare
 def search_entity(driver: WebDriver, wait_driver: WebDriverWait, name: str) -> None:
     try:
         clear_buttons = driver.find_elements(By.XPATH, '//i[@class="deleteicon fa fa-times"]')
@@ -143,8 +195,69 @@ def search_entity(driver: WebDriver, wait_driver: WebDriverWait, name: str) -> N
     search_input.clear()
     search_input.send_keys(name, Keys.ENTER)
 
-    time.sleep(1)
+def get_select_search_results(driver: WebDriver, wait_driver: WebDriverWait, field_name : str, search_query : str | None = None) -> list[WebElement]:
+    """
+    Retrieves the list of `<li>` elements representing search results from a Select2 dropdown 
+    associated with a label that matches the given field name.
 
+    This function performs the following steps:
+    1. Locates the `<label>` with exact text matching `field_name`.
+    2. Uses the 'for' attribute of the label to determine the Select2 container ID.
+    3. Clicks the Select2 `<span>` element to open the dropdown.
+    4. Optionally enters a search query if `search_query` is provided.
+    5. Waits for the loading indicator ("loading-results" `<li>`) to disappear.
+    6. Returns all `<li>` result elements from the dropdown.
+
+    Args:
+        driver (WebDriver): The Selenium WebDriver instance.
+        wait_driver (WebDriverWait): An instance of WebDriverWait for explicit waits.
+        field_name (str): The exact text content of the label associated with the Select2 element.
+        search_query (str | None, optional): The text to enter in the search input. Defaults to None.
+
+    Returns:
+        list[WebElement]: A list of `<li>` elements representing the available search results.
+    """
+    label = wait_driver.until(EC.presence_of_element_located((By.XPATH,f'//label[text()="{field_name}"]')))
+
+    label_for = label.get_attribute("for")
+
+    # Necessario per aprire la select (e caricare i dati)
+    select_id = f"select2-{label_for}-container"
+    select_span = wait_driver.until(
+        EC.presence_of_element_located((By.XPATH, f'//span[@id="{select_id}"]'))
+    )
+    select_span.click()
+
+    results_id = f"select2-{label_for}-results"
+
+    if search_query:
+        input_element = wait_driver.until(
+            EC.presence_of_element_located((
+                By.XPATH,
+                f'//input[@aria-controls="{results_id}"]'
+            ))
+        )
+        input_element.send_keys(search_query, Keys.ENTER)
+    
+
+    # Aspetto fino a quando l'elemento "Sto cercando..." viene rimosso
+    loading_li_xpath = f'//ul[@id="{results_id}"]/li[contains(@class, "loading-results")]'
+    loading_elements = driver.find_elements(By.XPATH, loading_li_xpath)
+
+    # Se esiste almeno uno, aspetta che scompaia
+    if loading_elements:
+        wait_driver.until(EC.invisibility_of_element_located((By.XPATH, loading_li_xpath)))
+
+    # Se esiste 
+    clear_buttons = select_span.find_elements(By.CSS_SELECTOR, "span.select2-selection__clear")
+    if len(clear_buttons) == 0:
+        select_results = wait_driver.until(EC.presence_of_element_located((By.ID,results_id)))
+    
+    # Aspetto fino a che gli elementi li siano visibili
+    results_xpath = f'//ul[@id="{results_id}"]/li'
+    results = driver.find_elements(By.XPATH, results_xpath)
+
+    return results
 
 def click_first_result(driver: WebDriver, wait_driver: WebDriverWait) -> None:
     wait_loader(driver, wait_driver)
@@ -161,12 +274,35 @@ def click_first_result(driver: WebDriver, wait_driver: WebDriverWait) -> None:
         ).click()
         wait_loader(driver, wait_driver)
 
-
 def wait_for_filter_cleared(driver: WebDriver, wait_driver: WebDriverWait) -> None:
     wait_driver.until(
         EC.invisibility_of_element_located((By.XPATH, '//div[@class="select2-search select2-search--dropdown"]'))
     )
 
+def find_filter_input(driver: WebDriver, wait_driver: WebDriverWait, name: str) -> WebElement:
+    """Finds and returns the input element associated with the specified filter name.
+
+    The filter is identified by a `<th>` element whose `id` attribute follows the format:
+
+        \t th_[filter-name] (with spaces replaced by hyphens)
+
+    Example:
+        name = "Regione sociale"
+        The function will look for an input inside:
+
+        `<th id="th_Regione-sociale"><input ...></th>`
+
+    Args:
+        driver (WebDriver): Instance of the Selenium WebDriver.
+        wait_driver (WebDriverWait): Instance of WebDriverWait used to wait for the element.
+        name (str): The name of the filter to search for.
+
+    Returns:
+        WebElement: The visible <input> element inside the matching filter.
+    """
+    return wait_driver.until(
+        EC.visibility_of_element_located((By.XPATH, f'//th[@id="th_{name.replace(" ", "-")}"]/input'))
+    )
 
 def clear_filters(driver: WebDriver, wait_driver: WebDriverWait) -> None:
     try:
@@ -194,6 +330,33 @@ def clear_filters(driver: WebDriver, wait_driver: WebDriverWait) -> None:
     except Exception as e:
         print(f"Warning: Could not clear filters: {str(e)}")
 
+def find_cells(driver: WebDriver, wait_driver: WebDriverWait, row: int | None = None, col: int | None = None, multiple : bool = False) -> Union[WebElement, List[WebElement]]:
+    """
+        Finds one or more cells (<td>) in an HTML table by specifying the row and/or column (1-based).
+
+        If multiple is False (default), returns a single element.
+        If multiple is True, returns a list of elements.
+
+        :param wait_driver: WebDriverWait used to wait for the elements
+        :param row: Row number (1-based), or None
+        :param col: Column number (1-based), or None
+        :param multiple: If True, returns multiple elements; otherwise, a single element
+        :return: A single WebElement or a list of WebElements
+    """
+    row_fmt = f"[{row}]" if row else ""
+    col_fmt = f"[{col}]" if col else ""
+
+    xpath = f'//tbody//tr{row_fmt}//td{col_fmt}'
+
+    if multiple:
+        return wait_driver.until(
+            EC.visibility_of_all_elements_located((By.XPATH, xpath))
+        )
+    else:
+        return wait_driver.until(
+            EC.visibility_of_element_located((By.XPATH, xpath))
+        )
+
 
 class AnyOf:
     def __init__(self, *conditions):
@@ -207,6 +370,21 @@ class AnyOf:
             except:
                 pass
         return False
+
+class AllOf:
+    def __init__(self, *conditions):
+        self.conditions = conditions
+
+    def __call__(self, driver):
+        results = []
+        for condition in self.conditions:
+            try:
+                result = condition(driver)
+                results.append(result)
+            except:
+                return False
+        return all(results)
+
 
 def wait_for_search_results(driver: WebDriver, wait_driver: WebDriverWait) -> None:
     wait_loader(driver, wait_driver)
@@ -240,10 +418,17 @@ def wait_for_element_and_click(driver: WebDriver, wait_driver: WebDriverWait, se
         wait_loader(driver, wait_driver)
         return element
 
+"""
+TODO: trovare tutti i posti in cui viene utilizzato questo metodo e sostituirlo con .get_select_search_results()
 
+PS: Quel metodo permette (opzionalmente) di fare una ricerca ad un Select e successivamente di ottenere i risultati/opzioni
+    ottenendo le opzioni del select possiamo chiamare il metodo .click() per selezionarle
+
+PPS: Se .get_select_search_results() non trova il select, probabilmente perchè è all'interno di una modal
+     quindi va chiamato prima .wait_modal()
+"""
 def wait_for_dropdown_and_select(driver: WebDriver, wait_driver: WebDriverWait, dropdown_xpath: str, option_xpath: str = None, option_text: str = None) -> None:
     wait_for_element_and_click(driver, wait_driver, dropdown_xpath, By.XPATH)
-    time.sleep(1)
 
     if option_xpath:
         wait_for_element_and_click(driver, wait_driver, option_xpath, By.XPATH)
@@ -259,20 +444,6 @@ def wait_for_dropdown_and_select(driver: WebDriver, wait_driver: WebDriverWait, 
     wait_loader(driver, wait_driver)
 
 
-class AllOf:
-    def __init__(self, *conditions):
-        self.conditions = conditions
-
-    def __call__(self, driver):
-        results = []
-        for condition in self.conditions:
-            try:
-                result = condition(driver)
-                results.append(result)
-            except:
-                return False
-        return all(results)
-
 def wait_loader(driver: WebDriver, wait_driver: WebDriverWait) -> None:
     try:
         wait_driver.until(AllOf(
@@ -282,7 +453,6 @@ def wait_loader(driver: WebDriver, wait_driver: WebDriverWait) -> None:
         ))
     except:
         pass
-
 
 def send_keys_and_wait(driver: WebDriver, wait_driver: WebDriverWait, element: WebElement, text: str, wait_for_modal: bool = True) -> Optional[WebElement]:
     """Send keys to an element and wait for the page to load after pressing Enter.
@@ -340,3 +510,10 @@ def send_keys_and_wait(driver: WebDriver, wait_driver: WebDriverWait, element: W
             return None
 
     return None
+
+def get_input(driver: WebDriver, wait_driver: WebDriverWait, label : str) -> WebElement:
+    label = wait_driver.until(EC.presence_of_element_located((By.XPATH,f'//label[text()="{label}"]')))
+
+    label_for = label.get_attribute("for")
+
+    return wait_driver.until(EC.element_to_be_clickable((By.XPATH, f'//input[@id="{label_for}"]')))
