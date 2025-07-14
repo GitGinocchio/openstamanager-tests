@@ -83,7 +83,7 @@ class Test(unittest.TestCase, TestHelperMixin):
             password_input.clear()
             password_input.send_keys(password)
 
-            self.find(By.XPATH, '//button[@type="submit"]').click()
+            self.get_element('//button[@type="submit"]', By.XPATH).click()
 
             self.wait_loader()
             self.logger.info("Login successful")
@@ -126,7 +126,7 @@ class Test(unittest.TestCase, TestHelperMixin):
             self.wait(condition)
 
             xpath = f'//a[contains(., "{name}")]'
-            element = self.find(By.XPATH, xpath)
+            element = self.get_element(xpath, By.XPATH)
 
             self.driver.execute_script("arguments[0].scrollIntoView();", element)
             element.click()
@@ -142,7 +142,7 @@ class Test(unittest.TestCase, TestHelperMixin):
 
         try:
             xpath = f'//a[contains(., "{name}")]//i[contains(@class, "fa-angle-left")]'
-            expand_icon = self.find(By.XPATH, xpath)
+            expand_icon = self.get_element(xpath, By.XPATH)
 
             expand_icon.click()
 
@@ -180,12 +180,14 @@ class Test(unittest.TestCase, TestHelperMixin):
     def wait_modal(self):
         self.logger.debug("Waiting for modal dialog")
         try:
-            self.wait(EC.visibility_of_element_located(
-                (By.CLASS_NAME, 'modal-dialog')))
-
-            modal = self.find_elements(By.CSS_SELECTOR, '.modal')[-1]
+            modals = self.wait_driver.until(
+                EC.visibility_of_all_elements_located((By.XPATH, f'//div[@id="modals"]/*'))
+            )
             self.logger.debug("Modal dialog appeared")
-            return modal
+
+            
+
+            return modals[-1] if len(modals) > 0 else None
         except TimeoutException:
             self.logger.error("Timeout waiting for modal dialog")
             raise
@@ -210,7 +212,7 @@ class Test(unittest.TestCase, TestHelperMixin):
     def input(self, element=None, name=None, css_id=None):
         try:
             if not element:
-                element = self.find(By.XPATH, '//body')
+                element = self.get_element('//body', By.XPATH)
 
             return Input.find(self.driver, element, name, css_id)
         except Exception as e:

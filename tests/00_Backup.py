@@ -14,7 +14,7 @@ class Backup(Test):
         self.navigateTo("Backup")
         self.wait_loader()
 
-        self.wait_for_element_and_click('//a[@onclick="creaBackup(this)"]')
-        self.wait_for_element_and_click('//button[@class="swal2-confirm btn btn-lg btn-success"]')
+        self.get_element('//a[@onclick="creaBackup(this)"]', By.XPATH).click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-success"]', By.XPATH).click()
 
         self.wait_loader()

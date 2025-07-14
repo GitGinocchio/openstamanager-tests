@@ -4,6 +4,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from common.Test import Test
 
+import time
+
 class Anagrafiche(Test):
     def setUp(self):
         super().setUp()
@@ -29,7 +31,7 @@ class Anagrafiche(Test):
 
 
     def add_anagrafica(self, nome: str, tipo: str):
-        self.wait_for_element_and_click('//i[@class="fa fa-plus"]')
+        self.get_element('//i[@class="fa fa-plus"]', By.XPATH).click()
 
         modal = self.wait_modal()
         self.input(modal, 'Denominazione').setValue(nome)
@@ -37,7 +39,7 @@ class Anagrafiche(Test):
         select.setByText(tipo)
 
         # Usa XPath relativo al modal per trovare il pulsante
-        modal.find_element(By.XPATH, './/div[@class="modal-footer"]//button[@type="submit"]').click()
+        self.get_element('.//div[@class="modal-footer"]//button[@type="submit"]', By.XPATH, modal).click()
         self.wait_loader()
 
     def modifica_anagrafica(self, tipologia: str):
@@ -46,32 +48,34 @@ class Anagrafiche(Test):
         self.search_entity("Cliente")
         self.click_first_result()
 
+        print("qui è lento e non so perchè")
         self.get_select_search_results("Tipologia", tipologia)
 
-        self.input(None, 'Partita IVA').setValue("05024030287")
-        self.input(None, 'Codice fiscale').setValue("05024030287")
+        piva = self.get_input("Partita IVA")
+        piva.clear()
+        piva.send_keys("05024030287")
 
-        address_field = self.wait_driver.until(
-            EC.presence_of_element_located((By.XPATH, '//input[@id="indirizzo"]'))
-        )
+        codice_fiscale = self.get_input("Codice fiscale")
+        codice_fiscale.clear()
+        codice_fiscale.send_keys("05024030287")
+
+        address_field = self.get_element("indirizzo")
         address_field.clear()
-        self.send_keys_and_wait(address_field, "Via controllo caratteri speciali: &\"<>èéàòùì?'`", wait_modal=False)
+        address_field.send_keys("Via controllo caratteri speciali: &\"<>èéàòùì?'`")
 
-        cap_field = self.wait_driver.until(
-            EC.element_to_be_clickable((By.XPATH, '//label[contains(., "C.A.P.")]/parent::div/parent::div//input'))
-        )
+        cap_field = self.get_element('//label[contains(., "C.A.P.")]/parent::div/parent::div//input', By.XPATH)
+        cap_field.click()
         cap_field.clear()
         cap_field.send_keys("35042")
 
         self.wait_loader()
 
-        city_field = self.wait_driver.until(
-            EC.element_to_be_clickable((By.XPATH, '//label[contains(., "Città")]/parent::div/parent::div//input'))
-        )
+        city_field = self.get_element('//label[contains(., "Città")]/parent::div/parent::div//input', By.XPATH)
+        city_field.click()
         city_field.clear()
         city_field.send_keys("Este")
-
-        self.wait_for_element_and_click('//button[@id="save"]')
+        
+        self.get_element('save', By.ID).click()
         self.wait_loader()
 
         self.navigateTo("Anagrafiche")
@@ -85,10 +89,10 @@ class Anagrafiche(Test):
         self.search_entity('Anagrafica di Prova da Eliminare')
         self.click_first_result()
         self.wait_loader()
-
-        self.wait_for_element_and_click('//div[@id="tab_0"]//a[@class="btn btn-danger ask"]')
-
-        self.wait_for_element_and_click('//button[@class="swal2-confirm btn btn-lg btn-danger"]')
+        
+        self.get_element('//div[@id="tab_0"]//a[@class="btn btn-danger ask"]', By.XPATH).click()
+        
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()
         self.wait_loader()
 
         self.clear_filters()
@@ -101,12 +105,11 @@ class Anagrafiche(Test):
         
         search_input = self.find_filter_input("Tipologia")
         search_input.clear()
-
-        self.send_keys_and_wait(search_input, "Privato", wait_modal=False)
+        search_input.send_keys("Privato", Keys.ENTER)
         self.wait_for_search_results()
 
-        entity_name = self.find_cell(col=2).text
-
+        context = self.get_element("tab_0")
+        entity_name = self.find_cell(row=1, col=4, context=context).text
         self.assertEqual("Cliente", entity_name)
 
         self.navigateTo("Anagrafiche")
@@ -115,8 +118,7 @@ class Anagrafiche(Test):
 
         search_input = self.find_filter_input("Ragione sociale")
         search_input.clear()
-
-        self.send_keys_and_wait(search_input, "Anagrafica di Prova da Eliminare", wait_modal=False)
+        search_input.send_keys("Anagrafica di Prova da Eliminare", Keys.ENTER)
         self.wait_for_search_results()
 
         no_results_message = self.find_cell(col=1).text
@@ -131,40 +133,45 @@ class Anagrafiche(Test):
 
         self.search_entity("Cliente")
         self.click_first_result()
-
-        self.wait_for_element_and_click('//button[@class="btn btn-info dropdown-toggle"]')
-        self.wait_for_element_and_click('(//a[@class="btn dropdown-item bound clickable"])[1]')
+        
+        self.get_element('//button[@class="btn btn-info dropdown-toggle"]', By.XPATH).click()
+        self.get_element('(//a[@class="btn dropdown-item bound clickable"])[1]', By.XPATH).click()
 
         self.wait_modal()
 
-        results = self.get_select_search_results("Tipo")
+        results = self.get_select_search_results("Tipo", label_for="idtipointervento")
         if len(results) > 0:
             results[0].click()
 
-        description_field = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '(//iframe[@class="cke_wysiwyg_frame cke_reset"])[2]'))
-        )
+        description_field = self.get_element('(//iframe[@class="cke_wysiwyg_frame cke_reset"])[2]', By.XPATH)
         description_field.click()
-        self.send_keys_and_wait(description_field, "Test", wait_modal=False)
-
-        self.wait_for_element_and_click('//div[@class="col-md-12 text-right"]//button[@type="button"]')
+        description_field.send_keys("Test", Keys.ENTER)
+        
+        self.get_element('//div[@class="col-md-12 text-right"]//button[@type="button"]', By.XPATH).click()
 
         self.navigateTo("Anagrafiche")
         self.wait_loader()
         self.search_entity("Cliente")
         self.click_first_result()
 
-        self.wait_for_element_and_click('//a[@id="link-tab_28"]')
-        activity_number = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '//div[@id="tab_28"]//tbody//tr//td[2]'))
-        ).text
+        self.expand_plugin_sidebar()
+        self.click_plugin("Storico attività")
 
+        activity_number = self.get_element('//div[@id="tab_28"]//tbody//tr//td[2]', By.XPATH).text
         self.assertEqual("1", activity_number)
+        
+        self.get_element('//div[@id="tab_28"]//tbody//td[2]', By.XPATH).click()
 
-        self.wait_for_element_and_click('//div[@id="tab_28"]//tbody//td[2]')
+        self.wait_loader()
 
-        self.wait_for_element_and_click('//div[@id="tab_0"]//a[@class="btn btn-danger ask"]')
-        self.wait_for_element_and_click('//button[@class="swal2-confirm btn btn-lg btn-danger"]')
+        self.driver.execute_script("window.scrollTo(0, document.documentElement.scrollHeight);")
+
+        delete_btn = self.get_element('//div[@id="tab_0"]//a[@class="btn btn-danger ask"]', By.XPATH)
+        delete_btn.click()
+
+        self.wait_swal2_popup()
+        
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()
         self.wait_loader()
 
         self.navigateTo("Anagrafiche")
@@ -176,9 +183,9 @@ class Anagrafiche(Test):
 
         self.search_entity("Cliente")
         self.click_first_result()
-
-        self.wait_for_element_and_click('//button[@class="btn btn-info dropdown-toggle"]')
-        self.wait_for_element_and_click('(//a[@class="btn dropdown-item bound clickable"])[2]')
+        
+        self.get_element('//button[@class="btn btn-info dropdown-toggle"]', By.XPATH).click()
+        self.get_element('(//a[@class="btn dropdown-item bound clickable"])[2]', By.XPATH).click()
         modal = self.wait_modal()
 
         results = self.get_select_search_results("Tipo di Attività")
@@ -190,28 +197,31 @@ class Anagrafiche(Test):
             results[0].click()
 
         self.input(modal, 'Nome').setValue("Preventivo di prova anagrafica")
-
-        self.wait_for_element_and_click('(//div[@id="form_13-"]//button[@class="btn btn-primary"])')
+        
+        self.get_element('(//div[@id="form_13-"]//button[@class="btn btn-primary"])', By.XPATH).click()
 
         self.navigateTo("Anagrafiche")
         self.wait_loader()
         self.search_entity("Cliente")
         self.click_first_result()
 
-        self.wait_for_element_and_click('//button[@class="btn btn-tool"]')
+        self.scroll_to_bottom()
+        
+        self.get_element('//button[@class="btn btn-tool"]', By.XPATH).click()
 
-        quote_text = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '(//div[@class="card-body"]//li)[7]'))
-        ).text
+        self.scroll_to_bottom()
+
+        quote_text = self.get_element('(//div[@class="card-body"]//li)[7]', By.XPATH).text
+
         self.assertEqual("Preventivo 1", quote_text[0:12])
-
-        self.wait_for_element_and_click('(//div[@class="card-body"]//li//a)[5]')
+        
+        self.get_element('(//div[@class="card-body"]//li//a)[5]', By.XPATH).click()
 
         self.wait_driver.until(lambda driver: len(driver.window_handles) > 1)
         self.driver.switch_to.window(self.driver.window_handles[1])
-
-        self.wait_for_element_and_click('//div[@id="tab_0"]//a[@class="btn btn-danger ask"]')
-        self.wait_for_element_and_click('//button[@class="swal2-confirm btn btn-lg btn-danger"]')
+        
+        self.get_element('//div[@id="tab_0"]//a[@class="btn btn-danger ask"]', By.XPATH).click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()
         self.wait_loader()
 
         self.driver.close()
@@ -226,19 +236,20 @@ class Anagrafiche(Test):
 
         self.search_entity("Cliente")
         self.click_first_result()
-
-        self.wait_for_element_and_click('//button[@class="btn btn-info dropdown-toggle"]')
-        self.wait_for_element_and_click('(//a[@class="btn dropdown-item bound clickable"])[3]')
+        
+        self.get_element('//button[@class="btn btn-info dropdown-toggle"]', By.XPATH).click()
+        self.get_element('(//a[@class="btn dropdown-item bound clickable"])[3]', By.XPATH).click()
         modal = self.wait_modal()
 
         self.input(modal, 'Nome').setValue("Contratto di prova anagrafica")
 
         results = self.get_select_search_results("Stato", "Bozza")
+        if len(results) > 0: results[0].click()
 
-        self.wait_for_element_and_click('(//div[@id="form_31-"]//button[@class="btn btn-primary"])')
+        self.get_element('(//div[@id="form_31-"]//button[@class="btn btn-primary"])', By.XPATH).click()
 
-        self.wait_for_element_and_click('//div[@id="tab_0"]//a[@class="btn btn-danger ask"]')
-        self.wait_for_element_and_click('//button[@class="swal2-confirm btn btn-lg btn-danger"]')
+        self.get_element('//div[@id="tab_0"]//a[@class="btn btn-danger ask"]', By.XPATH).click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()
         self.wait_loader()
 
         self.navigateTo("Anagrafiche")
@@ -252,11 +263,11 @@ class Anagrafiche(Test):
         self.search_entity("Cliente")
         self.click_first_result()
 
-        self.wait_for_element_and_click('//button[@class="btn btn-info dropdown-toggle"]')
-        self.wait_for_element_and_click('(//a[@class="btn dropdown-item bound clickable"])[4]')
+        self.get_element('//button[@class="btn btn-info dropdown-toggle"]', By.XPATH).click()
+        self.get_element('(//a[@class="btn dropdown-item bound clickable"])[4]', By.XPATH).click()
         self.wait_modal()
 
-        self.wait_for_element_and_click('(//div[@id="form_24-"]//button[@class="btn btn-primary"])')
+        self.get_element('(//div[@id="form_24-"]//button[@class="btn btn-primary"])', By.XPATH).click()
         self.wait_loader()
 
         self.navigateTo("Anagrafiche")
@@ -264,20 +275,18 @@ class Anagrafiche(Test):
         self.search_entity("Cliente")
         self.click_first_result()
 
-        self.wait_for_element_and_click('//button[@class="btn btn-tool"]')
+        self.get_element('//button[@class="btn btn-tool"]', By.XPATH).click()
 
-        order_text = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '(//div[@class="card-body"]//li)[7]'))
-        ).text
+        order_text = self.get_element('(//div[@class="card-body"]//li)[7]', By.XPATH).text
         self.assertEqual("Ordine cliente 01", order_text[0:17])
 
-        self.wait_for_element_and_click('(//div[@class="card-body"]//li//a)[5]')
+        self.get_element('(//div[@class="card-body"]//li//a)[5]', By.XPATH).click()
 
         self.wait_driver.until(lambda driver: len(driver.window_handles) > 1)
         self.driver.switch_to.window(self.driver.window_handles[1])
 
-        self.wait_for_element_and_click('//div[@id="tab_0"]//a[@class="btn btn-danger ask"]')
-        self.wait_for_element_and_click('//button[@class="swal2-confirm btn btn-lg btn-danger"]')
+        self.get_element('//div[@id="tab_0"]//a[@class="btn btn-danger ask"]', By.XPATH).click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()
         self.wait_loader()
 
         self.navigateTo("Anagrafiche")
@@ -293,8 +302,8 @@ class Anagrafiche(Test):
         self.search_entity("Cliente")
         self.click_first_result()
 
-        self.wait_for_element_and_click('//button[@class="btn btn-info dropdown-toggle"]')
-        self.wait_for_element_and_click('(//a[@class="btn dropdown-item bound clickable"])[5]')
+        self.get_element('//button[@class="btn btn-info dropdown-toggle"]', By.XPATH).click()
+        self.get_element('(//a[@class="btn dropdown-item bound clickable"])[5]', By.XPATH).click()
         modal = self.wait_modal()
 
         results = self.get_select_search_results("Causale trasporto")
@@ -302,24 +311,23 @@ class Anagrafiche(Test):
         if len(results) > 0:
             results[0].click()
 
-        self.wait_for_element_and_click('(//div[@id="form_26-"]//button[@class="btn btn-primary"])')
+        self.get_element('(//div[@id="form_26-"]//button[@class="btn btn-primary"])', By.XPATH).click()
 
         self.navigateTo("Anagrafiche")
         self.wait_loader()
         self.search_entity("Cliente")
         self.click_first_result()
 
-        self.wait_for_element_and_click('//a[@id="link-tab_17"]')
+        self.click_plugin("Ddt del cliente")
 
-        ddt_number = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '//div[@id="tab_17"]//tbody//td[2]'))
-        ).text
-        self.assertEqual("01", ddt_number)
+        ddt_number_cell = self.get_element('//div[@id="tab_17"]//tbody//td[2]', By.XPATH)
+        self.assertEqual("01", ddt_number_cell.text)
+        ddt_number_cell.click()
 
-        self.wait_for_element_and_click('//div[@id="tab_17"]//tbody//td[2]')
+        self.scroll_to_bottom()
 
-        self.wait_for_element_and_click('//div[@id="tab_0"]//a[@class="btn btn-danger ask"]')
-        self.wait_for_element_and_click('//button[@class="swal2-confirm btn btn-lg btn-danger"]')
+        self.get_element('//div[@id="tab_0"]//a[@class="btn btn-danger ask"]', By.XPATH).click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()
         self.wait_loader()
 
         self.navigateTo("Anagrafiche")
@@ -332,32 +340,34 @@ class Anagrafiche(Test):
         self.search_entity("Cliente")
         self.click_first_result()
 
-        self.wait_for_element_and_click('//button[@class="btn btn-info dropdown-toggle"]')
-        self.wait_for_element_and_click('(//a[@class="btn dropdown-item bound clickable"])[6]')
+        self.get_element('//button[@class="btn btn-info dropdown-toggle"]', By.XPATH).click()
+        self.get_element('(//a[@class="btn dropdown-item bound clickable"])[6]', By.XPATH).click()
 
-        self.wait_for_element_and_click('(//div[@id="form_14-"]//button[@class="btn btn-primary"])')
+        self.wait_modal()
+
+        self.get_element('(//div[@id="form_14-"]//button[@class="btn btn-primary"])', By.XPATH).click()
 
         self.navigateTo("Anagrafiche")
         self.wait_loader()
         self.search_entity("Cliente")
         self.click_first_result()
 
-        self.wait_for_element_and_click('//button[@class="btn btn-tool"]')
+        self.get_element('//button[@class="btn btn-tool"]', By.XPATH).click()
 
-        invoice_text = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '(//div[@class="card-body"]//li)[7]'))
-        ).text
+        self.scroll_to_bottom()
+
+        invoice_text = self.get_element('(//div[@class="card-body"]//li)[7]', By.XPATH).text
         self.assertEqual("Fattura immediata di vendita", invoice_text[0:28])
 
-        self.wait_for_element_and_click('(//div[@class="card-body"]//li//a)[5]')
+        self.get_element('(//div[@class="card-body"]//li//a)[5]', By.XPATH).click()
 
         self.wait_driver.until(lambda driver: len(driver.window_handles) > 1)
 
         self.driver.close()
         self.driver.switch_to.window(self.driver.window_handles[0])
 
-        self.wait_for_element_and_click('//div[@id="tab_0"]//a[@class="btn btn-danger ask "]')
-        self.wait_for_element_and_click('//button[@class="swal2-confirm btn btn-lg btn-danger"]')
+
+        self.delete_and_confirm()
         self.wait_loader()
 
         self.navigateTo("Anagrafiche")

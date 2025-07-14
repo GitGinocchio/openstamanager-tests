@@ -8,26 +8,26 @@ class Init(Test):
         self.connect()
 
     def test_config(self):
+        # TODO: Capire cosa vuole fare qui
         next_button_xpath = '//*[@id="smartwizard"]/div[2]/div/button[2]'
-        self.wait(EC.visibility_of_element_located((By.XPATH, next_button_xpath)))
-        self.find(By.XPATH, next_button_xpath).click()
+        self.get_element(next_button_xpath, By.XPATH).click()
 
-        self.find(By.XPATH, '//*[@id="agree"]').click()
-        self.find(By.XPATH, next_button_xpath).click()
+        self.get_element('agree').click()
+        self.get_element(next_button_xpath, By.XPATH).click()
 
         self.input(None, "Host del database").setValue(self.getConfig('database.host'))
         self.input(None, "Username dell'utente MySQL").setValue(self.getConfig('database.user'))
         self.input(None, "Password dell'utente MySQL").setValue(self.getConfig('database.pass'))
         self.input(None, "Nome del database").setValue(self.getConfig('database.name'))
 
-        self.find(By.XPATH, '//*[@id="install"]').click()
+        self.get_element('//*[@id="install"]', By.XPATH).click()
         self.wait(EC.visibility_of_element_located((By.ID, 'contine_button')))
 
-        self.find(By.XPATH, '//*[@id="contine_button"]').click()
-        self.find(By.XPATH, '/html/body/div[2]/div/div[10]/button[1]').click()
+        self.get_element('//*[@id="contine_button"]', By.XPATH).click()
+        self.get_element('/html/body/div[2]/div/div[10]/button[1]', By.XPATH).click()
 
         self.wait(EC.visibility_of_element_located((By.XPATH, '//*[@id="result"]/a')), 300)
-        self.find(By.XPATH, '//*[@id="result"]/a').click()
+        self.get_element('//*[@id="result"]/a', By.XPATH).click()
 
         self.input(None, 'Username').setValue(self.getConfig('login.username'))
         self.input(None, 'Password').setValue(self.getConfig('login.password'))
@@ -38,4 +38,4 @@ class Init(Test):
         self.input(None, 'Conto predefinito fatture di acquisto').setByText("000010 - Costi merci c/acquisto di rivendita")
         self.input(None, 'Valuta').setByText("Euro - €")
 
-        self.find(By.XPATH, '//*[@id="config"]').click()
+        self.get_element('//*[@id="config"]', By.XPATH).click()

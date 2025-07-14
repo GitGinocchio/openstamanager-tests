@@ -4,6 +4,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from common.Test import Test
 
+import time
+
 class AnagraficheBis(Test):
     def setUp(self):
         super().setUp()
@@ -16,7 +18,7 @@ class AnagraficheBis(Test):
         self.plugin_statistiche()
         self.dichiarazione_di_intento()
         self.assicurazione_crediti()
-        self.ricerca_coordinate()
+        self.ricerca_coordinate()      # Questo non funziona a causa di un bug
         self.elimina_selezionati()
         self.cambia_relazione()
         self.logger.info("Test di funzionalità aggiuntive anagrafica completato con successo")
@@ -28,76 +30,67 @@ class AnagraficheBis(Test):
         self.search_entity("Cliente")
         self.click_first_result()
 
-        self.wait_for_element_and_click('//a[@id="link-tab_3"]')
+        self.click_plugin("Referenti")
 
-        self.wait_for_element_and_click('//h4//i[@class="fa fa-plus"]')
+        self.get_element('//h4//i[@class="fa fa-plus"]', By.XPATH).click()
         modal = self.wait_modal()
 
         self.input(modal,'Nominativo').setValue("Referente di prova")
 
-        self.wait_for_element_and_click('//div[@class="modal-dialog modal-lg"]//i[@class="fa fa-plus"]')
+        self.get_element('//div[@class="modal-dialog modal-lg"]//i[@class="fa fa-plus"]', By.XPATH).click()
         modal = self.wait_modal()
 
-        job_title_input = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '//div[@class="modal-content"]//div[@id="form_82-"]//input[@id="nome"]'))
-        )
-        modal = self.send_keys_and_wait(job_title_input, "Segretario")
+        context = self.get_element("form_82-")
+        job_title_input = self.get_element("nome", context=context)
+        job_title_input.send_keys("Segretario", Keys.ENTER)
+        modal = self.wait_modal()
 
         results = self.get_select_search_results("Mansione", "Segretario")
+        if len(results) > 0: results[0].click()
 
-        if len(results) > 0:
-            results[0].click()
-
-        self.wait_for_element_and_click('//div[@class="modal-footer"]//button[@class="btn btn-primary"]')
+        self.get_element('//div[@class="modal-footer"]//button[@class="btn btn-primary"]', By.XPATH).click()
         self.wait_loader()
 
-        self.wait_for_element_and_click('//div[@id="tab_3"]//tbody//tr//td[2]')
+        self.get_element('//div[@id="tab_3"]//tbody//tr//td[2]', By.XPATH).click()
         self.wait_modal()
 
-        name_input = self.find(By.XPATH, '(//input[@id="nome"])[2]')
+        name_input = self.get_element('(//input[@id="nome"])[2]', By.XPATH)
         name_input.clear()
-        self.send_keys_and_wait(name_input, "Prova", wait_modal=False)
-
-
-        #self.wait_for_element_and_click('//button[@type="submit"]')
+        name_input.send_keys("Prova", Keys.ENTER)
         self.wait_loader()
 
-        contact_name = self.find(By.XPATH, '//div[@id="tab_3"]//tbody//tr//td[2]').text
+        contact_name = self.get_element('//div[@id="tab_3"]//tbody//tr//td[2]', By.XPATH).text
         self.assertEqual(contact_name, "Prova")
 
-        self.wait_for_element_and_click('//div[@id="tab_3"]//tbody//tr//td[2]')
-        self.wait_for_element_and_click('(//a[@class="btn btn-danger ask"])[2]')
-        self.wait_for_element_and_click('//button[@class="swal2-confirm btn btn-lg btn-danger"]')
+        self.get_element('//div[@id="tab_3"]//tbody//tr//td[2]', By.XPATH).click()
+
+        self.wait_modal()
+
+        self.get_element('(//a[@class="btn btn-danger ask"])[2]', By.XPATH).click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()
         self.wait_loader()
 
-        empty_message = self.find(By.XPATH, '//div[@id="tab_3"]//tbody//tr').text
+        empty_message = self.get_element('//div[@id="tab_3"]//tbody//tr', By.XPATH).text
         self.assertEqual(empty_message, "Nessun dato presente nella tabella")
 
-        self.wait_for_element_and_click('//h4//i[@class="fa fa-plus"]')
+        self.get_element('//h4//i[@class="fa fa-plus"]', By.XPATH).click()
         modal = self.wait_modal()
 
-        contact_name_input = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '(//input[@id="nome"])[2]'))
-        )
-        self.send_keys_and_wait(contact_name_input, "Referente di prova", wait_modal=False)
+        contact_name_input = self.get_element('(//input[@id="nome"])[2]', By.XPATH)
+        contact_name_input.send_keys("Referente di prova", Keys.ENTER)
 
         results = self.get_select_search_results("Mansione")
-
         if len(results) > 0:
             results[0].click()
 
-        self.wait_for_element_and_click('(//button[@type="submit"])[3]')
+        self.get_element('(//button[@type="submit"])[3]', By.XPATH).click()
         self.wait_loader()
 
-        search_input = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Mansione"]/input'))
-        )
-        self.send_keys_and_wait(search_input, "Segretario", wait_modal=False)
+        search_input = self.find_filter_input("Mansione")
+        search_input.send_keys("Segretario", Keys.ENTER)
         self.wait_for_search_results()
 
-        job_title = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '//div[@id="tab_3"]//tbody//tr//td[3]'))
-        ).text
+        job_title = self.get_element('//div[@id="tab_3"]//tbody//tr//td[3]', By.XPATH).text
         self.assertEqual("Segretario", job_title)
 
         self.navigateTo("Anagrafiche")
@@ -111,91 +104,77 @@ class AnagraficheBis(Test):
         self.search_entity("Cliente")
         self.click_first_result()
 
-        self.wait_for_element_and_click('//a[@id="link-tab_4"]')
+        self.click_plugin("Sedi aggiuntive")
 
-        self.wait_for_element_and_click('//div[@id="tab_4"]//i[@class="fa fa-plus"]')
+        self.get_element('//div[@id="tab_4"]//i[@class="fa fa-plus"]', By.XPATH).click()
         modal = self.wait_modal()
 
         self.input(None, 'Nome sede').setValue("Filiale XY")
 
-        postal_code_input = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '(//input[@id="cap"])[2]'))
-        )
-        self.send_keys_and_wait(postal_code_input, "35042", wait_modal=False)
+        postal_code_input = self.get_element('(//input[@id="cap"])[2]', By.XPATH)
+        postal_code_input.send_keys("35042")
 
-        city_input = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '(//input[@id="citta"])[2]'))
-        )
+        city_input = self.get_element('(//input[@id="citta"])[2]', By.XPATH)
         city_input.click()
-        self.send_keys_and_wait(city_input, "Padova", wait_modal=False)
+        city_input.send_keys("Padova", Keys.ENTER)
 
-        self.wait_for_dropdown_and_select(
-            '(//span[@id="select2-id_nazione-container"])[2]',
-            '//li[@class="select2-results__option select2-results__option--highlighted"]'
-        )
+        context = self.get_element("modals")
+        results = self.get_select_search_results("Nazione", context=context)
+        if len(results) > 0: results[0].click()
 
-        self.wait_for_element_and_click('(//button[@type="submit"])[3]')
+        self.get_element('(//button[@type="submit"])[3]', By.XPATH).click()
 
-        self.wait_for_element_and_click('//div[@id="tab_4"]//tbody/tr//td[2]')
+        self.wait_loader()
 
-        location_name_input = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '//input[@id="nomesede"]'))
-        )
+        self.get_element('//div[@id="tab_4"]//tbody/tr//td[2]', By.XPATH).click()
+
+        location_name_input = self.get_input("Nome sede")
         location_name_input.clear()
-        self.send_keys_and_wait(location_name_input, "Prova", wait_modal=False)
+        location_name_input.send_keys("Prova")
 
-        self.wait_for_element_and_click('//button[@class="btn btn-primary pull-right"]')
+        self.get_element('//button[@class="btn btn-primary pull-right"]', By.XPATH).click()
         self.wait_loader()
 
         # Wait for the table to be fully loaded
         self.wait_loader()
 
         # Wait explicitly for the table row to be visible
-        location_name_element = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '//div[@id="tab_4"]//tbody/tr//td[2]'))
-        )
-        location_name = location_name_element.text
+        location_name = self.get_element('//div[@id="tab_4"]//tbody/tr//td[2]', By.XPATH).text
         self.assertEqual(location_name, "Prova")
 
-        self.wait_for_element_and_click('//div[@id="tab_4"]//tbody/tr//td[2]')
-        self.wait_for_element_and_click('//button[@class="btn btn-danger "]')
-        self.wait_for_element_and_click('//button[@class="swal2-confirm btn btn-lg btn-danger"]')
+        self.get_element('//div[@id="tab_4"]//tbody/tr//td[2]', By.XPATH).click()
+
+        self.wait_modal()
+
+        self.get_element('//button[@class="btn btn-danger "]', By.XPATH).click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()
         self.wait_loader()
 
-        empty_message = self.find(By.XPATH, '//div[@id="tab_4"]//tbody//tr').text
+        empty_message = self.get_element('//div[@id="tab_4"]//tbody//tr', By.XPATH).text
         self.assertEqual(empty_message, "Nessun dato presente nella tabella")
 
-        self.wait_for_element_and_click('//div[@id="tab_4"]//i[@class="fa fa-plus"]')
+        self.get_element('//div[@id="tab_4"]//i[@class="fa fa-plus"]', By.XPATH).click()
         modal = self.wait_modal()
 
         self.input(None, 'Nome sede').setValue("Filiale XY")
 
-        postal_code_input = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '(//input[@id="cap"])[2]'))
-        )
-        self.send_keys_and_wait(postal_code_input, "35042", wait_modal=False)
+        postal_code_input = self.get_element('(//input[@id="cap"])[2]', By.XPATH)
+        postal_code_input.send_keys("35042")
 
-        city_input = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '(//input[@id="citta"])[2]'))
-        )
+        city_input = self.get_element('(//input[@id="citta"])[2]', By.XPATH)
         city_input.click()
-        self.send_keys_and_wait(city_input, "Padova", wait_modal=False)
+        city_input.send_keys("Padova")
 
-        self.wait_for_dropdown_and_select(
-            '(//span[@id="select2-id_nazione-container"])[2]',
-            '//li[@class="select2-results__option select2-results__option--highlighted"]'
-        )
+        context = self.get_element("modals")
+        results = self.get_select_search_results("Nazione", context=context)
+        if len(results) > 0: results[0].click()
 
-        self.wait_for_element_and_click('(//button[@type="submit"])[3]')
+        self.get_element('(//button[@type="submit"])[3]', By.XPATH).click()
 
-        search_input = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '(//th[@id="th_Nome"]/input)[2]'))
-        )
-        self.send_keys_and_wait(search_input, "Filiale XY", wait_modal=False)
+        search_input = self.find_filter_input("Nome")
+        search_input.send_keys("Filiale XY")
 
-        location_name = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '//div[@id="tab_4"]//tbody//td[2]'))
-        ).text
+        location_name = self.get_element('//div[@id="tab_4"]//tbody//td[2]', By.XPATH).text
         self.assertEqual("Filiale XY", location_name)
 
         self.navigateTo("Anagrafiche")
@@ -209,7 +188,7 @@ class AnagraficheBis(Test):
         self.search_entity("Cliente")
         self.click_first_result()
 
-        self.wait_for_element_and_click('//a[@id="link-tab_7"]')
+        self.click_plugin("Statistiche")
 
         stats_labels = [
             ("Preventivi", '//span[@class="info-box-text pull-left"]'),
@@ -222,9 +201,7 @@ class AnagraficheBis(Test):
         ]
 
         for expected_label, xpath in stats_labels:
-            actual_label = self.wait_driver.until(
-                EC.visibility_of_element_located((By.XPATH, xpath))
-            ).text
+            actual_label = self.get_element(xpath, By.XPATH).text
             self.assertEqual(actual_label, expected_label)
 
         self.navigateTo("Anagrafiche")
@@ -238,81 +215,73 @@ class AnagraficheBis(Test):
         self.search_entity("Cliente")
         self.click_first_result()
 
-        self.wait_for_element_and_click('//a[@id="link-tab_25"]')
+        self.click_plugin("Dichiarazioni d'Intento")
 
-        self.wait_for_element_and_click('//div[@id="tab_25"]//i[@class="fa fa-plus"]')
+        self.get_element('//div[@id="tab_25"]//i[@class="fa fa-plus"]', By.XPATH).click()
+
+        self.wait_modal()
 
         form_fields = [
-            ('//input[@id="numero_protocollo"]', "012345678901234567890123"),
-            ('//input[@id="data_protocollo"]', "01/01/2025"),
-            ('//input[@id="numero_progressivo"]', "001"),
-            ('//input[@id="data_inizio"]', "01/01/2025"),
-            ('//input[@id="data_fine"]', "31/12/2028"),
-            ('//input[@id="massimale"]', "50000"),
-            ('//input[@id="data_emissione"]', "13/01/2025")
+            ('Numero protocollo', "012345678901234567890123"),
+            ('Data protocollo', "01/01/2025"),
+            ('Progressivo int.', "001"),
+            ('Data inizio', "01/01/2025"),
+            ('Data fine', "31/12/2028"),
+            ('Massimale', "50000"),
+            ('Data di emissione', "13/01/2025")
         ]
 
-        for xpath, value in form_fields:
-            field = self.wait_driver.until(
-                EC.visibility_of_element_located((By.XPATH, xpath))
-            )
-            self.send_keys_and_wait(field, value, wait_modal=False)
+        for label, value in form_fields:
+            field = self.get_input(label)
+            field.click()
+            field.send_keys(value)
 
-        data_emissione = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '//input[@id="data_emissione"]'))
-        )
-        self.send_keys_and_wait(data_emissione, "", wait_modal=False)
+        data_emissione = self.get_element("data_emissione")
+        data_emissione.send_keys("")
 
-        self.wait_for_element_and_click('(//button[@class="btn btn-primary"])[2]')
+        self.get_element('(//button[@class="btn btn-primary"])[2]', By.XPATH).click()
         self.wait_loader()
 
-        self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '//div[@id="tab_25"]//tbody//tr//td[1]'))
-        )
+        # Attende che l'elemento sia presente
+        self.get_element('//div[@id="tab_25"]//tbody//tr//td[1]', By.XPATH)
 
         self.expandSidebar("Vendite")
         self.navigateTo("Fatture di vendita")
         self.wait_loader()
 
-        self.wait_for_element_and_click('//i[@class="fa fa-plus"]')
+        self.get_element('//i[@class="fa fa-plus"]', By.XPATH).click()
         self.wait_modal()
 
-        self.wait_for_dropdown_and_select(
-            '//span[@id="select2-idanagrafica_add-container"]',
-            option_text="Cliente"
-        )
+        context = self.get_element("modals")
+        results = self.get_select_search_results("Cliente", "Cliente", context=context)
+        if len(results) > 0: results[0].click()
 
-        self.wait_for_element_and_click('//button[@class="btn btn-primary"]')
+        self.get_element('//button[@class="btn btn-primary"]', By.XPATH).click()
         self.wait_loader()
 
-        declaration_message = self.find(By.XPATH, '(//div[@class="alert alert-info"])[1]').text
+        declaration_message = self.get_element('(//div[@class="alert alert-info"])[1]', By.XPATH).text
         self.assertEqual("La fattura è collegata ad una dichiarazione d'intento", declaration_message[0:53])
 
-        self.wait_for_element_and_click('//a[@class="btn btn-primary"]')
+        self.get_element('//a[@class="btn btn-primary"]', By.XPATH).click()
 
-        description_field = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '//textarea[@id="descrizione_riga"]'))
-        )
-        self.send_keys_and_wait(description_field, "prova per dichiarazione", wait_modal=False)
+        description_field = self.get_element("descrizione_riga")
+        description_field.send_keys("prova per dichiarazione")
 
-        quantity_field = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '//input[@id="qta"]'))
-        )
-        self.send_keys_and_wait(quantity_field, "100", wait_modal=False)
+        quantity_field = self.get_element("qta")
+        quantity_field.click()
+        quantity_field.send_keys("100,0", Keys.ENTER)
 
-        self.wait_for_dropdown_and_select(
-            '//span[@id="select2-um-container"]',
-            option_text="pz"
-        )
+        context = self.get_element("modals")
+        results = self.get_select_search_results("Unità di misura", "pz", context=context)
+        if len(results) > 0: results[0].click()
 
-        price_field = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '//input[@id="prezzo_unitario"]'))
-        )
-        self.send_keys_and_wait(price_field, "1", wait_modal=False)
+        price_field = self.get_element("prezzo_unitario")
+        price_field.click()
+        price_field.send_keys("1")
 
-        self.wait_for_element_and_click('//button[@class="btn btn-primary pull-right"]')
+        self.get_element('//button[@class="btn btn-primary pull-right"]', By.XPATH).click()
 
-        self.wait_for_element_and_click('//button[@id="save"]')
+        self.get_element('save').click()
         self.wait_loader()
 
         self.navigateTo("Anagrafiche")
@@ -320,39 +289,41 @@ class AnagraficheBis(Test):
         self.search_entity("Cliente")
         self.click_first_result()
 
-        self.wait_for_element_and_click('//a[@id="link-tab_25"]')
+        self.click_plugin("Dichiarazioni d'Intento")
 
-        total_amount = self.find(By.XPATH, '//div[@id="tab_25"]//tbody//tr//td[5]').text
+        self.wait_loader()
+
+        total_amount = self.get_element('//div[@id="tab_25"]//tbody//tr//td[5]', By.XPATH).text
         self.assertEqual(total_amount, "102.00")
 
-        self.wait_for_element_and_click('//div[@id="tab_25"]//tbody//tr//td[5]')
+        self.get_element('//div[@id="tab_25"]//tbody//tr//td[5]', By.XPATH).click()
         modal = self.wait_modal()
 
         self.input(modal, 'Progressivo int.').setValue("01")
 
-        self.wait_for_element_and_click('//div[@id="modals"]//button[@type="submit"]')
+        self.get_element('//div[@id="modals"]//button[@type="submit"]', By.XPATH).click()
         self.wait_loader()
 
-        progressive = self.find(By.XPATH, '//div[@id="tab_25"]//tbody//td[3]').text
+        progressive = self.get_element('//div[@id="tab_25"]//tbody//td[3]', By.XPATH).text
         self.assertEqual(progressive, "01")
 
-        self.wait_for_element_and_click('//div[@id="tab_25"]//tbody//td[3]')
-        self.wait_for_element_and_click('//a[@class="btn btn-danger ask "]')
-        self.wait_for_element_and_click('//button[@class="swal2-confirm btn btn-lg btn-danger"]')
+        self.get_element('//div[@id="tab_25"]//tbody//td[3]', By.XPATH).click()
+        self.get_element('//a[@class="btn btn-danger ask "]', By.XPATH).click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()
         self.wait_loader()
 
-        empty_message = self.find(By.XPATH, '//div[@id="tab_25"]//td[@class="dataTables_empty"]').text
+        empty_message = self.get_element('//div[@id="tab_25"]//td[@class="dataTables_empty"]', By.XPATH).text
         self.assertEqual(empty_message, "Nessun dato presente nella tabella")
 
         self.expandSidebar("Vendite")
         self.navigateTo("Fatture di vendita")
         self.wait_loader()
 
-        self.wait_for_element_and_click('//tbody//tr//td[2]')
+        self.find_cell(col=2).click()
         self.wait_loader()
 
-        self.wait_for_element_and_click('//a[@id="elimina"]')
-        self.wait_for_element_and_click('//button[@class="swal2-confirm btn btn-lg btn-danger"]')
+        self.get_element('elimina', By.ID).click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()
         self.wait_loader()
 
         self.navigateTo("Anagrafiche")
@@ -365,69 +336,61 @@ class AnagraficheBis(Test):
         self.search_entity("Cliente")
         self.click_first_result()
 
-        self.wait_for_element_and_click('//a[@id="link-tab_45"]')
+        self.click_plugin("Assicurazione crediti")
 
-        self.wait_for_element_and_click('//div[@id="tab_45"]//i[@class="fa fa-plus"]')
+        self.get_element('//div[@id="tab_45"]//i[@class="fa fa-plus"]', By.XPATH).click()
         self.wait_loader()
 
-        start_date_field = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '//input[@id="data_inizio"]'))
-        )
-        self.send_keys_and_wait(start_date_field, "01/01/2025", wait_modal=False)
+        start_date_field = self.get_element("data_inizio")
+        start_date_field.send_keys("01/01/2025")
 
-        end_date_field = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '//input[@id="data_fine"]'))
-        )
+        end_date_field = self.get_element("data_fine")
         end_date_field.clear()
-        self.send_keys_and_wait(end_date_field, "31/12/2025", wait_modal=False)
+        end_date_field.send_keys("31/12/2025")
 
-        credit_limit_field = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '//input[@id="fido_assicurato"]'))
-        )
-        self.send_keys_and_wait(credit_limit_field, "50000")
+        credit_limit_field = self.get_element("fido_assicurato")
+        credit_limit_field.click()
+        credit_limit_field.send_keys("50000", Keys.ENTER)
 
         self.expandSidebar("Vendite")
         self.navigateTo("Fatture di vendita")
         self.wait_loader()
 
-        self.wait_for_element_and_click('//i[@class="fa fa-plus"]')
+        self.get_element('//i[@class="fa fa-plus"]', By.XPATH).click()
         modal = self.wait_modal()
 
-        date_field = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '//input[@id="data"]'))
-        )
-        self.send_keys_and_wait(date_field, "01/01/2025", wait_modal=False)
+        date_field = self.get_element('data')
+        date_field.click()
+        date_field.clear()
+        date_field.send_keys("01/01/2025")
 
-        self.wait_for_dropdown_and_select(
-            '//span[@id="select2-idanagrafica_add-container"]',
-            option_text="Cliente"
-        )
+        context = self.get_element("modals")
+        results = self.get_select_search_results("Cliente", "Cliente", context=context)
+        if len(results) > 0: results[0].click()
 
-        self.wait_for_element_and_click('//button[@class="btn btn-primary"]')
+        self.get_element('//button[@class="btn btn-primary"]', By.XPATH).click()
         self.wait_loader()
 
-        self.wait_for_element_and_click('//a[@class="btn btn-primary"]')
+        self.get_element('//a[@class="btn btn-primary"]', By.XPATH).click()
 
-        description_field = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '//textarea[@id="descrizione_riga"]'))
-        )
-        self.send_keys_and_wait(description_field, "prova", wait_modal=False)
+        description_field = self.get_element("descrizione_riga")
+        description_field.click()
+        description_field.send_keys("prova")
 
-        price_field = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '//input[@id="prezzo_unitario"]'))
-        )
-        self.send_keys_and_wait(price_field, "51000", wait_modal=False)
+        price_field = self.get_element("prezzo_unitario")
+        price_field.click()
+        price_field.send_keys("51000")
 
-        self.wait_for_element_and_click('//button[@class="btn btn-primary pull-right"]')
+        self.get_element('//button[@class="btn btn-primary pull-right"]', By.XPATH).click()
 
-        self.wait_for_element_and_click('//button[@id="save"]')
+        self.get_element('save', By.ID).click()
         self.wait_loader()
 
-        warning_message = self.find(By.XPATH, '//div[@class="alert alert-warning text-center"]').text
+        warning_message = self.get_element('//div[@class="alert alert-warning text-center"]', By.XPATH).text
         self.assertEqual("Attenzione!", warning_message[0:11])
 
-        self.wait_for_element_and_click('//a[@id="elimina"]')
-        self.wait_for_element_and_click('//button[@class="swal2-confirm btn btn-lg btn-danger"]')
+        self.get_element('//a[@id="elimina"]', By.XPATH).click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()
         self.wait_loader()
 
         self.navigateTo("Anagrafiche")
@@ -435,23 +398,23 @@ class AnagraficheBis(Test):
         self.search_entity("Cliente")
         self.click_first_result()
 
-        self.wait_for_element_and_click('//a[@id="link-tab_45"]')
+        self.click_plugin("Assicurazione crediti")
 
-        self.wait_for_element_and_click('//div[@id="tab_45"]//tbody//tr//td[2]')
+        self.get_element('//div[@id="tab_45"]//tbody//tr//td[2]', By.XPATH).click()
 
-        credit_limit_field = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '//input[@id="fido_assicurato"]'))
-        )
-        credit_limit_field.send_keys(Keys.BACK_SPACE, "49000")
+        credit_limit_field = self.get_element("fido_assicurato")
+        credit_limit_field.clear()
+        credit_limit_field.click()
+        credit_limit_field.send_keys("49000")
 
-        self.wait_for_element_and_click('//button[@class="btn btn-primary pull-right"]')
+        self.get_element('//button[@class="btn btn-primary pull-right"]', By.XPATH).click()
 
-        modified_limit = self.find(By.XPATH, '//div[@id="tab_45"]//tbody//tr//td[2]').text
+        modified_limit = self.get_element('//div[@id="tab_45"]//tbody//tr//td[2]', By.XPATH).text
         self.assertEqual(modified_limit, "49000.00")
 
-        self.wait_for_element_and_click('//div[@id="tab_45"]//tbody//tr//td[2]')
-        self.wait_for_element_and_click('//div[@id="modals"]//a[@class="btn btn-danger ask"]')
-        self.wait_for_element_and_click('//button[@class="swal2-confirm btn btn-lg btn-danger"]')
+        self.get_element('//div[@id="tab_45"]//tbody//tr//td[2]', By.XPATH).click()
+        self.get_element('//div[@id="modals"]//a[@class="btn btn-danger ask"]', By.XPATH).click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()
         self.wait_loader()
 
         self.navigateTo("Anagrafiche")
@@ -461,34 +424,34 @@ class AnagraficheBis(Test):
         self.navigateTo("Anagrafiche")
         self.wait_loader()
 
-        search_input = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Ragione-sociale"]/input'))
-        )
-        self.send_keys_and_wait(search_input, "Admin spa", wait_modal=False)
+        search_input = self.find_filter_input("Ragione sociale")
+        search_input.send_keys("Admin spa")
         self.wait_for_search_results()
 
-        self.wait_for_element_and_click('//tbody//tr//td')
-        self.wait_for_element_and_click('//button[@data-toggle="dropdown"]')
+        self.get_element('//tbody//tr//td', By.XPATH).click()
+        self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click()
 
-        self.wait_for_element_and_click('//a[@data-op="search_coordinates"]')
+        self.get_element('//a[@data-op="search_coordinates"]', By.XPATH).click()
 
-        self.wait_for_element_and_click('//button[@class="swal2-confirm btn btn-lg btn-warning"]')
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-warning"]', By.XPATH).click()
         self.wait_loader()
 
-        self.wait_for_element_and_click('//tbody//tr//td[2]')
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
 
-        self.wait_for_element_and_click('//a[@onclick="modificaPosizione()"]')
+        # TODO: Tutta questa parte qui non può funzionare per un bug nella pagina...
+        #       Dopo che è stato sistemato il bug capire se è funzionante o no
+        self.get_element('//a[@onclick="modificaPosizione()"]', By.XPATH).click()
 
-        self.wait_for_element_and_click('//ul//li[2]//div')
+        self.get_element('//ul//li[2]//div', By.XPATH).click()
 
-        latitude = self.find(By.XPATH, '//input[@id="lat"]').text
+        latitude = self.get_element('lat', By.ID).text
         self.assertNotEqual(latitude, "0")
 
-        longitude = self.find(By.XPATH, '//input[@id="lng"]').text
+        longitude = self.get_element('lng', By.ID).text
         self.assertNotEqual(longitude, "0")
 
-        self.wait_for_element_and_click('//button[@class="close"]')
+        self.get_element('//button[@class="close"]', By.XPATH).click()
         self.wait_loader()
 
         self.navigateTo("Anagrafiche")
@@ -499,21 +462,25 @@ class AnagraficheBis(Test):
         self.navigateTo("Anagrafiche")
         self.wait_loader()
 
-        search_input = self.wait_driver.until(
-            EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Ragione-sociale"]/input'))
-        )
-        self.send_keys_and_wait(search_input, "Vettore", wait_modal=False)
+        search_input = self.find_filter_input("Ragione sociale")
+        search_input.clear()
+        search_input.send_keys("Vettore")
         self.wait_for_search_results()
 
-        self.wait_for_element_and_click('//tbody//tr//td')
-        self.wait_for_element_and_click('//button[@data-toggle="dropdown"]')
+        self.get_element('//tbody//tr//td', By.XPATH).click()
+        self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click()
 
-        self.wait_for_element_and_click('//a[@data-op="delete_bulk"]')
+        self.get_element('//a[@data-op="delete_bulk"]', By.XPATH).click()
 
-        self.wait_for_element_and_click('//button[@class="swal2-confirm btn btn-lg btn-danger"]')
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()
         self.wait_loader()
 
-        no_results_message = self.find(By.XPATH, '//tbody//tr[1]').text
+        search_input = self.find_filter_input("Ragione sociale")
+        search_input.clear()
+        search_input.send_keys("Vettore")
+        self.wait_for_search_results()
+
+        no_results_message = self.get_element('//tbody//tr[1]', By.XPATH).text
         self.assertEqual(no_results_message, "La ricerca non ha portato alcun risultato.")
 
         self.clear_filters()
@@ -523,40 +490,49 @@ class AnagraficheBis(Test):
         self.wait_loader()
 
         self.search_entity("Cliente")
+        self.wait_for_search_results()
 
-        self.wait_for_element_and_click('//tbody//tr//td')
-        self.wait_for_element_and_click('//button[@data-toggle="dropdown"]')
+        self.get_element('//tbody//tr[1]//td[1]', By.XPATH).click()
 
-        self.wait_for_element_and_click('//a[@data-op="change_relation"]')
+        self.scroll_to_bottom()
 
-        self.wait_for_dropdown_and_select(
-            '//span[@id="select2-idrelazione-container"]',
-            option_text="Attivo"
-        )
+        self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click()
 
-        self.wait_for_element_and_click('//button[@class="swal2-confirm btn btn-lg btn-warning"]')
+        self.get_element('//a[@data-op="change_relation"]', By.XPATH).click()
+
+        self.wait_swal2_popup()
+
+        results = self.get_select_search_results("Relazione con il cliente", "Attivo")
+        if len(results) > 0: results[0].click()
+
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-warning"]', By.XPATH).click()
         self.wait_loader()
 
-        relation = self.find(By.XPATH, '//tbody//tr//td[7]').text
+        relation = self.find_cell(col=7).text
         self.assertEqual(relation, "Attivo")
 
-        self.wait_for_element_and_click('//tbody//tr//td[7]')
+        self.find_cell(col=7).click()
         self.wait_loader()
 
-        self.wait_for_element_and_click('//span[@id="select2-idrelazione-container"]//span[@class="select2-selection__clear"]')
+        #results = self.get_select_search_results("Relazione", "Contattare", label_for="idrelazione")
+        #if len(results) > 0: results[0].click()
 
+        # TODO: Questo non sembra essere propriamente giusto, il test passa comunque perchè non viene controllato ma sarebbe da ricontrollare
+        self.get_element('//span[@id="select2-idrelazione-container"]//span[@class="select2-selection__clear"]', By.XPATH).click()
         search_field = self.wait_driver.until(
             EC.visibility_of_element_located((By.XPATH, '(//input[@class="select2-search__field"])[2]'))
         )
-        self.send_keys_and_wait(search_field, "Da contattare", wait_modal=False)
+        search_field.clear()
+        search_field.send_keys("Da contattare")
 
-        self.wait_for_element_and_click('//button[@id="save"]')
+
+        self.get_element('save', By.ID).click()
         self.wait_loader()
 
         self.navigateTo("Anagrafiche")
         self.wait_loader()
 
-        new_relation = self.find(By.XPATH, '//tbody//tr//td[7]').text
+        new_relation = self.find_cell(col=7).text
         self.assertNotEqual(new_relation, "Attivo")
 
         self.clear_filters()
