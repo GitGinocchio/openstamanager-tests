@@ -41,10 +41,10 @@ class Impostazioni(Test):
         self.navigateTo("Impostazioni")
         self.wait_loader()
 
-        self.find(By.XPATH, '//div[@data-title="Dashboard"]').click()
+        self.get_element('//div[@data-title="Dashboard"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//div[@class="form-group" and contains(., "Visualizzare la domenica sul calendario")]//div//label').click() 
+        self.get_element('//div[@class="form-group" and contains(., "Visualizzare la domenica sul calendario", By.XPATH)]//div//label').click() 
         sleep(1)
 
         self.navigateTo("Dashboard")
@@ -56,10 +56,10 @@ class Impostazioni(Test):
         self.navigateTo("Impostazioni")
         self.wait_loader()
 
-        self.find(By.XPATH, '//div[@data-title="Dashboard"]').click()
+        self.get_element('//div[@data-title="Dashboard"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//div[@class="form-group" and contains(., "Visualizzare la domenica sul calendario")]//div//label').click() 
+        self.get_element('//div[@class="form-group" and contains(., "Visualizzare la domenica sul calendario", By.XPATH)]//div//label').click() 
         sleep(1)
 
     def vista_dashboard(self):
@@ -67,10 +67,10 @@ class Impostazioni(Test):
         self.navigateTo("Impostazioni")
         self.wait_loader()
 
-        self.find(By.XPATH, '//div[@data-title="Dashboard"]').click()
+        self.get_element('//div[@data-title="Dashboard"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//div[@class="form-group" and contains(., "Vista dashboard")]//div//span').click()
+        self.get_element('//div[@class="form-group" and contains(., "Vista dashboard", By.XPATH)]//div//span').click()
         sleep(1)
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//span[@class="select2-search select2-search--dropdown"]//input'))).send_keys("mese")
@@ -88,10 +88,10 @@ class Impostazioni(Test):
         self.expandSidebar("Strumenti")
         self.navigateTo("Impostazioni")
         self.wait_loader()
-        self.find(By.XPATH, '//div[@data-title="Dashboard"]').click()
+        self.get_element('//div[@data-title="Dashboard"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//div[@class="form-group" and contains(., "Vista dashboard")]//div//span').click()
+        self.get_element('//div[@class="form-group" and contains(., "Vista dashboard", By.XPATH)]//div//span').click()
         sleep(1)
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//span[@class="select2-search select2-search--dropdown"]//input'))).send_keys("settimana")
@@ -105,10 +105,10 @@ class Impostazioni(Test):
         self.navigateTo("Impostazioni")
         self.wait_loader()
 
-        self.find(By.XPATH, '//div[@data-title="Dashboard"]').click()
+        self.get_element('//div[@data-title="Dashboard"]', By.XPATH).click()
         sleep(1)
 
-        element=self.find(By.XPATH, '//div[@class="form-group" and contains(., "Ora inizio sul calendario")]//input')
+        element=self.get_element('//div[@class="form-group" and contains(., "Ora inizio sul calendario", By.XPATH)]//input')
         element.clear()
         element.send_keys('01:00')
         sleep(1)
@@ -116,17 +116,17 @@ class Impostazioni(Test):
         self.navigateTo("Dashboard")
         self.wait_loader()
 
-        ora=self.find(By.XPATH, '//td[@role="presentation"]//tbody//tr//td').text 
+        ora=self.get_element('//td[@role="presentation"]//tbody//tr//td', By.XPATH).text 
         self.assertEqual(ora, "1:00", Keys.ENTER)
 
         self.expandSidebar("Strumenti")
         self.navigateTo("Impostazioni")
         self.wait_loader()
 
-        self.find(By.XPATH, '//div[@data-title="Dashboard"]').click()
+        self.get_element('//div[@data-title="Dashboard"]', By.XPATH).click()
         sleep(1)
 
-        element=self.find(By.XPATH, '//div[@class="form-group" and contains(., "Ora inizio sul calendario")]//input')
+        element=self.get_element('//div[@class="form-group" and contains(., "Ora inizio sul calendario", By.XPATH)]//input')
         element.clear()
         element.send_keys('6:00', Keys.ENTER)
         sleep(1)
@@ -136,10 +136,10 @@ class Impostazioni(Test):
         self.navigateTo("Impostazioni")
         self.wait_loader()
 
-        self.find(By.XPATH, '//div[@data-title="Dashboard"]').click()
+        self.get_element('//div[@data-title="Dashboard"]', By.XPATH).click()
         sleep(1)
 
-        element=self.find(By.XPATH, '//div[@class="form-group" and contains(., "Ora fine sul calendario")]//input')
+        element=self.get_element('//div[@class="form-group" and contains(., "Ora fine sul calendario", By.XPATH)]//input')
         element.clear()
         element.send_keys('13:30', Keys.ENTER)
         sleep(1)
@@ -154,10 +154,10 @@ class Impostazioni(Test):
         self.navigateTo("Impostazioni")
         self.wait_loader()
 
-        self.find(By.XPATH, '//div[@data-title="Dashboard"]').click()
+        self.get_element('//div[@data-title="Dashboard"]', By.XPATH).click()
         sleep(1)
 
-        element=self.find(By.XPATH, '//div[@class="form-group" and contains(., "Ora fine sul calendario")]//input')
+        element=self.get_element('//div[@class="form-group" and contains(., "Ora fine sul calendario", By.XPATH)]//input')
         element.clear()
         element.send_keys('18:59', Keys.ENTER)
         sleep(1)
@@ -168,26 +168,26 @@ class Impostazioni(Test):
         self.navigateTo("Impostazioni")
         self.wait_loader()
 
-        self.find(By.XPATH, '//div[@data-title="Dashboard"]').click()
+        self.get_element('//div[@data-title="Dashboard"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//div[@class="form-group" and contains(., "Visualizza informazioni aggiuntive sul calendario")]//span').click() 
+        self.get_element('//div[@class="form-group" and contains(., "Visualizza informazioni aggiuntive sul calendario", By.XPATH)]//span').click() 
         sleep(1)
 
         self.navigateTo("Dashboard")
         self.wait_loader()
 
-        scritta=self.find(By.XPATH, '//tr[1]//td[@class="fc-timegrid-axis fc-scrollgrid-shrink"]').text
+        scritta=self.get_element('//tr[1]//td[@class="fc-timegrid-axis fc-scrollgrid-shrink"]', By.XPATH).text
         self.assertEqual(scritta, "Tutto il giorno")
 
         self.expandSidebar("Strumenti")
         self.navigateTo("Impostazioni")
         self.wait_loader()
 
-        self.find(By.XPATH, '//div[@data-title="Dashboard"]').click()
+        self.get_element('//div[@data-title="Dashboard"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//div[@class="form-group" and contains(., "Visualizza informazioni aggiuntive sul calendario")]//span').click() 
+        self.get_element('//div[@class="form-group" and contains(., "Visualizza informazioni aggiuntive sul calendario", By.XPATH)]//span').click() 
         sleep(1)
 
 
@@ -196,10 +196,10 @@ class Impostazioni(Test):
         self.navigateTo("Impostazioni")
         self.wait_loader()
 
-        self.find(By.XPATH, '//div[@data-title="Dashboard"]').click()
+        self.get_element('//div[@data-title="Dashboard"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//div[@class="form-group" and contains(., "Visualizzazione colori sessioni")]//div//span').click()
+        self.get_element('//div[@class="form-group" and contains(., "Visualizzazione colori sessioni", By.XPATH)]//div//span').click()
         sleep(1)
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//span[@class="select2-search select2-search--dropdown"]//input'))).send_keys("sfondo colore tecnico - bordo colore stato")
@@ -211,43 +211,43 @@ class Impostazioni(Test):
         self.navigateTo("Attività")
         self.wait_loader()
 
-        self.find(By.XPATH,'//i[@class="fa fa-plus"]').click()  
+        self.get_element('//i[@class="fa fa-plus"]', By.XPATH).click()  
         sleep(1)
 
-        self.find(By.XPATH, '//span[@id="select2-idanagrafica-container"]').click() 
+        self.get_element('//span[@id="select2-idanagrafica-container"]', By.XPATH).click() 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//span[@class="select2-dropdown select2-dropdown--below"]//input'))).send_keys("Cliente")
         sleep(1)
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//span[@class="select2-dropdown select2-dropdown--below"]//input'))).send_keys(Keys.ENTER)
-        self.find(By.XPATH, '//span[@id="select2-idtipointervento-container"]').click() 
+        self.get_element('//span[@id="select2-idtipointervento-container"]', By.XPATH).click() 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//span[@class="select2-search select2-search--dropdown"]//input'))).send_keys("Generico")
         sleep(1)
 
-        self.find(By.XPATH, '//li[@class="select2-results__option select2-results__option--highlighted"]').click() 
+        self.get_element('//li[@class="select2-results__option select2-results__option--highlighted"]', By.XPATH).click() 
         wait.until(EC.visibility_of_element_located((By.XPATH, '(//iframe[@class="cke_wysiwyg_frame cke_reset"])[1]'))).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '(//iframe[@class="cke_wysiwyg_frame cke_reset"])[1]'))).send_keys("Test")   
-        self.find(By.XPATH, '//button[@class="btn btn-primary"]').click()  
+        self.get_element('//button[@class="btn btn-primary"]', By.XPATH).click()  
         self.wait_loader()
 
-        self.find(By.XPATH, '//span[@id="select2-nuovo_tecnico-container"]').click()  
+        self.get_element('//span[@id="select2-nuovo_tecnico-container"]', By.XPATH).click()  
         sleep(1)
 
-        self.find(By.XPATH, '//ul[@id="select2-nuovo_tecnico-results"]//li[2]').click()
-        self.find(By.XPATH, '//button[@class="btn btn-primary btn-block"]').click()
+        self.get_element('//ul[@id="select2-nuovo_tecnico-results"]//li[2]', By.XPATH).click()
+        self.get_element('//button[@class="btn btn-primary btn-block"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//button[@id="save"]').click() 
+        self.get_element('//button[@id="save"]', By.XPATH).click() 
         self.wait_loader()
 
         self.navigateTo("Dashboard")
         self.wait_loader()
 
-        self.find(By.XPATH, '//button[@class="btn btn-block counter_object btn-danger"]').click()
+        self.get_element('//button[@class="btn btn-block counter_object btn-danger"]', By.XPATH).click()
         sleep(1)
-        self.find(By.XPATH, '//input[@class="dashboard_tecnico"]').click()
+        self.get_element('//input[@class="dashboard_tecnico"]', By.XPATH).click()
         sleep(1)
 
-        colori_element = self.find(By.XPATH, '//td[@role="presentation"]//tbody//tr//td//a')
+        colori_element = self.get_element('//td[@role="presentation"]//tbody//tr//td//a', By.XPATH)
         colori = colori_element.get_attribute("style")
         self.assertEqual(colori, "border-color: rgb(255, 239, 153); background-color: rgb(255, 255, 255);")
 
@@ -255,10 +255,10 @@ class Impostazioni(Test):
         self.navigateTo("Impostazioni")
         self.wait_loader()
 
-        self.find(By.XPATH, '//div[@data-title="Dashboard"]').click()
+        self.get_element('//div[@data-title="Dashboard"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//div[@class="form-group" and contains(., "Visualizzazione colori sessioni")]//div//span').click()
+        self.get_element('//div[@class="form-group" and contains(., "Visualizzazione colori sessioni", By.XPATH)]//div//span').click()
         sleep(1)
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//span[@class="select2-search select2-search--dropdown"]//input'))).send_keys("sfondo colore stato - bordo colore tecnico")
@@ -270,20 +270,20 @@ class Impostazioni(Test):
         self.navigateTo("Dashboard")
         self.wait_loader()
 
-        colori_element = self.find(By.XPATH, '//div[@class="fc-timegrid-event-harness fc-timegrid-event-harness-inset"]//a')
+        colori_element = self.get_element('//div[@class="fc-timegrid-event-harness fc-timegrid-event-harness-inset"]//a', By.XPATH)
         colori = colori_element.get_attribute("style")  
         self.assertEqual(colori, "border-color: rgb(255, 255, 255); background-color: rgb(255, 239, 153);")
 
         self.navigateTo("Attività")
         self.wait_loader()
 
-        self.find(By.XPATH, '//tbody//tr[1]//td[2]').click()
+        self.get_element('//tbody//tr[1]//td[2]', By.XPATH).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '//a[@class="btn btn-danger ask"]').click() 
+        self.get_element('//a[@class="btn btn-danger ask"]', By.XPATH).click() 
         sleep(1)
 
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-danger"]').click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()
         self.wait_loader()
 
 

@@ -41,7 +41,7 @@ class Banche(Test):
 
     def creazione_banca(self, anagrafica: str, nome: str, iban: str, bic: str):
         self.navigateTo("Banche")
-        self.find(By.XPATH,'//i[@class="fa fa-plus"]').click()
+        self.get_element('//i[@class="fa fa-plus"]', By.XPATH).click()
         modal = self.wait_modal()
 
         select = self.input(modal, 'Anagrafica')
@@ -62,18 +62,18 @@ class Banche(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Nome"]/input'))).send_keys('Banca di Prova da Modificare', Keys.ENTER)
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         sleep(1)
 
         self.driver.execute_script('window.scrollTo(0,0)')
         self.input(None,'Nome').setValue(modifica)
-        self.find(By.XPATH, '//div[@id="tab_0"]//button[@id="save"]').click()
+        self.get_element('//div[@id="tab_0"]//button[@id="save"]', By.XPATH).click()
         self.wait_loader()
 
         self.navigateTo("Banche")
         self.wait_loader()    
 
-        self.find(By.XPATH, '//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
     def elimina_banca(self):
@@ -84,7 +84,7 @@ class Banche(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Nome"]/input'))).send_keys('Banca di Prova da Eliminare', Keys.ENTER)
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         sleep(1)
 
         self.driver.execute_script('window.scrollTo(0,0)')
@@ -92,7 +92,7 @@ class Banche(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-danger"]'))).click()
         self.wait_loader()      
 
-        self.find(By.XPATH, '//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
         
     def verifica_banca(self):
@@ -106,7 +106,7 @@ class Banche(Test):
         
         modificato=self.driver.find_element(By.XPATH,'//tbody//tr[1]//td[2]').text
         self.assertEqual("Banca di Prova",modificato)
-        self.find(By.XPATH, '//i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
         # Verifica elemento eliminato
@@ -121,10 +121,10 @@ class Banche(Test):
         self.navigateTo("Banche") 
         self.wait_loader()
 
-        self.find(By.XPATH,'//i[@class="fa fa-plus"]').click() 
+        self.get_element('//i[@class="fa fa-plus"]', By.XPATH).click() 
         sleep(1)
 
-        self.find(By.XPATH, '//span[@id="select2-id_anagrafica-container"]').click() 
+        self.get_element('//span[@id="select2-id_anagrafica-container"]', By.XPATH).click() 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys("Admin spa")
         sleep(1)
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys(Keys.ENTER)
@@ -134,7 +134,7 @@ class Banche(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@id="iban"]'))).send_keys("IT11C1234512345678912345679")
         sleep(1)
         
-        self.find(By.XPATH, '//button[@class="btn btn-primary"]').click()
+        self.get_element('//button[@class="btn btn-primary"]', By.XPATH).click()
         self.wait_loader()
 
         self.expandSidebar("Acquisti")
@@ -145,20 +145,20 @@ class Banche(Test):
         self.wait_loader()
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td').click() 
-        self.find(By.XPATH, '//button[@data-toggle="dropdown"]').click() 
-        self.find(By.XPATH, '//a[@data-op="change-bank"]').click() 
+        self.get_element('//tbody//tr//td', By.XPATH).click() 
+        self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click() 
+        self.get_element('//a[@data-op="change-bank"]', By.XPATH).click() 
         sleep(1)
 
-        self.find(By.XPATH, '//span[@id="select2-id_banca-container"]').click() 
+        self.get_element('//span[@id="select2-id_banca-container"]', By.XPATH).click() 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys("Banca Admin spa")
         sleep(1)
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys(Keys.ENTER)
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-warning"]').click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-warning"]', By.XPATH).click()
         self.wait_loader()
 
-        banca=self.find(By.XPATH, '//tbody//tr//td[9]').text 
+        banca=self.get_element('//tbody//tr//td[9]', By.XPATH).text 
         self.assertEqual(banca, "Banca Admin spa - IT11C1234512345678912345679")
         sleep(1)
 
@@ -168,7 +168,7 @@ class Banche(Test):
         self.navigateTo("Scadenzario")
         self.wait_loader()
 
-        self.find(By.XPATH, '//span[@id="select2-id_segment_-container"]').click()  
+        self.get_element('//span[@id="select2-id_segment_-container"]', By.XPATH).click()  
         sleep(1)
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys("Scadenzario clienti")
@@ -182,27 +182,27 @@ class Banche(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Tipo-di-pagamento"]//input'))).send_keys("Bonifico", Keys.ENTER) #cerca il bonifico
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td').click() 
-        self.find(By.XPATH, '//button[@data-toggle="dropdown"]').click() 
+        self.get_element('//tbody//tr//td', By.XPATH).click() 
+        self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click() 
         sleep(1)
 
-        self.find(By.XPATH, '//a[@data-op="change-bank"]').click() 
+        self.get_element('//a[@data-op="change-bank"]', By.XPATH).click() 
         sleep(1)
 
-        self.find(By.XPATH, '//span[@id="select2-id_banca-container"]').click()
+        self.get_element('//span[@id="select2-id_banca-container"]', By.XPATH).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys("Banca Admin spa")
         sleep(1)
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys(Keys.ENTER)
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-warning"]').click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-warning"]', By.XPATH).click()
         self.wait_loader()
         sleep(1)
 
-        widget=self.find(By.XPATH, '//div[@class="toast toast-success"]//div[3]').text 
+        widget=self.get_element('//div[@class="toast toast-success"]//div[3]', By.XPATH).text 
         self.assertEqual(widget, "Banca aggiornata per le Fatture 0001/2025 !")  
 
-        self.find(By.XPATH, '//tbody//tr//td').click() 
-        self.find(By.XPATH, '//span[@class="select2-selection__clear"]').click() 
+        self.get_element('//tbody//tr//td', By.XPATH).click() 
+        self.get_element('//span[@class="select2-selection__clear"]', By.XPATH).click() 
         self.wait_loader()
 
     def aggiorna_banca_fatture_vendita(self):
@@ -211,28 +211,28 @@ class Banche(Test):
         self.navigateTo("Fatture di vendita")
         self.wait_loader()
 
-        self.find(By.XPATH, '//tbody//tr//td').click()
-        self.find(By.XPATH, '//button[@data-toggle="dropdown"]').click() 
-        self.find(By.XPATH, '//a[@data-op="change-bank"]').click()  
+        self.get_element('//tbody//tr//td', By.XPATH).click()
+        self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click() 
+        self.get_element('//a[@data-op="change-bank"]', By.XPATH).click()  
         sleep(1)
 
-        self.find(By.XPATH, '//span[@id="select2-id_banca-container"]').click() 
+        self.get_element('//span[@id="select2-id_banca-container"]', By.XPATH).click() 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys("Banca Admin spa")
         sleep(1)
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys(Keys.ENTER)
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-warning"]').click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-warning"]', By.XPATH).click()
         self.wait_loader()
         sleep(1)
 
-        banca=self.find(By.XPATH, '//tbody//tr//td[7]').text  
+        banca=self.get_element('//tbody//tr//td[7]', By.XPATH).text  
         self.assertEqual(banca, "Banca Admin spa - IT11C1234512345678912345679")
-        self.find(By.XPATH, '//tbody//tr//td[2]').click() 
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click() 
         self.wait_loader()
 
-        self.find(By.XPATH, '//a[@id="elimina"]').click()
+        self.get_element('//a[@id="elimina"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-danger"]').click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()
         self.wait_loader()
 

@@ -11,4 +11,4 @@ class Mappa(Test):
     def test_mappa(self):
         self.navigateTo("Mappa")
 
-        self.find(By.XPATH, '//div[@id="mappa"]').click()
+        self.get_element('//div[@id="mappa"]', By.XPATH).click()

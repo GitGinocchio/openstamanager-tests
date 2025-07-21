@@ -31,7 +31,8 @@ class Preventivi(Test):
         self.elimina_preventivo()
 
         # Creazione contratto da preventivo
-        self.creazione_contratto()        
+        self.creazione_contratto
+         
 
         # Creazione ordine cliente da preventivo
         self.creazione_ordine_cliente()
@@ -68,7 +69,7 @@ class Preventivi(Test):
         self.wait_loader() 
 
         # Creazione preventivo
-        self.find(By.XPATH,'//i[@class="fa fa-plus"]').click()
+        self.get_element('//i[@class="fa fa-plus"]', By.XPATH).click()
         modal = self.wait_modal()
 
         self.input(modal, 'Nome').setValue(nome)
@@ -88,7 +89,7 @@ class Preventivi(Test):
         self.navigateTo("Preventivi")
         self.wait_loader()
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@id="pulsanti"]//button[@class="btn ask btn-primary"]'))).click()
@@ -99,7 +100,7 @@ class Preventivi(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@id="nome"]'))).send_keys(" da Eliminare")
         sleep(1)
         
-        self.find(By.XPATH, '//button[@class="btn btn-success"]').click()
+        self.get_element('//button[@class="btn btn-success"]', By.XPATH).click()
         sleep(1)
 
     def modifica_preventivo(self, stato:str):
@@ -110,20 +111,20 @@ class Preventivi(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Nome"]/input'))).send_keys('=Preventivo di Prova', Keys.ENTER)
         sleep(1)
         
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
         
         # Modifica stato preventivo
         select = self.input(None, 'Stato')
         select.setByText(stato)
-        self.find(By.XPATH, '//div[@id="tab_0"]//button[@id="save"]').click()
+        self.get_element('//div[@id="tab_0"]//button[@id="save"]', By.XPATH).click()
         sleep(1)
 
         # Estrazione totali righe
-        sconto = self.find(By.XPATH, '//div[@id="righe"]//tbody[2]//tr[2]//td[2]').text
-        totale_imponibile = self.find(By.XPATH, '//div[@id="righe"]//tbody[2]//tr[3]//td[2]').text
-        iva = self.find(By.XPATH, '//div[@id="righe"]//tbody[2]//tr[4]//td[2]').text
-        totale = self.find(By.XPATH, '//div[@id="tab_0"]//div[@id="righe"]//tbody[2]//tr[5]//td[2]').text
+        sconto = self.get_element('//div[@id="righe"]//tbody[2]//tr[2]//td[2]', By.XPATH).text
+        totale_imponibile = self.get_element('//div[@id="righe"]//tbody[2]//tr[3]//td[2]', By.XPATH).text
+        iva = self.get_element('//div[@id="righe"]//tbody[2]//tr[4]//td[2]', By.XPATH).text
+        totale = self.get_element('//div[@id="tab_0"]//div[@id="righe"]//tbody[2]//tr[5]//td[2]', By.XPATH).text
 
         self.assertEqual(sconto, (self.valori["Sconto/maggiorazione"]+ ' €'))
         self.assertEqual(totale_imponibile, (self.valori["Totale imponibile"]+ ' €'))
@@ -133,7 +134,7 @@ class Preventivi(Test):
         self.navigateTo("Preventivi")
         self.wait_loader()  
 
-        self.find(By.XPATH, '//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
     def elimina_preventivo(self):
@@ -144,7 +145,7 @@ class Preventivi(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Nome"]/input'))).send_keys('=Preventivo di Prova da Eliminare', Keys.ENTER)
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         sleep(1)
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@id="tab_0"]//a[@class="btn btn-danger ask"]'))).click()
@@ -154,7 +155,7 @@ class Preventivi(Test):
         self.navigateTo("Preventivi")
         self.wait_loader()  
 
-        self.find(By.XPATH, '//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
     def creazione_contratto(self):
@@ -165,9 +166,9 @@ class Preventivi(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Nome"]/input'))).send_keys('Preventivo di Prova', Keys.ENTER)
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         sleep(1)
-        totalepreventivo=self.find(By.XPATH, '//div[@id="righe"]//tbody[2]//tr[3]//td[2]').text
+        totalepreventivo=self.get_element('//div[@id="righe"]//tbody[2]//tr[3]//td[2]', By.XPATH).text
 
         # Creazione contratto
         wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@id="pulsanti"]//button[@class="btn btn-info dropdown-toggle "]'))).click()
@@ -177,7 +178,7 @@ class Preventivi(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//button[@id="submit_btn"]'))).click()
         sleep(1)
 
-        totalecontratto=self.find(By.XPATH, '//div[@id="righe"]//tbody[2]//tr[3]//td[2]').text
+        totalecontratto=self.get_element('//div[@id="righe"]//tbody[2]//tr[3]//td[2]', By.XPATH).text
         
         # Controllo valori righe preventivo
         self.assertEqual(totalecontratto,totalepreventivo)
@@ -195,7 +196,7 @@ class Preventivi(Test):
         self.navigateTo("Preventivi")
         self.wait_loader()
 
-        self.find(By.XPATH, '//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
     def creazione_ordine_cliente(self):
@@ -206,10 +207,10 @@ class Preventivi(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Nome"]/input'))).send_keys('Preventivo di Prova', Keys.ENTER)
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
 
-        totalepreventivo=self.find(By.XPATH, '//div[@id="righe"]//tbody[2]//tr[3]//td[2]').text
+        totalepreventivo=self.get_element('//div[@id="righe"]//tbody[2]//tr[3]//td[2]', By.XPATH).text
 
         # Creazione ordine cliente
         wait.until(EC.visibility_of_element_located((By.XPATH, '//button[@class="btn btn-info dropdown-toggle "]'))).click()
@@ -219,7 +220,7 @@ class Preventivi(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//button[@id="submit_btn"]'))).click()
         sleep(1)
 
-        totaleordinecliente=self.find(By.XPATH, '//div[@id="righe"]//tbody[2]//tr[3]//td[2]').text
+        totaleordinecliente=self.get_element('//div[@id="righe"]//tbody[2]//tr[3]//td[2]', By.XPATH).text
         
         # Controllo valori righe preventivo
         self.assertEqual(totaleordinecliente,totalepreventivo)
@@ -237,7 +238,7 @@ class Preventivi(Test):
         self.navigateTo("Preventivi")
         self.wait_loader()  
 
-        self.find(By.XPATH, '//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
     def creazione_ordine_fornitore(self):
@@ -248,7 +249,7 @@ class Preventivi(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Nome"]/input'))).send_keys('Preventivo di Prova', Keys.ENTER)
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
 
         # Creazione ordine fornitore
@@ -261,7 +262,7 @@ class Preventivi(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//button[@id="submit_btn"]'))).click()
         sleep(1)
 
-        totaleordinefornitore=self.find(By.XPATH, '//div[@id="righe"]//tbody[2]//tr[3]//td[2]').text
+        totaleordinefornitore=self.get_element('//div[@id="righe"]//tbody[2]//tr[3]//td[2]', By.XPATH).text
         
         # Controllo valori righe preventivo
         self.assertEqual(totaleordinefornitore, self.valori["Totale imponibile"] + ' €')
@@ -281,7 +282,7 @@ class Preventivi(Test):
         self.navigateTo("Preventivi")
         self.wait_loader()  
 
-        self.find(By.XPATH, '//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
     def creazione_attività(self):
@@ -292,10 +293,10 @@ class Preventivi(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Nome"]/input'))).send_keys('Preventivo di Prova', Keys.ENTER)
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
 
-        totalepreventivo=self.find(By.XPATH, '//div[@id="righe"]//tbody[2]//tr[3]//td[2]').text
+        totalepreventivo=self.get_element('//div[@id="righe"]//tbody[2]//tr[3]//td[2]', By.XPATH).text
 
         # Creazione attività
         wait.until(EC.visibility_of_element_located((By.XPATH, '//button[@class="btn btn-info dropdown-toggle "]'))).click()
@@ -309,7 +310,7 @@ class Preventivi(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//button[@id="submit_btn"]'))).click()
         sleep(1)
 
-        totaleattività=self.find(By.XPATH, '//div[@id="righe"]//tbody[2]//tr[3]//td[2]').text
+        totaleattività=self.get_element('//div[@id="righe"]//tbody[2]//tr[3]//td[2]', By.XPATH).text
         
         # Controllo valori righe preventivo
         self.assertEqual(totaleattività,totalepreventivo)
@@ -328,7 +329,7 @@ class Preventivi(Test):
         self.navigateTo("Preventivi")
         self.wait_loader()  
 
-        self.find(By.XPATH, '//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
     def creazione_ddt_uscita(self):
@@ -339,10 +340,10 @@ class Preventivi(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Nome"]/input'))).send_keys('Preventivo di Prova', Keys.ENTER)
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
 
-        totalepreventivo=self.find(By.XPATH, '//div[@id="righe"]//tbody[2]//tr[3]//td[2]').text
+        totalepreventivo=self.get_element('//div[@id="righe"]//tbody[2]//tr[3]//td[2]', By.XPATH).text
 
         # Creazione ddt uscita
         wait.until(EC.visibility_of_element_located((By.XPATH, '//button[@class="btn btn-info dropdown-toggle "]'))).click()
@@ -354,7 +355,7 @@ class Preventivi(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//button[@id="submit_btn"]'))).click()
         sleep(1)
 
-        totaleddtuscita=self.find(By.XPATH, '//div[@id="righe"]//tbody[2]//tr[3]//td[2]').text
+        totaleddtuscita=self.get_element('//div[@id="righe"]//tbody[2]//tr[3]//td[2]', By.XPATH).text
         
         # Controllo valori righe preventivo
         self.assertEqual(totaleddtuscita,totalepreventivo)
@@ -374,7 +375,7 @@ class Preventivi(Test):
         self.navigateTo("Preventivi")
         self.wait_loader()  
 
-        self.find(By.XPATH, '//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
     def creazione_fattura(self):
@@ -385,10 +386,10 @@ class Preventivi(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Nome"]/input'))).send_keys('Preventivo di Prova', Keys.ENTER)
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
 
-        totalepreventivo=self.find(By.XPATH, '//div[@id="righe"]//tbody[2]//tr[3]//td[2]').text
+        totalepreventivo=self.get_element('//div[@id="righe"]//tbody[2]//tr[3]//td[2]', By.XPATH).text
 
         # Creazione fattura
         wait.until(EC.visibility_of_element_located((By.XPATH, '//button[@class="btn btn-info dropdown-toggle "]'))).click()
@@ -396,7 +397,7 @@ class Preventivi(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//button[@id="submit_btn"]'))).click()
         sleep(1)
 
-        totalefattura=self.find(By.XPATH, '//div[@id="righe"]//tbody[2]//tr[3]//td[2]').text
+        totalefattura=self.get_element('//div[@id="righe"]//tbody[2]//tr[3]//td[2]', By.XPATH).text
         
         # Controllo valori righe preventivo
         self.assertEqual(totalefattura,totalepreventivo)
@@ -414,7 +415,7 @@ class Preventivi(Test):
         self.navigateTo("Preventivi")
         self.wait_loader()  
 
-        self.find(By.XPATH, '//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
     def verifica_preventivi(self):
@@ -428,7 +429,7 @@ class Preventivi(Test):
 
         modificato=self.driver.find_element(By.XPATH,'//tbody//tr[1]//td[3]').text
         self.assertEqual("Preventivo di Prova",modificato)
-        self.find(By.XPATH, '//i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
         # Verifica elemento eliminato
@@ -437,7 +438,7 @@ class Preventivi(Test):
 
         eliminato=self.driver.find_element(By.XPATH,'//td[@class="dataTables_empty"]').text
         self.assertEqual("La ricerca non ha portato alcun risultato.",eliminato)
-        self.find(By.XPATH, '//i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
     def consuntivo(self):
@@ -445,21 +446,21 @@ class Preventivi(Test):
         self.navigateTo("Preventivi")
         self.wait_loader()
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '//a[@id="link-tab_12"]').click()
-        budget=self.find(By.XPATH, '//span[@class="text-success"]').text
+        self.get_element('//a[@id="link-tab_12"]', By.XPATH).click()
+        budget=self.get_element('//span[@class="text-success"]', By.XPATH).text
         self.assertEqual(budget,"+ 264,80 €")     
     def revisioni(self):
         wait = WebDriverWait(self.driver, 20)
         self.navigateTo("Preventivi")
         self.wait_loader()
 
-        self.find(By.XPATH, '//tbody//tr//td[3]').click()
+        self.get_element('//tbody//tr//td[3]', By.XPATH).click()
         self.wait_loader()
 
-        self.find(By.XPATH,'//a[@id="link-tab_20"]').click()
+        self.get_element('//a[@id="link-tab_20"]', By.XPATH).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@id="tab_20"]//td[@class="text-center"][1]')))
 
     def cambia_stato(self):
@@ -470,35 +471,35 @@ class Preventivi(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Numero"]/input'))).send_keys("1", Keys.ENTER)  
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td').click()   
-        self.find(By.XPATH, '//button[@data-toggle="dropdown"]').click() 
-        self.find(By.XPATH, '//a[@data-op="cambia_stato"]').click() 
+        self.get_element('//tbody//tr//td', By.XPATH).click()   
+        self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click() 
+        self.get_element('//a[@data-op="cambia_stato"]', By.XPATH).click() 
         sleep(1)
 
-        self.find(By.XPATH, '//span[@id="select2-id_stato-container"]').click() 
+        self.get_element('//span[@id="select2-id_stato-container"]', By.XPATH).click() 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys("Bozza")
         sleep(1)
 
-        self.find(By.XPATH, '//ul[@id="select2-id_stato-results"]').click() 
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-warning"]').click() 
+        self.get_element('//ul[@id="select2-id_stato-results"]', By.XPATH).click() 
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-warning"]', By.XPATH).click() 
         self.wait_loader()
 
-        stato=self.find(By.XPATH, '//tbody//tr//td[6]').text
+        stato=self.get_element('//tbody//tr//td[6]', By.XPATH).text
         self.assertEqual(stato,"Bozza") 
 
-        self.find(By.XPATH, '//button[@data-toggle="dropdown"]').click() 
-        self.find(By.XPATH, '//a[@data-op="cambia_stato"]').click() 
+        self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click() 
+        self.get_element('//a[@data-op="cambia_stato"]', By.XPATH).click() 
         sleep(1)
 
-        self.find(By.XPATH, '//span[@id="select2-id_stato-container"]').click() 
+        self.get_element('//span[@id="select2-id_stato-container"]', By.XPATH).click() 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys("Accettato")
         sleep(1)
 
-        self.find(By.XPATH, '//ul[@id="select2-id_stato-results"]').click()
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-warning"]').click()
+        self.get_element('//ul[@id="select2-id_stato-results"]', By.XPATH).click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-warning"]', By.XPATH).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '//i[@class="deleteicon fa fa-times"]').click() 
+        self.get_element('//i[@class="deleteicon fa fa-times"]', By.XPATH).click() 
         sleep(1)
 
     def fattura_preventivi(self):
@@ -509,23 +510,23 @@ class Preventivi(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Numero"]/input'))).send_keys("1", Keys.ENTER) 
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[1]').click() 
-        self.find(By.XPATH, '//button[@data-toggle="dropdown"]').click() 
-        self.find(By.XPATH, '//a[@data-op="crea_fattura"]').click() 
+        self.get_element('//tbody//tr//td[1]', By.XPATH).click() 
+        self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click() 
+        self.get_element('//a[@data-op="crea_fattura"]', By.XPATH).click() 
         sleep(1)
 
-        self.find(By.XPATH, '//span[@id="select2-raggruppamento-container"]').click()  
+        self.get_element('//span[@id="select2-raggruppamento-container"]', By.XPATH).click()  
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys("Cliente")
         sleep(1)
 
-        self.find(By.XPATH, '//ul[@id="select2-raggruppamento-results"]').click()
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-warning"]').click() 
+        self.get_element('//ul[@id="select2-raggruppamento-results"]', By.XPATH).click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-warning"]', By.XPATH).click() 
         self.wait_loader()
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click() 
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click() 
         self.wait_loader()
 
-        self.find(By.XPATH, '//span[@id="select2-idstato-container"]').click()  
+        self.get_element('//span[@id="select2-idstato-container"]', By.XPATH).click()  
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys("In lavorazione", Keys.ENTER)
-        self.find(By.XPATH, '//button[@id="save"]')
+        self.get_element('//button[@id="save"]', By.XPATH)
         self.wait_loader()

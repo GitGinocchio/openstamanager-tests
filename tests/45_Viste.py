@@ -67,6 +67,6 @@ class Viste(Test):
         self.controllo_viste("2") 
         
     def controllo_viste(self, test: str):
-        verifica = self.find(By.XPATH, '//tbody//tr[1]//td[2]').text
+        verifica = self.get_element('//tbody//tr[1]//td[2]', By.XPATH).text
         self.assertEqual(verifica, test)
 

@@ -46,7 +46,7 @@ class Impianti(Test):
         self.navigateTo("Impianti")
         # Crea un nuovo impianto
         # Apre la schermata di nuovo elemento
-        self.find(By.XPATH,'//i[@class="fa fa-plus"]').click()
+        self.get_element('//i[@class="fa fa-plus"]', By.XPATH).click()
         modal = self.wait_modal()
 
         # Completamento dei campi per il nuovo elemento
@@ -67,17 +67,17 @@ class Impianti(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Nome"]/input'))).send_keys('Impianto di Prova da Modificare', Keys.ENTER)
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
         
         self.input(None,'Nome').setValue(modifica)
-        self.find(By.XPATH, '//div[@id="tab_0"]//button[@id="save"]').click()
+        self.get_element('//div[@id="tab_0"]//button[@id="save"]', By.XPATH).click()
         self.wait_loader()
 
         self.navigateTo("Impianti")
         self.wait_loader()    
 
-        self.find(By.XPATH, '//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
     def elimina_impianto(self):
@@ -88,14 +88,14 @@ class Impianti(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Nome"]/input'))).send_keys('Impianto di Prova da Eliminare', Keys.ENTER)
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@id="tab_0"]//a[@class="btn btn-danger ask "]'))).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-danger"]'))).click()
         sleep(1)
 
-        self.find(By.XPATH, '//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
         
     def verifica_impianto(self):
@@ -109,7 +109,7 @@ class Impianti(Test):
 
         modificato=self.driver.find_element(By.XPATH,'//tbody//tr[1]//td[3]').text
         self.assertEqual("Impianto di Prova",modificato)
-        self.find(By.XPATH, '//i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
         # Verifica elemento eliminato
@@ -119,7 +119,7 @@ class Impianti(Test):
         eliminato=self.driver.find_element(By.XPATH,'//tbody//tr[1]//td[@class="dataTables_empty"]').text
         self.assertEqual("La ricerca non ha portato alcun risultato.",eliminato)
         self.navigateTo("Impianti")
-        self.find(By.XPATH, '//i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
     def apri_impianti(self): 
@@ -130,16 +130,16 @@ class Impianti(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Ragione-sociale"]/input'))).send_keys("Cliente", Keys.ENTER)
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         sleep(1) 
 
-        self.find(By.XPATH, '//a[@id="link-tab_1"]').click()
-        self.find(By.XPATH, '//div[@class="text-right"]').click
-        impianto=self.find(By.XPATH, '//div [@class="text-right"]').text
+        self.get_element('//a[@id="link-tab_1"]', By.XPATH).click()
+        self.get_element('//div[@class="text-right"]', By.XPATH).click()
+        impianto=self.get_element('//div [@class="text-right"]', By.XPATH).text
         self.assertEqual(impianto,"01")
 
         self.navigateTo("Anagrafiche")
-        self.find(By.XPATH, '//i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
     def plugin_impianti(self):     
@@ -150,34 +150,34 @@ class Impianti(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Numero"]//input'))).send_keys("2", Keys.ENTER)
         sleep(1) 
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader() 
 
-        self.find(By.XPATH, '//a[@id="link-tab_2"]').click()
+        self.get_element('//a[@id="link-tab_2"]', By.XPATH).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '//span[@id="select2-id_impianto_add-container"]').click()
+        self.get_element('//span[@id="select2-id_impianto_add-container"]', By.XPATH).click()
         sleep(1)
         
-        self.find(By.XPATH, '//li[@class="select2-results__option select2-results__option--highlighted"]').click()
-        self.find(By.XPATH, '//button[@class="btn btn-default tip tooltipstered"]').click()
+        self.get_element('//li[@class="select2-results__option select2-results__option--highlighted"]', By.XPATH).click()
+        self.get_element('//button[@class="btn btn-default tip tooltipstered"]', By.XPATH).click()
         sleep(1)
 
-        matricola=self.find(By.XPATH, '//div[@id="tab_2"]//tbody//tr//td[2]').text
+        matricola=self.get_element('//div[@id="tab_2"]//tbody//tr//td[2]', By.XPATH).text
         self.assertEqual(matricola,"01")
-        self.find(By.XPATH, '//button[@class="btn btn-sm btn-danger "]').click()
+        self.get_element('//button[@class="btn btn-sm btn-danger "]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-primary"]').click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-primary"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//span[@id="select2-id_impianto_add-container"]').click()
-        self.find(By.XPATH, '//li[@class="select2-results__option select2-results__option--highlighted"]').click()
-        self.find(By.XPATH, '//button[@class="btn btn-default tip tooltipstered"]').click()
+        self.get_element('//span[@id="select2-id_impianto_add-container"]', By.XPATH).click()
+        self.get_element('//li[@class="select2-results__option select2-results__option--highlighted"]', By.XPATH).click()
+        self.get_element('//button[@class="btn btn-default tip tooltipstered"]', By.XPATH).click()
         sleep(1)
 
         self.navigateTo("Attività")
-        self.find(By.XPATH, '//i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
     def plugin_interventi_svolti(self):
@@ -188,18 +188,18 @@ class Impianti(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Nome"]/input'))).send_keys("Impianto di Prova", Keys.ENTER)
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[3]').click()
+        self.get_element('//tbody//tr//td[3]', By.XPATH).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '//a[@id="link-tab_8"]').click()
+        self.get_element('//a[@id="link-tab_8"]', By.XPATH).click()
         self.wait_loader()
 
-        totale=self.find(By.XPATH, '//tbody//tr[3]//td[2]').text
+        totale=self.get_element('//tbody//tr[3]//td[2]', By.XPATH).text
         self.assertEqual(totale, "36,60 €")
         self.navigateTo("Impianti")
         self.wait_loader()
 
-        self.find(By.XPATH, '//th[@id="th_Nome"]//i').click()
+        self.get_element('//th[@id="th_Nome"]//i', By.XPATH).click()
         sleep(1)
 
     def componenti(self):
@@ -210,42 +210,42 @@ class Impianti(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Nome"]/input'))).send_keys("Impianto di Prova", Keys.ENTER)
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[3]').click()
+        self.get_element('//tbody//tr//td[3]', By.XPATH).click()
         self.wait_loader()
  
-        self.find(By.XPATH, '//a[@id="link-tab_31"]').click()
+        self.get_element('//a[@id="link-tab_31"]', By.XPATH).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '(//button[@class="btn btn-primary bound clickable"])[2]').click()
+        self.get_element('(//button[@class="btn btn-primary bound clickable"])[2]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//span[@id="select2-id_articolo-container"]').click()
+        self.get_element('//span[@id="select2-id_articolo-container"]', By.XPATH).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys("Articolo 1", Keys.ENTER)
-        self.find(By.XPATH, '(//form//button[@class="btn btn-primary"])[2]').click()
+        self.get_element('(//form//button[@class="btn btn-primary"])[2]', By.XPATH).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '//div[@id="tab_31"]//button[@class="btn btn-tool"]').click()
+        self.get_element('//div[@id="tab_31"]//button[@class="btn btn-tool"]', By.XPATH).click()
         sleep(1)
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@id="data_installazione_1"]'))).send_keys("01/01/2025")
-        self.find(By.XPATH, '//button[@class="btn btn-success pull-right"]').click()
+        self.get_element('//button[@class="btn btn-success pull-right"]', By.XPATH).click()
         self.wait_loader()
 
-        data_installazione=self.find(By.XPATH, '//div[@id="tab_31"]//tr[1]//td[3]').text
+        data_installazione=self.get_element('//div[@id="tab_31"]//tr[1]//td[3]', By.XPATH).text
         self.assertEqual(data_installazione, "01/01/2025")
-        self.find(By.XPATH, '//div[@id="tab_31"]//button[@class="btn btn-tool"]').click()
+        self.get_element('//div[@id="tab_31"]//button[@class="btn btn-tool"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//button[@class="btn btn-warning pull-right"]').click()
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-primary"]').click()
+        self.get_element('//button[@class="btn btn-warning pull-right"]', By.XPATH).click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-primary"]', By.XPATH).click()
         self.wait_loader()
         
-        sostituito=self.find(By.XPATH, '(//div[@id="tab_31"]//tr[1]//td[1])[1]').text
+        sostituito=self.get_element('(//div[@id="tab_31"]//tr[1]//td[1])[1]', By.XPATH).text
         self.assertEqual(sostituito, "#2")
         self.navigateTo("Impianti")
         self.wait_loader()
 
-        self.find(By.XPATH, '//th[@id="th_Nome"]//i').click()
+        self.get_element('//th[@id="th_Nome"]//i', By.XPATH).click()
         sleep(1)
 
     def elimina_selezionati(self):
@@ -253,14 +253,14 @@ class Impianti(Test):
         self.navigateTo("Impianti")
         self.wait_loader()  
 
-        self.find(By.XPATH,'//i[@class="fa fa-plus"]').click()
+        self.get_element('//i[@class="fa fa-plus"]', By.XPATH).click()
         modal = self.wait_modal()
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@id="matricola"]'))).send_keys("02")   
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@id="nome"]'))).send_keys("Prova")     
-        self.find(By.XPATH, '//span[@id="select2-idanagrafica_impianto-container"]').click()  
+        self.get_element('//span[@id="select2-idanagrafica_impianto-container"]', By.XPATH).click()  
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys("Cliente", Keys.ENTER)
-        self.find(By.XPATH, '//button[@class="btn btn-primary"]').click() 
+        self.get_element('//button[@class="btn btn-primary"]', By.XPATH).click() 
         self.wait_loader()
 
         self.navigateTo("Impianti") 
@@ -269,13 +269,13 @@ class Impianti(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Matricola"]/input'))).send_keys("02", Keys.ENTER)  
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td').click() 
-        self.find(By.XPATH, '//button[@data-toggle="dropdown"]').click() 
-        self.find(By.XPATH, '//a[@data-op="delete-bulk"]').click()  
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-danger"]').click() 
+        self.get_element('//tbody//tr//td', By.XPATH).click() 
+        self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click() 
+        self.get_element('//a[@data-op="delete-bulk"]', By.XPATH).click()  
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click() 
         self.wait_loader()
 
-        scritta=self.find(By.XPATH, '//tbody//tr').text
+        scritta=self.get_element('//tbody//tr', By.XPATH).text
         self.assertEqual(scritta, "La ricerca non ha portato alcun risultato.") 
-        self.find(By.XPATH, '//th[@id="th_Matricola"]//i').click()  
+        self.get_element('//th[@id="th_Matricola"]//i', By.XPATH).click()  
         sleep(1)

@@ -48,7 +48,7 @@ class OrdiniCliente(Test):
         self.wait_loader() 
 
         # Crea rdine
-        self.find(By.XPATH,'//i[@class="fa fa-plus"]').click()
+        self.get_element('//i[@class="fa fa-plus"]', By.XPATH).click()
         modal = self.wait_modal()
 
         select = self.input(modal, 'Cliente')
@@ -67,7 +67,7 @@ class OrdiniCliente(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Numero"]/input'))).send_keys('1', Keys.ENTER)        
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
         sleep(1)
         
@@ -79,10 +79,10 @@ class OrdiniCliente(Test):
         sleep(1)
 
         # Estrazione totali righe
-        sconto = self.find(By.XPATH, '//div[@id="righe"]//tbody[2]//tr[2]//td[2]').text
-        totale_imponibile = self.find(By.XPATH, '//div[@id="righe"]//tbody[2]//tr[3]//td[2]').text
-        iva = self.find(By.XPATH, '//div[@id="righe"]//tbody[2]//tr[4]//td[2]').text
-        totale = self.find(By.XPATH, '//div[@id="tab_0"]//div[@id="righe"]//tbody[2]//tr[5]//td[2]').text
+        sconto = self.get_element('//div[@id="righe"]//tbody[2]//tr[2]//td[2]', By.XPATH).text
+        totale_imponibile = self.get_element('//div[@id="righe"]//tbody[2]//tr[3]//td[2]', By.XPATH).text
+        iva = self.get_element('//div[@id="righe"]//tbody[2]//tr[4]//td[2]', By.XPATH).text
+        totale = self.get_element('//div[@id="tab_0"]//div[@id="righe"]//tbody[2]//tr[5]//td[2]', By.XPATH).text
 
         self.assertEqual(sconto, (self.valori["Sconto/maggiorazione"]+ ' €'))
         self.assertEqual(totale_imponibile, (self.valori["Totale imponibile"]+ ' €'))
@@ -92,7 +92,7 @@ class OrdiniCliente(Test):
         self.navigateTo("Ordini cliente")
         self.wait_loader()  
 
-        self.find(By.XPATH, '//th[@id="th_Numero"]/i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//th[@id="th_Numero"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
     def elimina_ordine_cliente(self):
@@ -103,14 +103,14 @@ class OrdiniCliente(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Numero"]/input'))).send_keys('2', Keys.ENTER)        
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         sleep(1)
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@id="tab_0"]//a[@class="btn btn-danger ask"]'))).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-danger"]'))).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '//th[@id="th_Numero"]/i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//th[@id="th_Numero"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
         
     def verifica_ordine_cliente(self):
@@ -124,7 +124,7 @@ class OrdiniCliente(Test):
 
         modificato=self.driver.find_element(By.XPATH,'//tbody//tr//td[7]').text
         self.assertEqual("Accettato",modificato)
-        self.find(By.XPATH, '//i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
         # Verifica elemento eliminato
@@ -133,7 +133,7 @@ class OrdiniCliente(Test):
 
         eliminato=self.driver.find_element(By.XPATH,'//tbody//tr[1]//td[@class="dataTables_empty"]').text
         self.assertEqual("La ricerca non ha portato alcun risultato.",eliminato)
-        self.find(By.XPATH, '//th[@id="th_Numero"]/i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//th[@id="th_Numero"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
     def consuntivi(self):
@@ -144,18 +144,18 @@ class OrdiniCliente(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Numero"]/input'))).send_keys('1', Keys.ENTER)        
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '//a[@id="link-tab_29"]').click()
-        budget=self.find(By.XPATH, '//div[@id="tab_29"]//span[@class="text-success"]').text
+        self.get_element('//a[@id="link-tab_29"]', By.XPATH).click()
+        budget=self.get_element('//div[@id="tab_29"]//span[@class="text-success"]', By.XPATH).text
 
         self.assertEqual(budget, "+ 264,80 €")
 
         self.navigateTo("Ordini cliente")
         self.wait_loader()
 
-        self.find(By.XPATH, '//th[@id="th_Numero"]/i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//th[@id="th_Numero"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
     def cambia_stato(self):
@@ -166,22 +166,22 @@ class OrdiniCliente(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Numero"]/input'))).send_keys('01', Keys.ENTER) 
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td').click() 
-        self.find(By.XPATH, '//button[@data-toggle="dropdown"]').click() 
-        self.find(By.XPATH, '//a[@data-op="cambia_stato"]').click() 
+        self.get_element('//tbody//tr//td', By.XPATH).click() 
+        self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click() 
+        self.get_element('//a[@data-op="cambia_stato"]', By.XPATH).click() 
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//span[@id="select2-id_stato-container"]'))).click() 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys('Accettato')
         sleep(1)
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys(Keys.ENTER)
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-warning"]').click() 
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-warning"]', By.XPATH).click() 
         self.wait_loader()
 
-        stato=self.find(By.XPATH, '(//tbody//tr[1]//td[7]//span)[2]').text 
+        stato=self.get_element('(//tbody//tr[1]//td[7]//span, By.XPATH)[2]').text 
         self.assertEqual(stato, "Accettato")
 
-        self.find(By.XPATH, '//th[@id="th_Numero"]/i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//th[@id="th_Numero"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
     def fattura_ordini_clienti(self):
@@ -189,27 +189,27 @@ class OrdiniCliente(Test):
         self.navigateTo("Ordini cliente")
         self.wait_loader()
 
-        self.find(By.XPATH, '//tbody//tr//td').click()
+        self.get_element('//tbody//tr//td', By.XPATH).click()
 
-        self.find(By.XPATH, '//button[@data-toggle="dropdown"]').click() 
-        self.find(By.XPATH, '//a[@data-op="crea_fattura"]').click() 
+        self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click() 
+        self.get_element('//a[@data-op="crea_fattura"]', By.XPATH).click() 
         sleep(1)
 
-        self.find(By.XPATH, '//span[@id="select2-raggruppamento-container"]').click()   
+        self.get_element('//span[@id="select2-raggruppamento-container"]', By.XPATH).click()   
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys('Cliente')
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys(Keys.ENTER)
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-warning"]').click()  
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-warning"]', By.XPATH).click()  
         self.wait_loader()
 
         self.navigateTo("Fatture di vendita")
         self.wait_loader()
 
-        tipo=self.find(By.XPATH, '//tbody//tr[3]//td[5]').text
+        tipo=self.get_element('//tbody//tr[3]//td[5]', By.XPATH).text
         self.assertEqual(tipo, "Fattura immediata di vendita") 
 
-        self.find(By.XPATH, '//tbody//tr//td[4]').click()
+        self.get_element('//tbody//tr//td[4]', By.XPATH).click()
         self.wait_loader()
     
-        self.find(By.XPATH, '//a[@id="elimina"]').click()
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-danger"]').click()
+        self.get_element('//a[@id="elimina"]', By.XPATH).click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()
         self.wait_loader()

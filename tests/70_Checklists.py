@@ -30,7 +30,7 @@ class Checklists(Test):
 
     def checklists(self, nome=str, modulo= str, plugin=str):
         self.navigateTo("Checklists")
-        self.find(By.XPATH,'//i[@class="fa fa-plus"]').click()
+        self.get_element('//i[@class="fa fa-plus"]', By.XPATH).click()
         modal = self.wait_modal()
 
         self.input(modal, 'Nome').setValue(nome)
@@ -47,31 +47,31 @@ class Checklists(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Nome"]/input'))).send_keys('Checklist di Prova da Modificare', Keys.ENTER)
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         sleep(1)
 
         self.driver.execute_script('window.scrollTo(0,0)')
         self.input(None,'Nome').setValue(modifica)
 
-        self.find(By.XPATH, '//div[@id="tab_0"]//button[@id="save"]').click()
+        self.get_element('//div[@id="tab_0"]//button[@id="save"]', By.XPATH).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '(//iframe[@class="cke_wysiwyg_frame cke_reset"])[1]').click()  
+        self.get_element('(//iframe[@class="cke_wysiwyg_frame cke_reset"])[1]', By.XPATH).click()  
         wait.until(EC.visibility_of_element_located((By.XPATH, '(//iframe[@class="cke_wysiwyg_frame cke_reset"])[1]'))).send_keys("TestPadre")
-        self.find(By.XPATH, '(//button[@type="submit"])[2]').click()
+        self.get_element('(//button[@type="submit"])[2]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '(//iframe[@class="cke_wysiwyg_frame cke_reset"])[1]').click()  
+        self.get_element('(//iframe[@class="cke_wysiwyg_frame cke_reset"])[1]', By.XPATH).click()  
         wait.until(EC.visibility_of_element_located((By.XPATH, '(//iframe[@class="cke_wysiwyg_frame cke_reset"])[1]'))).send_keys("TestFiglio")
-        self.find(By.XPATH, '(//span[@class="select2-selection select2-selection--single"])[3]').click()
-        self.find(By.XPATH, '//li[@class="select2-results__option select2-results__option--highlighted"]').click()
-        self.find(By.XPATH, '(//button[@type="submit"])[2]').click()
+        self.get_element('(//span[@class="select2-selection select2-selection--single"])[3]', By.XPATH).click()
+        self.get_element('//li[@class="select2-results__option select2-results__option--highlighted"]', By.XPATH).click()
+        self.get_element('(//button[@type="submit"])[2]', By.XPATH).click()
         sleep(1)
 
         self.navigateTo("Checklists")
         self.wait_loader()    
 
-        self.find(By.XPATH, '//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
     def elimina_checklist(self):
@@ -82,7 +82,7 @@ class Checklists(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Nome"]/input'))).send_keys('Checklist di Prova da Eliminare', Keys.ENTER)
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         sleep(1)
 
         self.driver.execute_script('window.scrollTo(0,0)')
@@ -90,7 +90,7 @@ class Checklists(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-danger"]'))).click()
         self.wait_loader()      
 
-        self.find(By.XPATH, '//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
         
     def verifica_checklist(self):
@@ -104,7 +104,7 @@ class Checklists(Test):
 
         modificato=self.driver.find_element(By.XPATH,'//tbody//tr[1]//td[2]').text
         self.assertEqual("Checklist di Prova",modificato)
-        self.find(By.XPATH, '//i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
         # Verifica elemento eliminato
@@ -113,29 +113,29 @@ class Checklists(Test):
 
         self.navigateTo("Attività")  
 
-        self.find(By.XPATH, '//div[@id="tab_0"]//tbody//tr[2]//td[2]').click()
+        self.get_element('//div[@id="tab_0"]//tbody//tr[2]//td[2]', By.XPATH).click()
         self.wait_loader()
 
 
-        self.find(By.XPATH, '//a[@href="#tab_checks"]').click()
+        self.get_element('//a[@href="#tab_checks"]', By.XPATH).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '(//a[@data-title="Aggiungi check"])[2]').click()
+        self.get_element('(//a[@data-title="Aggiungi check"])[2]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//div[@class="modal-content"]//span[@class="select2-selection__placeholder"]').click()
-        self.find(By.XPATH, '//li[@class="select2-results__option select2-results__option--highlighted"]').click()
-        self.find(By.XPATH, '//button[@id="check-add"]').click()
+        self.get_element('//div[@class="modal-content"]//span[@class="select2-selection__placeholder"]', By.XPATH).click()
+        self.get_element('//li[@class="select2-results__option select2-results__option--highlighted"]', By.XPATH).click()
+        self.get_element('//button[@id="check-add"]', By.XPATH).click()
         sleep(1)
 
-        TestPadre = self.find(By.XPATH, '(//div[@id="tab_checks"]//tbody//td[2]//span)[1]').text
-        TestFiglio = self.find(By.XPATH, '(//div[@id="tab_checks"]//tbody//td[2]//span)[2]').text
+        TestPadre = self.get_element('(//div[@id="tab_checks"]//tbody//td[2]//span, By.XPATH)[1]').text
+        TestFiglio = self.get_element('(//div[@id="tab_checks"]//tbody//td[2]//span, By.XPATH)[2]').text
         self.assertEqual("TestPadre", TestPadre)
         self.assertEqual("TestFiglio", TestFiglio)
 
-        self.find(By.XPATH, '(//input[@class="checkbox unblockable"])[2]').click()
+        self.get_element('(//input[@class="checkbox unblockable"])[2]', By.XPATH).click()
 
-        test1 = self.find(By.XPATH, '(//input[@class="checkbox unblockable"])[1]').is_selected()
-        test2 = self.find(By.XPATH, '(//input[@class="checkbox unblockable"])[2]').is_selected()
+        test1 = self.get_element('(//input[@class="checkbox unblockable"])[1]', By.XPATH).is_selected()
+        test2 = self.get_element('(//input[@class="checkbox unblockable"])[2]', By.XPATH).is_selected()
         self.assertEqual(test1, False)
         self.assertEqual(test2, True)                

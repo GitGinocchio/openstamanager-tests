@@ -22,153 +22,153 @@ class StampeContabili(Test):
         self.wait_loader()
 
         # Stampa registro IVA vendite
-        self.find(By.XPATH, '//button[@data-title="Stampa registro IVA vendite"]').click()
+        self.get_element('//button[@data-title="Stampa registro IVA vendite"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//span[@id="select2-id_sezionale-container"]').click()
+        self.get_element('//span[@id="select2-id_sezionale-container"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//ul[@id="select2-id_sezionale-results"]//li[1]').click()
-        self.find(By.XPATH, '//span[@id="select2-format-container"]').click()
-        self.find(By.XPATH, '//ul[@id="select2-format-results"]//li[1]').click()
-        self.find(By.XPATH, '//span[@id="select2-orientation-container"]').click()
+        self.get_element('//ul[@id="select2-id_sezionale-results"]//li[1]', By.XPATH).click()
+        self.get_element('//span[@id="select2-format-container"]', By.XPATH).click()
+        self.get_element('//ul[@id="select2-format-results"]//li[1]', By.XPATH).click()
+        self.get_element('//span[@id="select2-orientation-container"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//ul[@id="select2-orientation-results"]//li[1]').click()
-        self.find(By.XPATH, '//button[@class="btn btn-primary btn-block"]').click()
+        self.get_element('//ul[@id="select2-orientation-results"]//li[1]', By.XPATH).click()
+        self.get_element('//button[@class="btn btn-primary btn-block"]', By.XPATH).click()
         sleep(1)
 
         self.driver.switch_to.window(self.driver.window_handles[1])
         sleep(1)
 
-        stampa=self.find(By.XPATH, '//div[@id="viewer"]//span[3]').text
+        stampa=self.get_element('//div[@id="viewer"]//span[3]', By.XPATH).text
         self.assertEqual(stampa, "REGISTRO IVA VENDITE DAL 01/01/2025 AL 31/12/2025 - STANDARD VENDITE")
         self.driver.close()
         self.driver.switch_to.window(self.driver.window_handles[0])
 
         # Stampa registro IVA acquisti
-        self.find(By.XPATH, '//button[@data-title="Stampa registro IVA acquisti"]').click()
+        self.get_element('//button[@data-title="Stampa registro IVA acquisti"]', By.XPATH).click()
         sleep(1)
         
-        self.find(By.XPATH, '//span[@id="select2-id_sezionale-container"]').click()
+        self.get_element('//span[@id="select2-id_sezionale-container"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//ul[@id="select2-id_sezionale-results"]//li[1]').click()
-        self.find(By.XPATH, '//button[@class="btn btn-primary btn-block"]').click()
+        self.get_element('//ul[@id="select2-id_sezionale-results"]//li[1]', By.XPATH).click()
+        self.get_element('//button[@class="btn btn-primary btn-block"]', By.XPATH).click()
         sleep(1)
 
         self.driver.switch_to.window(self.driver.window_handles[1])
         sleep(1)
 
-        stampa=self.find(By.XPATH, '//div[@id="viewer"]//span[3]').text
+        stampa=self.get_element('//div[@id="viewer"]//span[3]', By.XPATH).text
         self.assertEqual(stampa, "REGISTRO IVA ACQUISTI DAL 01/01/2025 AL 31/12/2025 - STANDARD ACQUISTI")
         self.driver.close()
         self.driver.switch_to.window(self.driver.window_handles[0])
 
         # Stampa liquidazione IVA
-        self.find(By.XPATH, '//button[@data-title="Stampa liquidazione IVA"]').click()
+        self.get_element('//button[@data-title="Stampa liquidazione IVA"]', By.XPATH).click()
         sleep(1)
         
-        self.find(By.XPATH, '//button[@class="btn btn-primary btn-block"]').click() 
+        self.get_element('//button[@class="btn btn-primary btn-block"]', By.XPATH).click() 
         sleep(1)
 
         self.driver.switch_to.window(self.driver.window_handles[1]) 
         sleep(1)
 
-        stampa=self.find(By.XPATH, '(//div[@id="viewer"]//span)[1]').text 
+        stampa=self.get_element('(//div[@id="viewer"]//span, By.XPATH)[1]').text 
         self.assertEqual(stampa, "PROSPETTO LIQUIDAZIONE IVA DAL 01/01/2025 AL 31/12/2025")
         self.driver.close()
         self.driver.switch_to.window(self.driver.window_handles[0])
 
         # Stampa Bilancio
-        self.find(By.XPATH, '//button[@data-title="Stampa Bilancio"]').click()
+        self.get_element('//button[@data-title="Stampa Bilancio"]', By.XPATH).click()
         sleep(1)
         
-        self.find(By.XPATH, '//button[@class="btn btn-primary"]').click()
+        self.get_element('//button[@class="btn btn-primary"]', By.XPATH).click()
         sleep(1)
 
         self.driver.switch_to.window(self.driver.window_handles[1]) 
         sleep(1)
 
-        stampa=self.find(By.XPATH, '//div[@id="viewer"]//span').text
+        stampa=self.get_element('//div[@id="viewer"]//span', By.XPATH).text
         self.assertEqual(stampa, "STAMPA BILANCIO")
         self.driver.close() 
         self.driver.switch_to.window(self.driver.window_handles[0]) 
-        self.find(By.XPATH, '//button[@class="close"]').click()
+        self.get_element('//button[@class="close"]', By.XPATH).click()
         sleep(1)
         
         # Stampa Situazione patrimoniale
-        self.find(By.XPATH, '(//a[@id="print-button"])[1]').click()
+        self.get_element('(//a[@id="print-button"])[1]', By.XPATH).click()
         sleep(1)
         
         self.driver.switch_to.window(self.driver.window_handles[1]) 
         sleep(1)
 
-        stampa=self.find(By.XPATH, '//div[@id="viewer"]//span').text
+        stampa=self.get_element('//div[@id="viewer"]//span', By.XPATH).text
         self.assertEqual(stampa, "STAMPA MASTRINO")
         self.driver.close() 
         self.driver.switch_to.window(self.driver.window_handles[0]) 
 
         # Stampa Situazione economica
-        self.find(By.XPATH, '(//a[@id="print-button"])[2]').click()
+        self.get_element('(//a[@id="print-button"])[2]', By.XPATH).click()
         sleep(1)
         
         self.driver.switch_to.window(self.driver.window_handles[1])
         sleep(1)
 
-        stampa=self.find(By.XPATH, '(//div[@id="viewer"]//span)[1]').text 
+        stampa=self.get_element('(//div[@id="viewer"]//span, By.XPATH)[1]').text 
         self.assertEqual(stampa, "STAMPA MASTRINO")
         self.driver.close()
         self.driver.switch_to.window(self.driver.window_handles[0]) 
 
         # Stampa fatturato
-        self.find(By.XPATH, '(//a[@id="print-button"])[3]').click()
+        self.get_element('(//a[@id="print-button"])[3]', By.XPATH).click()
         sleep(1)
         
         self.driver.switch_to.window(self.driver.window_handles[1]) 
         sleep(1)
 
-        stampa=self.find(By.XPATH, '(//div[@id="viewer"]//span)[9]').text 
+        stampa=self.get_element('(//div[@id="viewer"]//span, By.XPATH)[9]').text 
         self.assertEqual(stampa, "FATTURATO MENSILE DAL 01/01/2025 AL 31/12/2025")
         self.driver.close() 
         self.driver.switch_to.window(self.driver.window_handles[0]) 
 
         # Stampa acquisti
-        self.find(By.XPATH, '(//a[@id="print-button"])[4]').click()
+        self.get_element('(//a[@id="print-button"])[4]', By.XPATH).click()
         sleep(1)
         
         self.driver.switch_to.window(self.driver.window_handles[1])
         sleep(1)
 
-        stampa=self.find(By.XPATH, '(//div[@id="viewer"]//span)[9]').text 
+        stampa=self.get_element('(//div[@id="viewer"]//span, By.XPATH)[9]').text 
         self.assertEqual(stampa, "ACQUISTI MENSILI DAL 01/01/2025 AL 31/12/2025")
         self.driver.close() 
         self.driver.switch_to.window(self.driver.window_handles[0])
 
         # Stampa libro giornale
-        self.find(By.XPATH, '//button[@data-title="Libro giornale"]').click()
+        self.get_element('//button[@data-title="Libro giornale"]', By.XPATH).click()
         sleep(1)
         
-        self.find(By.XPATH, '//button[@class="btn btn-primary btn-block"]').click()
+        self.get_element('//button[@class="btn btn-primary btn-block"]', By.XPATH).click()
         sleep(1)
         
         self.driver.switch_to.window(self.driver.window_handles[1]) 
         sleep(1)
 
-        stampa=self.find(By.XPATH, '(//div[@id="viewer"]//span)[1]').text 
+        stampa=self.get_element('(//div[@id="viewer"]//span, By.XPATH)[1]').text 
         self.assertEqual(stampa, "STAMPA LIBRO GIORNALE")
         self.driver.close() 
         self.driver.switch_to.window(self.driver.window_handles[0])
 
         # Stampa scadenziario
-        self.find(By.XPATH, '//button[@data-title="Stampa scadenzario"]').click()
+        self.get_element('//button[@data-title="Stampa scadenzario"]', By.XPATH).click()
         sleep(1)
         
-        self.find(By.XPATH, '//button[@class="btn btn-primary"]').click()   
+        self.get_element('//button[@class="btn btn-primary"]', By.XPATH).click()   
         self.driver.switch_to.window(self.driver.window_handles[1])
         sleep(1)
 
-        stampa=self.find(By.XPATH, '(//div[@id="viewer"]//span)[6]').text  
+        stampa=self.get_element('(//div[@id="viewer"]//span, By.XPATH)[6]').text  
         self.assertEqual(stampa, "SCADENZE DAL 01/01/2025 AL 31/12/2025")
         self.driver.close() 
         self.driver.switch_to.window(self.driver.window_handles[0]) 

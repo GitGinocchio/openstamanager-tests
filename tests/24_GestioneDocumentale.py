@@ -31,7 +31,7 @@ class GestioneDocumentale(Test):
 
         # Crea una nuova newsletter
         # Apre la schermata di nuovo elemento
-        self.find(By.XPATH,'//i[@class="fa fa-plus"]').click()
+        self.get_element('//i[@class="fa fa-plus"]', By.XPATH).click()
         modal = self.wait_modal()
 
         # Completamento dei campi per il nuovo elemento
@@ -52,17 +52,17 @@ class GestioneDocumentale(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Nome"]/input'))).send_keys('Documento di Prova da Modificare', Keys.ENTER)        
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
         
         self.input(None,'Nome').setValue(modifica)
-        self.find(By.XPATH, '//div[@id="tab_0"]//button[@id="save"]').click()
+        self.get_element('//div[@id="tab_0"]//button[@id="save"]', By.XPATH).click()
         self.wait_loader()
 
         self.navigateTo("Gestione documentale")
         self.wait_loader()  
 
-        self.find(By.XPATH, '//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
     def elimina_documento(self):
@@ -73,14 +73,14 @@ class GestioneDocumentale(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Nome"]/input'))).send_keys('Documento di Prova da Eliminare', Keys.ENTER)        
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         sleep(1)
         
         wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@id="tab_0"]//a[@class="btn btn-danger ask"]'))).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-danger"]'))).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
         
     def verifica_documento(self):
@@ -94,7 +94,7 @@ class GestioneDocumentale(Test):
 
         modificato=self.driver.find_element(By.XPATH,'//tbody//tr[1]//td[3]').text
         self.assertEqual("Documento di prova",modificato)
-        self.find(By.XPATH, '//i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
         # Verifica elemento eliminato

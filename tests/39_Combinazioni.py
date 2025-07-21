@@ -37,7 +37,7 @@ class Combinazioni(Test):
         self.navigateTo("Combinazioni")
         self.wait_loader()
 
-        self.find(By.XPATH,'//i[@class="fa fa-plus"]').click()
+        self.get_element('//i[@class="fa fa-plus"]', By.XPATH).click()
         modal = self.wait_modal()
 
         self.input(modal, 'Codice').setValue(codice)
@@ -55,23 +55,23 @@ class Combinazioni(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Nome"]/input'))).send_keys('Combinazione di Prova da Modificare', Keys.ENTER)
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
         
         self.input(None,'Nome').setValue(modifica)
-        self.find(By.XPATH, '//div[@id="tab_0"]//button[@id="save"]').click()
+        self.get_element('//div[@id="tab_0"]//button[@id="save"]', By.XPATH).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '//button[@onclick="generaVarianti(this)"]').click()
+        self.get_element('//button[@onclick="generaVarianti(this, By.XPATH)"]').click()
         self.wait_loader()
 
-        self.find(By.XPATH, '//div[@id="tab_0"]//button[@id="save"]').click()
+        self.get_element('//div[@id="tab_0"]//button[@id="save"]', By.XPATH).click()
         self.wait_loader()
 
         self.navigateTo("Combinazioni")
         self.wait_loader()
 
-        self.find(By.XPATH, '//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
     def elimina_combinazioni(self):
@@ -82,14 +82,14 @@ class Combinazioni(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Nome"]/input'))).send_keys('Combinazione di Prova da Eliminare', Keys.ENTER)
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         sleep(1)
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@id="tab_0"]//a[@class="btn btn-danger ask"]'))).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-danger"]'))).click()
         sleep(1)
         
-        self.find(By.XPATH, '//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
         
     def verifica_combinazioni(self):
@@ -103,7 +103,7 @@ class Combinazioni(Test):
 
         modificato=self.driver.find_element(By.XPATH,'//tbody//tr[1]//td[3]').text
         self.assertEqual("Vestito",modificato)
-        self.find(By.XPATH, '//i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
         # Verifica elemento eliminato
@@ -122,10 +122,10 @@ class Combinazioni(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Descrizione"]/input'))).send_keys('Vestito', Keys.ENTER)
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '//a[@id="link-tab_34"]').click() 
+        self.get_element('//a[@id="link-tab_34"]', By.XPATH).click() 
         self.wait_loader()
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@id="tab_34"]//tr[3]')))
@@ -134,13 +134,13 @@ class Combinazioni(Test):
         self.navigateTo("Attributi Combinazioni")
         self.wait_loader()
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '(//button[@class="btn btn-warning btn-xs"])[1]').click()
+        self.get_element('(//button[@class="btn btn-warning btn-xs"])[1]', By.XPATH).click()
         sleep(1)
 
-        element = self.find(By.XPATH, '//input[@id="nome"]')
+        element = self.get_element('//input[@id="nome"]', By.XPATH)
         element.clear()
         element.send_keys("XS",Keys.ENTER)
         sleep(2)
@@ -148,25 +148,25 @@ class Combinazioni(Test):
         self.navigateTo("Articoli")
         self.wait_loader()
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '//a[@id="link-tab_34"]').click() 
+        self.get_element('//a[@id="link-tab_34"]', By.XPATH).click() 
         self.wait_loader()
 
-        taglia=self.find(By.XPATH, '//div[@id="tab_34"]//div[@class="card card-primary"]//tbody//tr//td[2]').text
+        taglia=self.get_element('//div[@id="tab_34"]//div[@class="card card-primary"]//tbody//tr//td[2]', By.XPATH).text
         self.assertEqual(taglia, "Taglie: XS")
 
         # Elimina combinazioni
         self.navigateTo("Combinazioni")
         self.wait_loader()
 
-        self.find(By.XPATH, '//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '//a[@class="btn btn-danger ask"]').click()
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-danger"]').click()
+        self.get_element('//a[@class="btn btn-danger ask"]', By.XPATH).click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()
         self.wait_loader()

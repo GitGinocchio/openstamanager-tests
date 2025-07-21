@@ -13,87 +13,87 @@ class Dashboard(Test):
         self.navigateTo("Dashboard")
         self.wait_loader()
 
-        self.find(By.XPATH, '(//div[@class="info-box"])[1]').click()
+        self.get_element('(//div[@class="info-box"])[1]', By.XPATH).click()
         sleep(1)
-        widget=self.find(By.XPATH, '//div[@class="modal-body"]//p').text
+        widget=self.get_element('//div[@class="modal-body"]//p', By.XPATH).text
         self.assertEqual(widget, "Non ci sono promemoria da pianificare.")
-        self.find(By.XPATH, '//div[@class="modal-content"]//button[@class="close"]').click()
+        self.get_element('//div[@class="modal-content"]//button[@class="close"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '(//div[@class="info-box"])[2]').click()
+        self.get_element('(//div[@class="info-box"])[2]', By.XPATH).click()
         sleep(1)
-        widget=self.find(By.XPATH, '//div[@id="modals"]//tbody//tr//td').text
+        widget=self.get_element('//div[@id="modals"]//tbody//tr//td', By.XPATH).text
         self.assertEqual(widget, "2")
-        self.find(By.XPATH, '//div[@class="modal-content"]//button[@class="close"]').click()
+        self.get_element('//div[@class="modal-content"]//button[@class="close"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '(//div[@class="info-box"])[3]').click()
+        self.get_element('(//div[@class="info-box"])[3]', By.XPATH).click()
         sleep(1)
-        widget=self.find(By.XPATH, '//div[@class="modal-body"]//p').text
+        widget=self.get_element('//div[@class="modal-body"]//p', By.XPATH).text
         self.assertEqual(widget, "Non ci sono note da notificare.")
-        self.find(By.XPATH, '//div[@class="modal-content"]//button[@class="close"]').click()
+        self.get_element('//div[@class="modal-content"]//button[@class="close"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '(//div[@class="info-box"])[4]').click()
+        self.get_element('(//div[@class="info-box"])[4]', By.XPATH).click()
         sleep(1)
-        verifica = self.find(By.XPATH, '//tbody//tr[1]//td[2]').text
+        verifica = self.get_element('//tbody//tr[1]//td[2]', By.XPATH).text
         self.assertEqual(verifica, "Fattura immediata di acquisto numero 01")
 
         self.navigateTo("Dashboard")
         self.wait_loader()
 
-        self.find(By.XPATH, '(//div[@class="info-box"])[5]').click()
+        self.get_element('(//div[@class="info-box"])[5]', By.XPATH).click()
         sleep(1)
-        widget=self.find(By.XPATH, '//div[@class="modal-body"]//div').text
+        widget=self.get_element('//div[@class="modal-body"]//div', By.XPATH).text
         self.assertEqual(widget, "Non ci sono articoli in esaurimento.")
-        self.find(By.XPATH, '//div[@class="modal-content"]//button[@class="close"]').click()
+        self.get_element('//div[@class="modal-content"]//button[@class="close"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '(//div[@class="info-box"])[6]').click()
+        self.get_element('(//div[@class="info-box"])[6]', By.XPATH).click()
         sleep(1)
-        widget=self.find(By.XPATH, '//div[@class="modal-body"]//tr//th').text
+        widget=self.get_element('//div[@class="modal-body"]//tr//th', By.XPATH).text
         self.assertEqual(widget, "Preventivo")
-        self.find(By.XPATH, '//div[@class="modal-content"]//button[@class="close"]').click()
+        self.get_element('//div[@class="modal-content"]//button[@class="close"]', By.XPATH).click()
         sleep(1)
         
-        self.find(By.XPATH, '(//div[@class="info-box"])[7]').click()
+        self.get_element('(//div[@class="info-box"])[7]', By.XPATH).click()
         sleep(1)
-        widget=self.find(By.XPATH, '//div[@class="modal-content"]//p').text
+        widget=self.get_element('//div[@class="modal-content"]//p', By.XPATH).text
         self.assertEqual(widget, "Non ci sono contratti in scadenza.")
-        self.find(By.XPATH, '//div[@class="modal-content"]//button[@class="close"]').click()
+        self.get_element('//div[@class="modal-content"]//button[@class="close"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '(//div[@class="info-box"])[8]').click()
+        self.get_element('(//div[@class="info-box"])[8]', By.XPATH).click()
         sleep(1)
-        widget=self.find(By.XPATH, '(//table[@id="tbl-rate"]//tr//th)[2]').text
+        widget=self.get_element('(//table[@id="tbl-rate"]//tr//th, By.XPATH)[2]').text
         self.assertEqual(widget, "Scadenza")
-        self.find(By.XPATH, '//div[@class="modal-content"]//button[@class="close"]').click()
+        self.get_element('//div[@class="modal-content"]//button[@class="close"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '(//div[@class="info-box"])[9]').click()
+        self.get_element('(//div[@class="info-box"])[9]', By.XPATH).click()
         sleep(1)
-        widget=self.find(By.XPATH, '//div[@class="modal-body"]//label').text
+        widget=self.get_element('//div[@class="modal-body"]//label', By.XPATH).text
         self.assertEqual(widget, "Mese e anno*")
-        self.find(By.XPATH, '//div[@class="modal-content"]//button[@class="close"]').click()
+        self.get_element('//div[@class="modal-content"]//button[@class="close"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '(//div[@class="info-box"])[10]').click()
+        self.get_element('(//div[@class="info-box"])[10]', By.XPATH).click()
         sleep(1)
-        widget=self.find(By.XPATH, '//div[@class="modal-body"]//label').text
+        widget=self.get_element('//div[@class="modal-body"]//label', By.XPATH).text
         self.assertEqual(widget, "Settimana*")
-        self.find(By.XPATH, '//div[@class="modal-content"]//button[@class="close"]').click()
+        self.get_element('//div[@class="modal-content"]//button[@class="close"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '(//div[@class="info-box"])[11]').click()
+        self.get_element('(//div[@class="info-box"])[11]', By.XPATH).click()
         sleep(1)
-        widget=self.find(By.XPATH, '//div[@class="modal-body"]//tbody//tr//th').text
+        widget=self.get_element('//div[@class="modal-body"]//tbody//tr//th', By.XPATH).text
         self.assertEqual(widget, "Codice")
-        self.find(By.XPATH, '//div[@class="modal-content"]//button[@class="close"]').click()
+        self.get_element('//div[@class="modal-content"]//button[@class="close"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '(//div[@class="info-box"])[12]').click()
+        self.get_element('(//div[@class="info-box"])[12]', By.XPATH).click()
         sleep(1)
-        widget=self.find(By.XPATH, '//div[@class="modal-body"]//tbody//tr//th').text
+        widget=self.get_element('//div[@class="modal-body"]//tbody//tr//th', By.XPATH).text
         self.assertEqual(widget, "Attività")
-        self.find(By.XPATH, '//div[@class="modal-content"]//button[@class="close"]').click()
+        self.get_element('//div[@class="modal-content"]//button[@class="close"]', By.XPATH).click()
         sleep(1)
