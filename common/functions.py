@@ -88,11 +88,14 @@ class TestHelperMixin:
         """
         return find_cells(self.driver, self.wait_driver, row, col, multiple=multiple, context=context)
 
-    def get_select_search_results(self, field_name : str, search_query : str | None = None, label_for : str | None = None, context: WebElement | None = None) -> list[WebElement]:
+    def get_select_search_results(self, field_name : str | None = None, search_query : str | None = None, label_for : str | None = None, context: WebElement | None = None) -> list[WebElement]:
         return get_select_search_results(self.driver, self.wait_driver, field_name, search_query, label_for, context=context)
 
-    def get_input(self, label : str) -> WebElement:
-        return get_input(self.driver, self.wait_driver, label)
+    def get_input(self, label : str, context: Optional[WebElement] = None) -> WebElement:
+        return get_input(self.driver, self.wait_driver, label, context)
+
+    def get_textarea(self, label : str, context: Optional[WebElement] = None) -> WebElement:
+        return get_textarea(self.driver, self.wait_driver, label, context)
 
     def get_elements(self, selector : str, by: By = By.ID, context : WebElement | None = None) -> list[WebElement]:
         return get_elements(self.driver, self.wait_driver, selector, by, context)
@@ -133,11 +136,11 @@ class TestHelperMixin:
     def click_plugin(self, name : str) -> None:
         click_plugin(self.driver, self.wait_driver, name)
 
+    def wait_for_visibility(self, selector, by: By = By.ID) -> None:
+        wait_for_visibility(self.driver, self.wait_driver, selector, by)
+
     def wait_for_invisibility(self, selector: str, by : By = By.ID) -> None:
         wait_for_invisibility(self.driver, self.wait_driver, selector, by)
-    
-    def wait_for_visibility(self, selector: str, by: By = By.ID) -> WebElement:
-        return wait_for_visibility(self.driver, self.wait_driver, selector, by)
 
     def wait_swal2_popup(self, mode: Literal["appear", "disappear"] = "appear") -> None:
         """
@@ -178,6 +181,9 @@ class TestHelperMixin:
         """
         scroll_to_element(self.driver, self.wait_driver, element, offset)
 
+    def scroll_to_top(self):
+        scroll_to_top(self.driver, self.wait_driver)
+
     def scroll_to_bottom(self, pause_time: float = 1.0, max_tries: int = 30) -> None:
         """
         Scrolla fino in fondo alla pagina web.
@@ -191,6 +197,12 @@ class TestHelperMixin:
 
     def expand_plugin_sidebar(self):
         expand_plugin_sidebar(self.driver, self.wait_driver)
+
+    def close_toast_popups(self):
+        close_toast_popups(self.driver, self.wait_driver)
+
+    def open_piano_conti_section(self, label: str, exact: bool = False) -> WebElement:
+        return open_piano_conti_section(self.driver, self.wait_driver, label, exact)
 
 def random_string(size: int = 32, chars: str = string.ascii_letters + string.digits) -> str:
     return ''.join(random.choice(chars) for _ in range(size))
@@ -275,7 +287,7 @@ def search_entity(driver: WebDriver, wait_driver: WebDriverWait, name: str) -> N
     search_input.clear()
     search_input.send_keys(name, Keys.ENTER)
 
-def get_select_search_results(driver: WebDriver, wait_driver: WebDriverWait, field_name : str, search_query : str | None = None, label_for : str = None, context : WebElement | None = None) -> list[WebElement]:
+def get_select_search_results(driver: WebDriver, wait_driver: WebDriverWait, field_name : str | None = None, search_query : str | None = None, label_for : str = None, context : WebElement | None = None) -> list[WebElement]:
     """
     Returns a list of `<li>` elements representing search results inside a Select2 dropdown 
     associated with a specific `<label>` element.
@@ -306,18 +318,18 @@ def get_select_search_results(driver: WebDriver, wait_driver: WebDriverWait, fie
     """
     search_root = context if context else driver
 
-    # 1. Trova il <label> corrispondente
-    inner_xpath = f'@for="{label_for}" and ' if label_for else ""
-    xpath = f'.//label[{inner_xpath}contains(normalize-space(string(.)), "{field_name}")]'
+    if not label_for:
+        # 1. Trova il <label> corrispondente
+        xpath = f'.//label[contains(normalize-space(string(.)), "{field_name}")]'
 
-    try:
-        label = wait_driver.until(lambda d: search_root.find_element(By.XPATH, xpath))
-    except TimeoutException:
-        print(f"Label con testo '{field_name}' non trovato.")
-        return []
+        try:
+            label = wait_driver.until(lambda d: search_root.find_element(By.XPATH, xpath))
+        except TimeoutException:
+            print(f"Label con testo '{field_name}' non trovato.")
+            return []
 
-    label_for = label.get_attribute("for")
-    print(f"[DEBUG] label_for: {label_for}")
+        label_for = label.get_attribute("for")
+        print(f"[DEBUG] label_for: {label_for}")
 
     # 2. Apri la Select2
     select_id = f"select2-{label_for}-container"
@@ -330,19 +342,24 @@ def get_select_search_results(driver: WebDriver, wait_driver: WebDriverWait, fie
 
     results_id = f"select2-{label_for}-results"
 
-    # 3. Scrivi nella casella di ricerca, se richiesto
+    # 3. Rimuovi eventuali filtri precedenti con il pulsante "x"
+    clear_buttons = select_span.find_elements(By.CSS_SELECTOR, "span.select2-selection__clear")
+    if clear_buttons:
+        clear_buttons[0].click()
+
+    # 4. Scrivi nella casella di ricerca, se richiesto
     if search_query:
         input_xpath = f'.//input[@aria-controls="{results_id}"]'
         try:
             input_element = wait_driver.until(lambda d: driver.find_element(By.XPATH, input_xpath))
-            input_element.clear()
             input_element.click()
-            input_element.send_keys(search_query, Keys.ENTER)
+            input_element.clear()
+            input_element.send_keys(search_query)
         except TimeoutException:
             print(f"Input di ricerca per '{results_id}' non trovato.")
             return []
 
-    # 4. Attendi che il caricamento termini (loading-results)
+    # 5. Attendi che il caricamento termini (loading-results)
     loading_li_xpath = f'.//ul[@id="{results_id}"]/li[contains(@class, "loading-results")]'
     try:
         loading_elements = driver.find_elements(By.XPATH, loading_li_xpath)
@@ -351,13 +368,11 @@ def get_select_search_results(driver: WebDriver, wait_driver: WebDriverWait, fie
     except TimeoutException:
         print("L'elemento 'loading-results' potrebbe essere ancora visibile dopo il timeout.")
 
-    # 5. Rimuovi eventuali filtri precedenti con il pulsante "x"
-    clear_buttons = select_span.find_elements(By.CSS_SELECTOR, "span.select2-selection__clear")
-    if clear_buttons:
-        clear_buttons[0].click()
-
     # 6. Raccogli i risultati <li>
-    results_xpath = f'.//ul[@id="{results_id}"]/li'
+    if exists(driver, wait_driver, '//li[@aria-label="<i>Nessuna categoria</i>"]', By.XPATH):
+        results_xpath = f'.//li[@aria-label="<i>Nessuna categoria</i>"]/ul'
+    else:
+        results_xpath = f'.//ul[@id="{results_id}"]/li'
     try:
         results = wait_driver.until(lambda d: driver.find_elements(By.XPATH, results_xpath))
         if not search_query and results:
@@ -559,6 +574,11 @@ def wait_loader(driver: WebDriver, wait_driver: WebDriverWait) -> None:
     except:
         pass
 
+def wait_for_visibility(driver : WebDriver, wait_driver : WebDriverWait, selector : str, by : By = By.ID) -> None:
+    wait_driver.until(
+        EC.visibility_of_element_located((by, selector))
+    )
+
 def wait_for_invisibility(driver : WebDriver, wait_driver : WebDriverWait, selector : str, by : By = By.ID) -> None:
     def all_invisible(_):
         try:
@@ -630,27 +650,77 @@ def send_keys_and_wait(driver: WebDriver, wait_driver: WebDriverWait, element: W
 
     return None
 
-def get_input(driver: WebDriver, wait_driver: WebDriverWait, label : str) -> WebElement:
+def get_input(driver: WebDriver, wait_driver: WebDriverWait, label: str, context: Optional[WebElement] = None) -> WebElement:
     """
-    Finds an <input> element associated with a <label> by its visible text and waits until the input is clickable.
+    Finds an <input> element associated with a <label> by its visible text, optionally within a given context,
+    and waits until the input is clickable.
 
     Args:
         driver (WebDriver): The Selenium WebDriver instance.
         wait_driver (WebDriverWait): A WebDriverWait instance used for waiting on elements.
         label (str): The visible text of the <label> element linked to the desired input.
+        context (WebElement, optional): The DOM element within which to search. Defaults to None.
 
     Returns:
-        WebElement: The <input> WebElement associated with the given label, once it becomes clickable.
+        WebElement: The <input> element associated with the given label, once it becomes clickable.
 
     Raises:
-        TimeoutException: If the label or input element is not found or doesn't become clickable in time.
+        TimeoutException: If the label or input is not found or doesn't become clickable in time.
+        ValueError: If the <label> doesn't have a 'for' attribute.
     """
-    xpath = f'//label[contains(normalize-space(string(.)), "{label}")]'
-    label = wait_driver.until(EC.presence_of_element_located((By.XPATH, xpath)))
 
-    label_for = label.get_attribute("for")
+    label_xpath = f'.//label[contains(normalize-space(string(.)), "{label}")]' if context else f'//label[contains(normalize-space(string(.)), "{label}")]'
 
-    return wait_driver.until(EC.element_to_be_clickable((By.XPATH, f'//input[@id="{label_for}"]')))
+    # Trova il <label>
+    label_el = (context or driver).find_element(By.XPATH, label_xpath)
+
+    # Ottieni l'id dell'input associato
+    input_id = label_el.get_attribute("for")
+    if not input_id:
+        raise ValueError(f"No 'for' attribute found on label with text '{label}'")
+
+    # Trova l'<input> con quell'id (nel contesto se fornito)
+    input_xpath = f'.//input[@id="{input_id}"]' if context else f'//input[@id="{input_id}"]'
+    input_el = (context or driver).find_element(By.XPATH, input_xpath)
+
+    # Aspetta che l'input diventi cliccabile
+    return wait_driver.until(EC.element_to_be_clickable(input_el))
+
+def get_textarea(driver: WebDriver, wait_driver: WebDriverWait, label: str, context: Optional[WebElement] = None) -> WebElement:
+    """
+    Finds a <textarea> element associated with a <label> by its visible text, optionally within a given context,
+    and waits until the textarea is clickable.
+
+    Args:
+        driver (WebDriver): The Selenium WebDriver instance.
+        wait_driver (WebDriverWait): A WebDriverWait instance used for waiting on elements.
+        label (str): The visible text of the <label> element linked to the desired textarea.
+        context (WebElement, optional): The DOM element within which to search. Defaults to None.
+
+    Returns:
+        WebElement: The <textarea> element associated with the given label, once it becomes clickable.
+
+    Raises:
+        TimeoutException: If the label or textarea is not found or doesn't become clickable in time.
+        ValueError: If the <label> doesn't have a 'for' attribute.
+    """
+
+    label_xpath = f'.//label[contains(normalize-space(string(.)), "{label}")]' if context else f'//label[contains(normalize-space(string(.)), "{label}")]'
+
+    # Trova il <label>
+    label_el = (context or driver).find_element(By.XPATH, label_xpath)
+
+    # Ottieni l'id della textarea associata
+    textarea_id = label_el.get_attribute("for")
+    if not textarea_id:
+        raise ValueError(f"No 'for' attribute found on label with text '{label}'")
+
+    # Trova la <textarea> con quell'id (nel contesto se fornito)
+    textarea_xpath = f'.//textarea[@id="{textarea_id}"]' if context else f'//textarea[@id="{textarea_id}"]'
+    textarea_el = (context or driver).find_element(By.XPATH, textarea_xpath)
+
+    # Aspetta che la textarea diventi cliccabile
+    return wait_driver.until(EC.element_to_be_clickable(textarea_el))
 
 def get_element(driver: WebDriver, wait_driver: WebDriverWait, selector : str, by: By, context : WebElement | None = None) -> WebElement:
     if context and by == By.XPATH and not selector.strip().startswith('.'):
@@ -677,19 +747,14 @@ def get_elements(driver: WebDriver, wait_driver: WebDriverWait, selector : str, 
 
     return wait_driver.until(elements_are_clickable)
 
-def close_toast_popup(driver: WebDriver, wait_driver: WebDriverWait):
-    """
-    <div id="toast-container" class="toast-bottom-right">
-        <div class="toast toast-success" aria-live="polite" style="">
-            <div class="toast-progress" style="width: 44.05%;">
-            </div>
-        <button type="button" class="toast-close-button" role="button">×</button>
-        <div class="toast-title"></div>
-        <div class="toast-message">Informazioni salvate correttamente!</div>
-        </div>
-    </div>
-    """
-    pass
+def close_toast_popups(driver: WebDriver, wait_driver: WebDriverWait):
+    buttons = driver.find_elements(By.XPATH, '//div[@id="toast-container"]//button[contains(@class, "toast-close-button")]')
+
+    for button in buttons:
+        try:
+            button.click()
+        except Exception as e:
+            print("errore durante il click su un toast popup")
 
 def delete_and_confirm(driver: WebDriver, wait_driver: WebDriverWait, context: WebElement | None = None):
     """
@@ -834,6 +899,11 @@ def scroll_to_element(driver: WebDriver, wait_driver: WebDriverWait, element : W
     y = element.location['y'] - offset
     driver.execute_script(f"window.scrollTo({{ top: {y}, behavior: 'smooth' }});")
 
+def scroll_to_top(driver: WebDriver, wait_driver: WebDriverWait):
+    driver.execute_script("window.scrollTo(0, 0);")
+    # Aspetta che sia arrivato in cima
+    wait_driver.until(lambda d: d.execute_script("return window.pageYOffset;") == 0)
+
 def scroll_to_bottom(driver: WebDriver, wait_driver: WebDriverWait, pause_time: float = 1.0, max_tries: int = 30):
     """
     Scrolla fino in fondo alla pagina web.
@@ -859,3 +929,25 @@ def scroll_to_bottom(driver: WebDriver, wait_driver: WebDriverWait, pause_time: 
             break
         last_height = new_height
         tries += 1
+
+def open_piano_conti_section(driver: WebDriver, wait_driver: WebDriverWait, label: str, exact: bool = False) -> WebElement:
+    if exact:
+        xpath = f'//span[.//text()[normalize-space()="{label}"]]'
+    else:
+        xpath = f'//span[contains(., "{label}")]'
+
+    # Trova e clicca lo span
+    span_element = wait_driver.until(EC.element_to_be_clickable((By.XPATH, xpath)))
+    span_element.click()
+
+    # XPath relativo al fratello div
+    sibling_div_xpath = './following-sibling::div[1]'
+
+    # Aspetta che il div sia visibile
+    sibling_div = wait_driver.until(
+        EC.visibility_of_element_located(
+            (By.XPATH, f'{xpath}/following-sibling::div[1]')
+        )
+    )
+
+    return sibling_div

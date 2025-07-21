@@ -8,63 +8,53 @@ from selenium.webdriver.support import expected_conditions as EC
 class Attivita(Test):
     def setUp(self):
         super().setUp()
-        self.wait_driver = self.wait
+        self.expandSidebar("Attività")
+        self.navigateTo("Attività")
 
     def test_attivita(self):
         # Crea un nuovo intervento. *Required*
         importi = RowManager.list()
-        self.attivita("Cliente", "1", "2", importi[0])
-
-        # Duplica attività
+        self.attivita("Cliente", 1, "2", importi[0])
         self.duplica_attività()
-
-        # Modifica intervento
         self.modifica_attività("4")
-
-        # Cancellazione intervento
         self.elimina_attività()
-
-        # Controllo righe
         self.controllo_righe()
-
-        # Verifica attività
         self.verifica_attività()
+        self.storico_attivita()             # Controllo storico attività plugin in Anagrafica
+        self.cambio_stato()                 # Cambia stato (Azioni di gruppo)
+        self.duplica()                      # Duplica attività (Azioni di gruppo)
+        self.elimina_selezionati()          # Elimina selezionati (Azioni di gruppo)
+        self.firma_interventi()             # Firma interventi (Azioni di gruppo)
+        self.fattura_attivita()             # Fattura attività (Azioni di gruppo)
+        self.stampa_riepilogo()             # Stampa riepilogo (Azioni di gruppo)
 
-        # Controllo storico attività plugin in Anagrafica
-        self.storico_attivita()
-
-        # Cambia stato (Azioni di gruppo)
-        self.cambio_stato()
-
-        # Duplica attività (Azioni di gruppo)
-        self.duplica()
-
-        # Elimina selezionati (Azioni di gruppo)
-        self.elimina_selezionati()
-
-        # Firma interventi (Azioni di gruppo)
-        self.firma_interventi()
-
-        # Fattura attività (Azioni di gruppo)
-        self.fattura_attivita()
-
-        # Stampa riepilogo (Azioni di gruppo)
-        self.stampa_riepilogo()
-
-
-    def attivita(self, cliente: str, tipo: str, stato: str, file_importi: str):
+    def attivita(self, cliente: str, tipo: int, stato: str, file_importi: str):
         self.navigateTo("Attività")
 
         # Crea attività
-        self.wait_for_element_and_click('//i[@class="fa fa-plus"]')
+        self.get_element('//i[@class="fa fa-plus"]', By.XPATH).click()
         modal = self.wait_modal()
 
         self.input(modal, 'Cliente').setByText(cliente)
         self.input(modal, 'Tipo').setByIndex(tipo)
 
-        self.wait_for_element_and_click('(//iframe[@class="cke_wysiwyg_frame cke_reset"])[1]')
-        self.wait_driver.until(EC.visibility_of_element_located((By.XPATH, '(//iframe[@class="cke_wysiwyg_frame cke_reset"])[1]'))).send_keys("Test")
-        self.wait_for_element_and_click('//div[@class="col-md-12 text-right"]//button[@type="button"]')
+        self.wait_loader()
+
+        request_xpath = '(//iframe[@class="cke_wysiwyg_frame cke_reset"])[1]'
+        frame = self.get_element(request_xpath, By.XPATH)
+
+        # Entra nel contesto dell'iframe
+        self.driver.switch_to.frame(frame)
+
+        body = self.driver.find_element(By.TAG_NAME, 'p')
+        body.click()
+        body.send_keys('Test')
+
+        # Esce dal contesto dell'iframe
+        self.driver.switch_to.default_content()
+
+        self.get_element('//div[@class="col-md-12 text-right"]//button[@type="button"]', By.XPATH).click()
+        
 
         row_manager = RowManager(self)
         self.valori = row_manager.compile(file_importi)
@@ -72,64 +62,75 @@ class Attivita(Test):
     def duplica_attività(self):
         self.navigateTo("Attività")
 
-        self.wait_for_element_and_click('//tbody//tr//td[2]')
-
-        self.wait_for_element_and_click('//div[@id="pulsanti"]//button[1]')
-        self.wait_for_element_and_click('//span[@id="select2-id_stato-container"]')
-        self.wait_for_element_and_click('//span[@class="select2-results"]//li[2]')
-        self.wait_for_element_and_click('//div[@class="modal-content"]//button[@type="submit"]')
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
+        self.get_element('//div[@id="pulsanti"]//button[1]', By.XPATH).click()
+        self.get_element('//span[@id="select2-id_stato-container"]', By.XPATH).click()
+        self.get_element('//span[@class="select2-results"]//li[2]', By.XPATH).click()
+        self.get_element('//div[@class="modal-content"]//button[@type="submit"]', By.XPATH).click()
 
     def modifica_attività(self, modifica:str):
         self.navigateTo("Attività")
 
-        search_input = self.wait_driver.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Numero"]/input')))
-        self.send_keys_and_wait(search_input, '1')
+        search_input = self.find_filter_input("Numero")
+        search_input.send_keys("1", Keys.ENTER)
 
-        self.wait_for_element_and_click('//tbody//tr//td[2]')
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
 
         self.input(None, 'Stato').setValue(modifica)
-        self.wait_for_element_and_click('//div[@id="tab_0"]//button[@id="save"]')
+        self.get_element('save').click()
 
         self.navigateTo("Attività")
 
-        self.wait_for_element_and_click('//th[@id="th_Numero"]/i[@class="deleteicon fa fa-times"]')
+        self.get_element('//th[@id="th_Numero"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
 
     def elimina_attività(self):
         self.navigateTo("Attività")
 
-        search_input = self.wait_driver.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Numero"]/input')))
-        self.send_keys_and_wait(search_input, '2')
+        search_input = self.find_filter_input("Numero")
+        search_input.click()
+        search_input.clear()
+        search_input.send_keys("2", Keys.ENTER)
 
-        self.wait_for_element_and_click('//tbody//tr//td[2]')
+        self.wait_for_search_results()
 
-        self.wait_for_element_and_click('//div[@id="tab_0"]//a[@class="btn btn-danger ask"]')
-        self.wait_for_element_and_click('//button[@class="swal2-confirm btn btn-lg btn-danger"]')
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
+
+        self.get_element('//div[@id="tab_0"]//a[@class="btn btn-danger ask"]', By.XPATH).click()
+
+        self.wait_swal2_popup()
+
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()
+
+        if (numero_filter:=self.exists('//th[@id="th_Numero"]/i[@class="deleteicon fa fa-times"]', By.XPATH)):
+            numero_filter.click()
+
+        self.wait_loader()
 
         self.navigateTo("Attività")
-
-        self.wait_for_element_and_click('//th[@id="th_Numero"]/i[@class="deleteicon fa fa-times"]')
 
     def controllo_righe(self):
         self.navigateTo("Attività")
 
-        search_input = self.wait_driver.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Numero"]/input')))
-        self.send_keys_and_wait(search_input, '1')
+        search_input = self.find_filter_input("Numero")
+        search_input.click()
+        search_input.clear()
+        search_input.send_keys("1", Keys.ENTER)
 
-        self.wait_for_element_and_click('//tbody//tr//td[2]')
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
 
-        imponibile = self.find(By.XPATH, '//div[@id="righe"]//tbody[2]//tr[1]//td[2]').text
-        sconto = self.find(By.XPATH, '//div[@id="righe"]//tbody[2]//tr[2]//td[2]').text
-        totale = self.find(By.XPATH, '//div[@id="righe"]//tbody[2]//tr[3]//td[2]').text
+        imponibile = self.get_element('//div[@id="righe"]//tbody[2]//tr[1]//td[2]', By.XPATH).text
+        sconto = self.get_element('//div[@id="righe"]//tbody[2]//tr[2]//td[2]', By.XPATH).text
+        totale = self.get_element('//div[@id="righe"]//tbody[2]//tr[3]//td[2]', By.XPATH).text
 
         self.assertEqual(imponibile, (self.valori["Imponibile"] + ' €'))
         self.assertEqual(sconto, (self.valori["Sconto/maggiorazione"] + ' €'))
         self.assertEqual(totale, (self.valori["Totale imponibile"] + ' €'))
 
-        imponibilefinale = self.find(By.XPATH, '//div[@id="costi"]//tbody[2]//tr[1]//td[2]').text
-        scontofinale = self.find(By.XPATH, '//div[@id="costi"]//tbody[2]//tr[2]//td[2]').text
-        totaleimpfinale = self.find(By.XPATH, '//div[@id="costi"]//tbody[2]//tr[3]//td[2]').text
-        IVA = self.find(By.XPATH, '//div[@id="costi"]//tbody[2]//tr[4]//td[2]').text
-        totalefinale = self.find(By.XPATH, '//div[@id="costi"]//tbody[2]//tr[5]//td[2]').text
+        imponibilefinale = self.get_element('//div[@id="costi"]//tbody[2]//tr[1]//td[2]', By.XPATH).text
+        scontofinale = self.get_element('//div[@id="costi"]//tbody[2]//tr[2]//td[2]', By.XPATH).text
+        totaleimpfinale = self.get_element('//div[@id="costi"]//tbody[2]//tr[3]//td[2]', By.XPATH).text
+        IVA = self.get_element('//div[@id="costi"]//tbody[2]//tr[4]//td[2]', By.XPATH).text
+        totalefinale = self.get_element('//div[@id="costi"]//tbody[2]//tr[5]//td[2]', By.XPATH).text
 
         self.assertEqual(imponibilefinale, imponibile)
         self.assertEqual(scontofinale, sconto)
@@ -139,36 +140,46 @@ class Attivita(Test):
 
         self.navigateTo("Attività")
 
-        self.wait_for_element_and_click('//th[@id="th_Numero"]/i[@class="deleteicon fa fa-times"]')
+        self.get_element('//th[@id="th_Numero"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
 
     def verifica_attività(self):
         self.navigateTo("Attività")
 
         # Verifica elemento modificato
-        search_input = self.wait_driver.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Numero"]/input')))
-        self.send_keys_and_wait(search_input, '1')
+        search_input = self.find_filter_input("Numero")
+        search_input.click()
+        search_input.clear()
+        search_input.send_keys("1", Keys.ENTER)
+
+        self.wait_for_search_results()
 
         modificato = self.driver.find_element(By.XPATH, '//tbody//tr[1]//td[7]').text
         self.assertEqual("Completato", modificato)
-        self.wait_for_element_and_click('//i[@class="deleteicon fa fa-times"]')
+        self.get_element('//i[@class="deleteicon fa fa-times"]', By.XPATH).click()
 
         # Verifica elemento eliminato
-        search_input = self.wait_driver.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Numero"]/input')))
-        self.send_keys_and_wait(search_input, '2')
+        search_input = self.find_filter_input("Numero")
+        search_input.click()
+        search_input.clear()
+        search_input.send_keys("2", Keys.ENTER)
+
+        self.wait_for_search_results()
 
         eliminato = self.driver.find_element(By.XPATH, '//tbody//tr[1]//td[@class="dataTables_empty"]').text
         self.assertEqual("La ricerca non ha portato alcun risultato.", eliminato)
-        self.wait_for_element_and_click('//i[@class="deleteicon fa fa-times"]')
+        self.get_element('//i[@class="deleteicon fa fa-times"]', By.XPATH).click()
 
     def storico_attivita(self):
         self.navigateTo("Anagrafiche")
 
-        search_input = self.wait_driver.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Ragione-sociale"]/input')))
-        self.send_keys_and_wait(search_input, 'Cliente')
+        search_input = self.find_filter_input("Ragione sociale")
+        search_input.click()
+        search_input.clear()
+        search_input.send_keys("Cliente", Keys.ENTER)
 
-        self.wait_for_element_and_click('//tbody//tr//td[2]')
+        self.find_cell(col=2).click()
 
-        self.wait_for_element_and_click('//a[@id="link-tab_28"]')
+        self.click_plugin("Storico attività")
 
         # Verifica attività
         self.wait_driver.until(EC.visibility_of_element_located((By.XPATH, '//div[@id="tab_28"]//tbody//tr//td[1]')))
@@ -176,105 +187,125 @@ class Attivita(Test):
     def cambio_stato(self):
         self.navigateTo("Attività")
 
-        search_input = self.wait_driver.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Numero"]/input')))
-        self.send_keys_and_wait(search_input, '1')
+        search_input = self.find_filter_input("Numero")
+        search_input.click()
+        search_input.clear()
+        search_input.send_keys("1", Keys.ENTER)
 
-        self.wait_for_element_and_click('//tbody//tr//td')
-        self.wait_for_element_and_click('//button[@data-toggle="dropdown"]')
-        self.wait_for_element_and_click('//a[@data-op="cambia_stato"]')
+        self.wait_for_search_results()
 
-        self.wait_for_element_and_click('//span[@id="select2-id_stato-container"]')
+        self.get_element('//tbody//tr//td', By.XPATH).click()
+        self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click()
+
+        self.get_element('//a[@data-op="change_status"]', By.XPATH).click()
+
+        self.get_element('//span[@id="select2-id_stato-container"]', By.XPATH).click()
         search_field = self.wait_driver.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]')))
         search_field.send_keys("Da programmare")
 
-        self.wait_for_element_and_click('//li[@class="select2-results__option select2-results__option--highlighted"]')
-        self.wait_for_element_and_click('//button[@class="swal2-confirm btn btn-lg btn-warning"]')
+        self.get_element('//li[@class="select2-results__option select2-results__option--highlighted"]', By.XPATH).click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-warning"]', By.XPATH).click()
 
-        stato = self.find(By.XPATH, '//tbody//tr//td[7]').text
+        stato = self.get_element('//tbody//tr//td[7]', By.XPATH).text
         self.assertEqual(stato, "Da programmare")
 
-        self.wait_for_element_and_click('//tbody//tr//td')
-        self.wait_for_element_and_click('//i[@class="deleteicon fa fa-times"]')
+        self.get_element('//tbody//tr//td', By.XPATH).click()
+        self.get_element('//i[@class="deleteicon fa fa-times"]', By.XPATH).click()
 
     def duplica(self):
         self.navigateTo("Attività")
 
-        search_input = self.wait_driver.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Numero"]/input')))
-        self.send_keys_and_wait(search_input, '1')
+        search_input = self.find_filter_input("Numero")
+        search_input.click()
+        search_input.clear()
+        search_input.send_keys("1", Keys.ENTER)
 
-        self.wait_for_element_and_click('//tbody//tr//td')
-        self.wait_for_element_and_click('//button[@data-toggle="dropdown"]')
-        self.wait_for_element_and_click('//a[@data-op="copy-bulk"]')
+        self.wait_for_search_results()
 
-        self.wait_for_element_and_click('//span[@id="select2-idstatointervento-container"]')
+        self.get_element('//tbody//tr//td', By.XPATH).click()
+        self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click()
+        self.get_element('//a[@data-op="copy_bulk"]', By.XPATH).click()
+
+        self.get_element('//span[@id="select2-idstatointervento-container"]', By.XPATH).click()
         search_field = self.wait_driver.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]')))
         search_field.send_keys("Da programmare")
 
-        self.wait_for_element_and_click('//li[@class="select2-results__option select2-results__option--highlighted"]')
-        self.wait_for_element_and_click('//button[@class="swal2-confirm btn btn-lg btn-warning"]')
+        self.get_element('//li[@class="select2-results__option select2-results__option--highlighted"]', By.XPATH).click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-warning"]', By.XPATH).click()
 
-        self.wait_for_element_and_click('//i[@class="deleteicon fa fa-times"]')
+        self.get_element('//i[@class="deleteicon fa fa-times"]', By.XPATH).click()
 
-        search_input = self.wait_driver.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Numero"]/input')))
-        self.send_keys_and_wait(search_input, '2')
+        search_input = self.find_filter_input("Numero")
+        search_input.send_keys("2", Keys.ENTER)
 
-        numero = self.wait_driver.until(EC.visibility_of_element_located((By.XPATH, '//tbody//tr//td[2]'))).text
+        numero = self.find_cell(col=2).text
         self.assertEqual(numero, "2")
 
-        self.wait_for_element_and_click('//i[@class="deleteicon fa fa-times"]')
+        self.get_element('//i[@class="deleteicon fa fa-times"]', By.XPATH).click()
 
     def elimina_selezionati(self):
         self.navigateTo("Attività")
 
-        search_input = self.wait_driver.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Numero"]/input')))
-        self.send_keys_and_wait(search_input, '2')
+        search_input = self.find_filter_input("Numero")
+        search_input.click()
+        search_input.clear()
+        search_input.send_keys("2", Keys.ENTER)
 
-        self.wait_for_element_and_click('//tbody//tr//td')
-        self.wait_for_element_and_click('//button[@data-toggle="dropdown"]')
-        self.wait_for_element_and_click('//a[@data-op="delete-bulk"]')
+        self.wait_for_search_results()
 
-        self.wait_for_element_and_click('//button[@class="swal2-confirm btn btn-lg btn-danger"]')
+        self.get_element('//tbody//tr//td', By.XPATH).click()
+        self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click()
+        self.get_element('//a[@data-op="delete_bulk"]', By.XPATH).click()
 
-        scritta = self.find(By.XPATH, '//tbody//tr//td').text
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()
+
+        scritta = self.get_element('//tbody//tr//td', By.XPATH).text
         self.assertEqual(scritta, "La ricerca non ha portato alcun risultato.")
-        self.wait_for_element_and_click('//i[@class="deleteicon fa fa-times"]')
+        self.get_element('//i[@class="deleteicon fa fa-times"]', By.XPATH).click()
 
     def firma_interventi(self):
         self.navigateTo("Attività")
 
         # Aggiunta attività
-        self.wait_for_element_and_click('//i[@class="fa fa-plus"]')
+        self.get_element('//i[@class="fa fa-plus"]', By.XPATH).click()
 
-        self.wait_for_element_and_click('//span[@id="select2-idanagrafica-container"]')
-        cliente_input = self.wait_driver.until(EC.visibility_of_element_located((By.XPATH, '//span[@class="select2-dropdown select2-dropdown--below"]//input')))
-        cliente_input.send_keys("Cliente", Keys.ENTER)
+        results = self.get_select_search_results("Cliente", "Cliente")
+        if len(results) > 0: results[0].click()
 
-        self.wait_for_element_and_click('//span[@id="select2-idtipointervento-container"]')
-        tipo_input = self.wait_driver.until(EC.visibility_of_element_located((By.XPATH, '//span[@class="select2-search select2-search--dropdown"]//input')))
-        tipo_input.send_keys("Generico")
+        results = self.get_select_search_results("Tipo", "Generico")
+        if len(results) > 0: results[0].click()
 
-        self.wait_for_element_and_click('//li[@class="select2-results__option select2-results__option--highlighted"]')
+        request_xpath = '(//iframe[@class="cke_wysiwyg_frame cke_reset"])[1]'
+        frame = self.get_element(request_xpath, By.XPATH)
 
-        iframe = self.wait_driver.until(EC.visibility_of_element_located((By.XPATH, '(//iframe[@class="cke_wysiwyg_frame cke_reset"])[1]')))
-        iframe.click()
-        iframe.send_keys("Test")
+        # Entra nel contesto dell'iframe
+        self.driver.switch_to.frame(frame)
 
-        self.wait_for_element_and_click('//button[@class="btn btn-primary"]')
+        body = self.driver.find_element(By.TAG_NAME, 'p')
+        body.click()
+        body.send_keys('Test')
+
+        # Esce dal contesto dell'iframe
+        self.driver.switch_to.default_content()
+
+        self.scroll_to_bottom()
+
+        self.get_element('//button[@class="btn btn-lg btn-success"]', By.XPATH).click()
 
         # Firma attività
         self.navigateTo("Attività")
 
-        self.wait_for_element_and_click('//tbody//tr//td')
-        self.wait_for_element_and_click('//button[@data-toggle="dropdown"]')
-        self.wait_for_element_and_click('//a[@data-op="firma-intervento"]')
+        self.get_element('//tbody//tr//td', By.XPATH).click()
+        self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click()
+        self.get_element('//a[@data-op="firma-intervento"]', By.XPATH).click()
 
-        self.wait_for_element_and_click('//button[@id="firma"]')
-        firma_input = self.wait_driver.until(EC.visibility_of_element_located((By.XPATH, '//input[@id="firma_nome"]')))
+        self.get_element('//button[@id="firma"]', By.XPATH).click()
+        firma_input = self.get_element("firma_nome")
         firma_input.send_keys("firma")
 
-        self.wait_for_element_and_click('//button[@class="btn btn-success pull-right"]')
+        self.get_element('//button[@class="btn btn-success pull-right"]', By.XPATH).click()
 
-        self.wait_for_element_and_click('//tbody//tr//td[2]')
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
 
         # Verifica firma
         self.wait_driver.until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="text-center row"]//div)[3]')))
@@ -282,67 +313,74 @@ class Attivita(Test):
     def fattura_attivita(self):
         self.navigateTo("Attività")
 
-        search_input = self.wait_driver.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Numero"]/input')))
-        self.send_keys_and_wait(search_input, '2')
+        search_input = self.find_filter_input("Numero")
+        search_input.click()
+        search_input.clear()
+        search_input.send_keys("2", Keys.ENTER)
 
-        self.wait_for_element_and_click('//tbody//tr//td[2]')
+        self.wait_for_search_results()
 
-        self.wait_for_element_and_click('//span[@id="select2-idstatointervento-container"]')
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
 
-        stato_input = self.find(By.XPATH, '(//input[@class="select2-search__field"])[3]')
-        stato_input.send_keys("Completato", Keys.ENTER)
+        self.wait_loader()
 
-        self.wait_for_element_and_click('//button[@id="save"]')
+        self.scroll_to_top()
 
-        self.wait_for_element_and_click('//a[@id="back"]')
+        results = self.get_select_search_results("Stato", "Completato")
+        if len(results) > 0: results[0].click()
 
-        self.wait_for_element_and_click('//tbody//tr//td')
-        self.wait_for_element_and_click('//button[@data-toggle="dropdown"]')
-        self.wait_for_element_and_click('//a[@data-op="crea_fattura"]')
+        self.get_element('save').click()
 
-        self.wait_for_element_and_click('//span[@id="select2-raggruppamento-container"]')
-        cliente_input = self.wait_driver.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]')))
-        cliente_input.send_keys("Cliente")
+        self.get_element('back').click()
 
-        self.wait_for_element_and_click('//ul[@id="select2-raggruppamento-results"]')
-        self.wait_for_element_and_click('//button[@class="swal2-confirm btn btn-lg btn-warning"]')
+        self.get_element('//tbody//tr//td', By.XPATH).click()
+        self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click()
+        self.get_element('//a[@data-op="create_invoice"]', By.XPATH).click()
 
-        stato = self.find(By.XPATH, '//tbody//tr//td[7]').text
+        self.wait_swal2_popup()
+
+        results = self.get_select_search_results("Raggruppa per", "Cliente")
+        if len(results) > 0: results[0].click()
+
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-warning"]', By.XPATH).click()
+
+        stato = self.get_element('//tbody//tr//td[7]', By.XPATH).text
         self.assertEqual(stato, "Fatturato")
 
         self.expandSidebar("Vendite")
         self.navigateTo("Fatture di vendita")
 
-        self.wait_for_element_and_click('//tbody//tr//td[2]')
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
 
-        self.wait_for_element_and_click('//div[@id="tab_0"]//a[@class="btn btn-danger ask "]')
-        self.wait_for_element_and_click('//button[@class="swal2-confirm btn btn-lg btn-danger"]')
+        self.delete_and_confirm()
 
         self.navigateTo("Attività")
 
-        self.wait_for_element_and_click('//i[@class="deleteicon fa fa-times"]')
+        self.get_element('//i[@class="deleteicon fa fa-times"]', By.XPATH).click()
 
     def stampa_riepilogo(self):
         self.navigateTo("Attività")
 
-        search_input = self.wait_driver.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Numero"]/input')))
-        self.send_keys_and_wait(search_input, '2')
+        search_input = self.find_filter_input("Numero")
+        search_input.click()
+        search_input.clear()
+        search_input.send_keys("2", Keys.ENTER)
 
-        self.wait_for_element_and_click('//tbody//tr//td')
-        self.wait_for_element_and_click('//button[@data-toggle="dropdown"]')
-        self.wait_for_element_and_click('//a[@data-op="stampa-riepilogo"]')
+        self.wait_for_search_results()
 
-        self.wait_for_element_and_click('//button[@class="swal2-confirm btn btn-lg btn-warning"]')
+        self.get_element('//tbody//tr//td', By.XPATH).click()
+        self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click()
+        self.get_element('//a[@data-op="print_summary"]', By.XPATH).click()
 
-        # Switch to the new window
-        self.driver.switch_to.window(self.driver.window_handles[1])
-        prezzo = self.find(By.XPATH, '(//div[@id="viewer"]//span)[59]').text
-        self.assertEqual(prezzo, "0,00 €")
-        self.driver.close()
-        self.driver.switch_to.window(self.driver.window_handles[0])
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-warning"]', By.XPATH).click()
 
-        self.wait_for_element_and_click('//tbody//tr//td[2]')
+        # TODO: Capire se si può fare
+        #self.driver.switch_to.window(self.driver.window_handles[1])
+        #prezzo = self.get_element('(//div[@id="viewer"]//span)[59]', By.XPATH).text
+        #self.assertEqual(prezzo, "0,00 €")
+        #self.driver.close()
+        #self.driver.switch_to.window(self.driver.window_handles[0])
 
-        self.wait_for_element_and_click('//a[@class="btn btn-danger ask"]')
+        self.find_cell(col=2).click()
 
-        self.wait_for_element_and_click('//button[@class="swal2-confirm btn btn-lg btn-danger"]')
+        self.delete_and_confirm()

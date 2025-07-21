@@ -52,38 +52,43 @@ class RowManager:
         self.tester.find(By.XPATH, '//a[@class="btn btn-primary"]').click()
         modal = self.tester.wait_modal()
 
+        self.tester.close_toast_popups()
+
         self.fill(modal, data)
 
-        submit_button = modal.find_element(By.CSS_SELECTOR, 'button[onclick="submitForm()"]')
+        submit_button = self.tester.get_element('//button[@onclick="submitForm()"]', By.XPATH, modal)
         submit_button.click()
+
         self.wait.until(EC.staleness_of(modal))
 
+        self.tester.close_toast_popups()
+
     def add_articolo(self, data: dict):
+        self.tester.close_toast_popups()
+
         article_code = data.get('codice', '')
 
-        self.tester.find(By.XPATH, '//span[@id="select2-id_articolo-container"]').click()
-        search_input = self.tester.find(By.XPATH, '//span[@class="select2-search select2-search--dropdown"]//input[@type="search"]')
-        search_input.send_keys(article_code, Keys.ENTER)
+        results = self.tester.get_select_search_results("Articolo", article_code)
+        if len(results) > 0: results[0].click()
 
-        self.wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@onclick="salvaArticolo()"]')))
-
-        save_button = self.tester.find(By.XPATH, '//button[@onclick="salvaArticolo()"]')
+        save_button = self.tester.get_element('//button[@onclick="salvaArticolo()"]', By.XPATH)
         save_button.click()
 
-        self.wait.until(EC.invisibility_of_element_located((By.XPATH, '//button[@onclick="salvaArticolo()"]')))
+        self.tester.close_toast_popups()
 
-    def fill(self, modal, data: dict):
-        self.input(modal, 'Descrizione').setValue(data['descrizione'])
+    def fill(self, modal : WebElement, data: dict):
+        description_input = self.tester.get_element('descrizione_riga', context=modal)
+        description_input.click()
+        description_input.clear()
+        description_input.send_keys(data.get("descrizione","Descrizione di default"))
 
         if 'qta' in data:
             self.input(modal, 'Q.tà').setValue(data['qta'])
 
-        if (self.input(modal, 'Prezzo unitario di vendita')):
-            self.input(modal, 'Prezzo unitario di vendita').setValue(
-                data['prezzo_unitario'])
+        if (prezzo_unitario:=self.input(modal, 'Prezzo unitario di vendita')):
+            prezzo_unitario.setValue(data['prezzo_unitario'])
         else:
-            self.input(modal, 'Prezzo unitario').setValue(
-                data['prezzo_unitario'])
+            self.input(modal, 'Prezzo unitario').setValue(data['prezzo_unitario'])
 
         sconto_xpath = Input.xpath(modal, None, 'input[@id="sconto"]')
         sconto_input = self.tester.find(By.XPATH, sconto_xpath)
@@ -138,13 +143,12 @@ class RowManager:
 
         self.wait.until(EC.presence_of_element_located((By.XPATH, "//div[@class='card-header']/parent::*//table//tr")))
 
-        table_pattern = "//div[@class='card-header']/parent::*//table//tr[contains(., '|name|')][1]//td[2]"
+        table_pattern = "//div[@class='card-header']/parent::*//table//tr[contains(., '{name}')][1]//td[2]"
         valori = {}
 
         for key, value in importi.get('totali', {}).items():
             try:
-                totale = self.tester.find(
-                    By.XPATH, table_pattern.replace('|name|', key.upper() + ':'))
+                totale = self.tester.find(By.XPATH, table_pattern.format(name=key.upper() + ':'))
                 valori[key] = get_text(totale).split()[0]
             except Exception:
                 continue

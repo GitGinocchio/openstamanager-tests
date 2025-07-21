@@ -38,7 +38,7 @@ class OrdiniFornitore(Test):
         self.navigateTo("Ordini fornitore")
 
         # Crea Ordine
-        self.find(By.XPATH,'//i[@class="fa fa-plus"]').click()
+        self.get_element('//i[@class="fa fa-plus"]', By.XPATH).click()
         modal = self.wait_modal()
 
         select = self.input(modal, 'Fornitore')
@@ -50,30 +50,30 @@ class OrdiniFornitore(Test):
         self.valori=row_manager.compile(file_importi)
 
     def modifica_ordine_fornitore(self, modifica):
-        wait = WebDriverWait(self.driver, 20)
         self.navigateTo("Ordini fornitore")
         self.wait_loader()
 
-        wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Numero"]/input'))).send_keys('1', Keys.ENTER)
-        sleep(1)
+        filter_input = self.find_filter_input("Numero")
+        filter_input.click()
+        filter_input.clear()
+        filter_input.send_keys("1", Keys.ENTER)
+        self.wait_for_search_results()
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
 
-        self.driver.execute_script('window.scrollTo(0,0)')
-        sleep(1)
-        
-        self.find(By.XPATH, '//span[@aria-labelledby="select2-idstatoordine-container"]').click()
-        wait.until(EC.visibility_of_element_located((By.XPATH, '//span[@class="select2-search select2-search--dropdown"]//input[@type="search"]'))).send_keys("Accettato")
-        wait.until(EC.visibility_of_element_located((By.XPATH, '//li[@class="select2-results__option select2-results__option--highlighted"]'))).click()
-        wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@id="tab_0"]//button[@id="save"]'))).click()
-        sleep(1)
+        self.scroll_to_top()
+
+        results = self.get_select_search_results("Stato*", "Accettato")
+        if len(results) > 0: results[0].click()
+
+        self.get_element("save").click()
 
         # Estrazione totali righe
-        sconto = self.find(By.XPATH, '//div[@id="righe"]//tbody[2]//tr[2]//td[2]').text
-        totale_imponibile = self.find(By.XPATH, '//div[@id="righe"]//tbody[2]//tr[3]//td[2]').text
-        iva = self.find(By.XPATH, '//div[@id="righe"]//tbody[2]//tr[4]//td[2]').text
-        totale = self.find(By.XPATH, '//div[@id="tab_0"]//div[@id="righe"]//tbody[2]//tr[5]//td[2]').text
+        sconto = self.get_element('//div[@id="righe"]//tbody[2]//tr[2]//td[2]', By.XPATH).text
+        totale_imponibile = self.get_element('//div[@id="righe"]//tbody[2]//tr[3]//td[2]', By.XPATH).text
+        iva = self.get_element('//div[@id="righe"]//tbody[2]//tr[4]//td[2]', By.XPATH).text
+        totale = self.get_element('//div[@id="tab_0"]//div[@id="righe"]//tbody[2]//tr[5]//td[2]', By.XPATH).text
 
         self.assertEqual(sconto, (self.valori["Sconto/maggiorazione"]+ ' €'))
         self.assertEqual(totale_imponibile, (self.valori["Totale imponibile"]+ ' €'))
@@ -83,73 +83,71 @@ class OrdiniFornitore(Test):
         self.navigateTo("Ordini fornitore")
         self.wait_loader()  
 
-        self.find(By.XPATH, '//th[@id="th_Numero"]/i[@class="deleteicon fa fa-times"]').click()
-        sleep(1)
+        self.get_element('//th[@id="th_Numero"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
 
     def elimina_ordine_fornitore(self):
         wait = WebDriverWait(self.driver, 20)
         self.navigateTo("Ordini fornitore")
         self.wait_loader()  
 
-        wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Numero"]/input'))).send_keys('2', Keys.ENTER)
-        sleep(1)
+        filter_input = self.find_filter_input("Numero")
+        filter_input.click()
+        filter_input.clear()
+        filter_input.send_keys("2", Keys.ENTER)
+        self.wait_for_search_results()
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
-        sleep(1)
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
 
-        wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@id="tab_0"]//a[@class="btn btn-danger ask"]'))).click()
-        wait.until(EC.visibility_of_element_located((By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-danger"]'))).click()
+        self.get_element('//div[@id="tab_0"]//a[@class="btn btn-danger ask"]', By.XPATH).click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '//th[@id="th_Numero"]/i[@class="deleteicon fa fa-times"]').click()
-        sleep(1)
+        self.get_element('//th[@id="th_Numero"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
 
     def verifica_ordine_fornitore(self):
         wait = WebDriverWait(self.driver, 20)
         self.navigateTo("Ordini fornitore")
-        self.wait_loader()  
+        self.wait_loader()
 
-        # Verifica elemento modificato
-        wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_icon_title_Stato"]/input'))).send_keys("Accettato", Keys.ENTER)
-        sleep(1)
+        filter_input = self.get_element("th_icon_title_Stato")
+        filter_input.click()
+        filter_input.clear()
+        filter_input.send_keys("Accettato", Keys.ENTER)
 
         modificato=self.driver.find_element(By.XPATH,'//tbody//tr[1]//td[6]').text
         self.assertEqual("Accettato",modificato)
-        self.find(By.XPATH, '//i[@class="deleteicon fa fa-times"]').click()
-        sleep(1)
+        self.get_element('//i[@class="deleteicon fa fa-times"]', By.XPATH).click()
 
-        # Verifica elemento eliminato
-        wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Numero"]/input'))).send_keys("2", Keys.ENTER)
-        sleep(1)
+        filter_input = self.find_filter_input("Numero")
+        filter_input.click()
+        filter_input.clear()
+        filter_input.send_keys("2", Keys.ENTER)
 
         eliminato=self.driver.find_element(By.XPATH,'//tbody//tr[1]//td[@class="dataTables_empty"]').text
         self.assertEqual("La ricerca non ha portato alcun risultato.",eliminato)
-        self.find(By.XPATH, '//th[@id="th_Numero"]/i[@class="deleteicon fa fa-times"]').click()
-        sleep(1)
+        self.get_element('//th[@id="th_Numero"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
 
     def cambia_stato(self):
         wait = WebDriverWait(self.driver, 20)
         self.navigateTo("Ordini fornitore")
         self.wait_loader() 
 
-        wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Numero"]/input'))).send_keys("1", Keys.ENTER) 
-        sleep(1)
+        filter_input = self.find_filter_input("Numero")
+        filter_input.click()
+        filter_input.clear()
+        filter_input.send_keys("1", Keys.ENTER)
 
-        self.find(By.XPATH, '//tbody//tr//td').click() 
-        self.find(By.XPATH, '//button[@data-toggle="dropdown"]').click()  
-        self.find(By.XPATH, '//a[@data-op="cambia_stato"]').click() 
-        sleep(1)
+        self.get_element('//tbody//tr//td', By.XPATH).click() 
+        self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click()  
+        self.get_element('//a[@data-op="change_status"]', By.XPATH).click() 
 
-        self.find(By.XPATH, '//span[@id="select2-id_stato-container"]').click() 
-        wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys("Evaso")
-        sleep(1)
+        results = self.get_select_search_results("Stato*", "Evaso")
+        if len(results) > 0: results[0].click()
 
-        self.find(By.XPATH, '//ul[@id="select2-id_stato-results"]').click()
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-warning"]').click() 
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-warning"]', By.XPATH).click() 
         self.wait_loader()
 
-        stato=self.find(By.XPATH, '//tbody//tr//td[6]').text
+        stato=self.get_element('//tbody//tr//td[6]', By.XPATH).text
         self.assertEqual(stato, "Evaso")  
 
-        self.find(By.XPATH, '//th[@id="th_Numero"]/i[@class="deleteicon fa fa-times"]').click() 
-        sleep(1)
+        self.get_element('//th[@id="th_Numero"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click() 

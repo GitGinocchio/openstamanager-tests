@@ -48,8 +48,8 @@ class Anagrafiche(Test):
         self.search_entity("Cliente")
         self.click_first_result()
 
-        print("qui è lento e non so perchè")
-        self.get_select_search_results("Tipologia", tipologia)
+        results = self.get_select_search_results("Tipologia", tipologia)
+        if len(results) > 0: results[0].click()
 
         piva = self.get_input("Partita IVA")
         piva.clear()

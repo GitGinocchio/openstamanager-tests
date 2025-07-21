@@ -15,7 +15,7 @@ class Dashboard(Test):
         self.wait_loader()
 
         actions = webdriver.common.action_chains.ActionChains(self.driver)
-        calendar = self.driver.find_element(By.XPATH, '//div[@id="calendar"]')
+        calendar = self.driver.find_element(By.ID, 'calendar')
         actions.move_to_element(calendar).move_by_offset(300, 100).click().perform()
         modal = self.wait_modal()
 
@@ -23,39 +23,47 @@ class Dashboard(Test):
         self.input(modal, 'Tipo').setByIndex("1")
         expected_text = "Int. 1 Cliente\nTecnici: Stefano Bianchi"
 
-        self.wait_for_element_and_click('//a[@id="tecnici-sessioni-tab"]')
-        self.wait_for_element_and_click('(//div[@id="tab_tecnici_sessioni"]//i[@class="fa fa-plus"])[2]')
+        self.get_element('//a[@id="tecnici-sessioni-tab"]', By.XPATH).click()
+        self.get_element('(//div[@id="tab_tecnici_sessioni"]//i[@class="fa fa-plus"])[2]', By.XPATH).click()
         self.wait_loader()
         technician_modal = self.wait_modal()
 
         denominazione_input = self.get_input("Denominazione")
         denominazione_input.send_keys("Stefano Bianchi")
 
-        self.wait_for_element_and_click('//div[@class="col-md-12 text-right"]//button[@type="submit"]')
+        self.get_element('//div[@class="col-md-12 text-right"]//button[@type="submit"]', By.XPATH).click()
         self.wait_loader()
 
-        description_field = self.find(By.XPATH, '(//iframe[@class="cke_wysiwyg_frame cke_reset"])[1]')
-        description_field.click()
-        description_field = self.wait_driver.until(EC.visibility_of_element_located(
-            (By.XPATH, '(//iframe[@class="cke_wysiwyg_frame cke_reset"])[1]')
-        ))
-        self.send_keys_and_wait(description_field, "Test", wait_modal=False)
+        #https://stackoverflow.com/questions/49603312/interacting-with-ckeditor-in-selenium-python
+
+        request_xpath = '(//iframe[@class="cke_wysiwyg_frame cke_reset"])[1]'
+        frame = self.get_element(request_xpath, By.XPATH)
+
+        # Entra nel contesto dell'iframe
+        self.driver.switch_to.frame(frame)
+
+        body = self.driver.find_element(By.TAG_NAME, 'p')
+        body.click()
+        body.send_keys('Test')
+
+        # Esce dal contesto dell'iframe
+        self.driver.switch_to.default_content()
 
         self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
         close_toast_button = self.wait_driver.until(EC.element_to_be_clickable((By.CLASS_NAME, "toast-close-button")))
         close_toast_button.click()
 
-        self.wait_for_element_and_click('//div[@class="col-md-12 text-right"]//button[@type="button"]')
+        self.get_element('//div[@class="col-md-12 text-right"]//button[@type="button"]', By.XPATH).click()
         self.wait_loader()
 
         self.navigateTo("Dashboard")
         self.wait_loader()
 
-        self.wait_for_element_and_click('//div[@class="tab-content"]//div[@class="row"]//div[@id="dashboard_tecnici"]//button[@type="button"]')
+        self.get_element('//div[@class="tab-content"]//div[@class="row"]//div[@id="dashboard_tecnici"]//button[@type="button"]', By.XPATH).click()
         self.wait_loader()
 
-        self.wait_for_element_and_click('//div[@id="dashboard_tecnici"]//button[@class="btn btn-primary btn-sm seleziona_tutto"]')
+        self.get_element('//div[@id="dashboard_tecnici"]//button[@class="btn btn-primary btn-sm seleziona_tutto"]', By.XPATH).click()
         self.wait_loader()
 
         activity = self.wait_driver.until(EC.element_to_be_clickable((By.XPATH, '//div[@class="fc-event-main"]')))
@@ -67,10 +75,9 @@ class Dashboard(Test):
         self.navigateTo("Attività")
         self.wait_loader()
 
-        search_input = self.wait_driver.until(EC.visibility_of_element_located(
-            (By.XPATH, '//th[@id="th_Numero"]/input')
-        ))
-        self.send_keys_and_wait(search_input, "1", wait_modal=False)
+        search_input = self.find_filter_input("Numero")
+        search_input.click()
+        search_input.send_keys("1")
         self.wait_loader()
 
         technician_name = self.wait_driver.until(EC.visibility_of_element_located((By.XPATH, '//tbody//tr[1]//td[12]'))).text
@@ -79,11 +86,11 @@ class Dashboard(Test):
         self.navigateTo("Attività")
         self.wait_loader()
 
-        self.wait_for_element_and_click('//tbody//tr//td[2]')
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
 
-        self.wait_for_element_and_click('//div[@id="tab_0"]//a[@class="btn btn-danger ask"]')
-        self.wait_for_element_and_click('//button[@class="swal2-confirm btn btn-lg btn-danger"]')
+        self.get_element('//div[@id="tab_0"]//a[@class="btn btn-danger ask"]', By.XPATH).click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()
         self.wait_loader()
 
         self.navigateTo("Attività")
