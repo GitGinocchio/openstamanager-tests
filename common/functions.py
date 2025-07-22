@@ -204,6 +204,9 @@ class TestHelperMixin:
     def open_piano_conti_section(self, label: str, exact: bool = False) -> WebElement:
         return open_piano_conti_section(self.driver, self.wait_driver, label, exact)
 
+    def open_new_window_when_available(self):
+        open_new_window_when_available(self.driver, self.wait_driver)
+
 def random_string(size: int = 32, chars: str = string.ascii_letters + string.digits) -> str:
     return ''.join(random.choice(chars) for _ in range(size))
 
@@ -587,6 +590,8 @@ def wait_for_invisibility(driver : WebDriver, wait_driver : WebDriverWait, selec
         except StaleElementReferenceException:
             # One or more elements were detached from the DOM — assume they are gone
             return True
+        except TimeoutException:
+            return True
 
     wait_driver.until(all_invisible)
 
@@ -951,3 +956,16 @@ def open_piano_conti_section(driver: WebDriver, wait_driver: WebDriverWait, labe
     )
 
     return sibling_div
+
+def open_new_window_when_available(driver: WebDriver, wait_driver: WebDriverWait) -> None:
+    # Salva l'handle della scheda corrente
+    original_window = driver.current_window_handle
+
+    # Attendi fino a quando una nuova finestra non è disponibile
+    wait_driver.until(lambda d: len(d.window_handles) > 1)
+
+    # Trova la nuova finestra che non è quella originale
+    for handle in driver.window_handles:
+        if handle != original_window:
+            driver.switch_to.window(handle)
+            break
