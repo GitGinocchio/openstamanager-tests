@@ -352,10 +352,19 @@ class FattureVendita(Test):
         self.get_element('//i[@class="fa fa-plus"]', By.XPATH).click()
         modal = self.wait_modal()
 
-        select = self.input(modal, 'Fornitore')
-        select.setByText("Fornitore Estero")
-        sleep(1)
-        self.input(modal, 'N. fattura del fornitore').setValue("02")
+        results = self.get_select_search_results("Fornitore*", "Fornitore")
+        if len(results) > 0: results[0].click()
+
+        n_fattura_input = self.get_input("N. fattura del fornitore*", modal)
+        n_fattura_input.click()
+        n_fattura_input.clear()
+        n_fattura_input.send_keys("02", Keys.ENTER)
+
+        results = self.get_select_search_results("Tipo documento*")
+        if len(results) > 0: results[0].click()
+
+        results = self.get_select_search_results("Sezionale*")
+        if len(results) > 0: results[0].click()
 
         # Submit
         modal.find_element(By.CSS_SELECTOR, 'button[type="submit"]').click()
@@ -366,35 +375,41 @@ class FattureVendita(Test):
 
         # Inserisco le righe
 
-        self.input(self.get_element('//div[@id="tab_0"]', By.XPATH), 'Pagamento').setByIndex(pagamento)
+        self.scroll_to_top()
+        results = self.get_select_search_results("Pagamento", pagamento, label_for="idpagamento")
+        if len(results) > 0: results[0].click()
+
         row_manager = RowManager(self)
         row_manager.compile(file_importi)
 
-        wait.until(EC.invisibility_of_element_located((By.XPATH, '//div[@class="toast-message"]')))
+        self.close_toast_popups()
         self.get_element('(//a[@title="Modifica riga"])[1]', By.XPATH).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '//span[@id="select2-idiva-container"]'))).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys('Non imponibile')
         wait.until(EC.visibility_of_element_located((By.XPATH, '//li[@class="select2-results__option select2-results__option--highlighted"]'))).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '//button[@onclick="submitForm()"]'))).click()
-        sleep(1)
+        
+        self.wait_loader()
 
-        wait.until(EC.invisibility_of_element_located((By.XPATH, '//div[@class="toast-message"]')))
+        self.close_toast_popups()
         self.get_element('(//a[@title="Modifica riga"])[2]', By.XPATH).click()  
         wait.until(EC.visibility_of_element_located((By.XPATH, '//span[@id="select2-idiva-container"]'))).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys('Non imponibile')
         wait.until(EC.visibility_of_element_located((By.XPATH, '//li[@class="select2-results__option select2-results__option--highlighted"]'))).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '//button[@onclick="submitForm()"]'))).click()
-        sleep(1)
+       
+        self.wait_loader()
 
-        wait.until(EC.invisibility_of_element_located((By.XPATH, '//div[@class="toast-message"]')))
+        self.close_toast_popups()
         self.get_element('(//a[@title="Modifica riga"])[3]', By.XPATH).click()  
         wait.until(EC.visibility_of_element_located((By.XPATH, '//span[@id="select2-idiva-container"]'))).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys('Non imponibile')
         wait.until(EC.visibility_of_element_located((By.XPATH, '//li[@class="select2-results__option select2-results__option--highlighted"]'))).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '//button[@onclick="submitForm()"]'))).click()
-        sleep(1)
+        
+        self.wait_loader()
 
-        wait.until(EC.invisibility_of_element_located((By.XPATH, '//div[@class="toast-message"]')))
+        self.close_toast_popups()
         self.get_element('(//a[@title="Modifica riga"])[4]', By.XPATH).click()  
         wait.until(EC.visibility_of_element_located((By.XPATH, '//span[@id="select2-idiva-container"]'))).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys('Non imponibile')
@@ -402,36 +417,47 @@ class FattureVendita(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//button[@onclick="submitForm()"]'))).click()
         sleep(1)
 
-        wait.until(EC.invisibility_of_element_located((By.XPATH, '//div[@class="toast-message"]')))
+        self.close_toast_popups()
         self.get_element('(//a[@title="Modifica riga"])[5]', By.XPATH).click()  
         wait.until(EC.visibility_of_element_located((By.XPATH, '//span[@id="select2-idiva-container"]'))).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys('Non imponibile')
         wait.until(EC.visibility_of_element_located((By.XPATH, '//li[@class="select2-results__option select2-results__option--highlighted"]'))).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '//button[@onclick="submitForm()"]'))).click()
-        sleep(1)
+        
+        self.wait_loader()
 
-        self.input(None,'Stato*').setByText("Emessa")
-        self.driver.execute_script('window.scrollTo(0,0)')
-        sleep(1)
+        self.scroll_to_top()
+
+        results = self.get_select_search_results("Stato*", "Emessa")
+        if len(results) > 0: results[0].click()
+        self.scroll_to_top()
         
         self.get_element('//div[@id="tab_0"]//button[@id="save"]', By.XPATH).click()
-        sleep(1)
+
+        self.wait_loader()
 
         # Creazione autofattura
+        """
+        A che serve sta roba?
         wait.until(EC.visibility_of_element_located((By.XPATH, '//button[@class="btn btn-primary unblockable dropdown-toggle "]'))).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '//a[@class="btn dropdown-item bound clickable"]'))).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@class="modal-body"]//span[@class="select2-selection select2-selection--single"]'))).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '//span[@class="select2-search select2-search--dropdown"]//input[@type="search"]'))).send_keys("TD17")
         wait.until(EC.visibility_of_element_located((By.XPATH, '//li[@class="select2-results__option select2-results__option--highlighted"]'))).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@class="modal-body"]//button[@type="submit"]'))).click()
+        """
         self.wait_loader()
+
+        self.scroll_to_top()
     
-        self.input(None,'Stato*').setByText("Emessa")
-        self.driver.execute_script('window.scrollTo(0,0)')
-        sleep(1)
+        results = self.get_select_search_results("Stato*", "Emessa")
+        if len(results) > 0: results[0].click()
+        self.scroll_to_top()
         
         self.get_element('//div[@id="tab_0"]//button[@id="save"]', By.XPATH).click()
         self.wait_loader()
+
+        self.scroll_to_bottom()
 
         totale_imponibile = self.get_element('//div[@id="righe"]//tbody[2]//tr[1]//td[2]', By.XPATH).text
         iva = self.get_element('//div[@id="righe"]//tbody[2]//tr[2]//td[2]', By.XPATH).text
@@ -445,9 +471,13 @@ class FattureVendita(Test):
         wait = WebDriverWait(self.driver, 20)
         self.navigateTo("Fatture di vendita")
         self.wait_loader()
-        
-        wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Tipo"]/input'))).send_keys("Fattura immediata di vendita", Keys.ENTER)
-        sleep(1) 
+
+        filter_input = self.find_filter_input("Tipo")
+        filter_input.click()
+        filter_input.clear()
+        filter_input.send_keys("Fattura immediata di vendita", Keys.ENTER)
+
+        self.wait_for_search_results()
 
         self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader() 
@@ -455,6 +485,9 @@ class FattureVendita(Test):
         self.get_element('//a[@id="link-tab_37"]', By.XPATH).click()
         self.get_element('//a[@class="btn btn-info btn-lg"]', By.XPATH).click()
         self.wait_loader() 
+
+        print("qui")
+        time.sleep(10000)
         
         # Verifica movimenti contabili
         dare=self.get_element('(//td[@class="text-right"])[21]', By.XPATH).text
@@ -466,15 +499,18 @@ class FattureVendita(Test):
 
         self.navigateTo("Fatture di vendita")
         self.get_element('//i[@class="deleteicon fa fa-times"]', By.XPATH).click()
-        sleep(1)
 
     def plugin_movimenti_contabili(self):
         wait = WebDriverWait(self.driver, 20)
         self.navigateTo("Anagrafiche")
         self.wait_loader() 
 
-        wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Ragione-sociale"]/input'))).send_keys("Cliente", Keys.ENTER)
-        sleep(1)
+        filter_input = self.find_filter_input("Ragione sociale")
+        filter_input.click()
+        filter_input.clear()
+        filter_input.send_keys("Cliente", Keys.ENTER)
+
+        self.wait_for_search_results()
 
         self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader() 
@@ -488,15 +524,18 @@ class FattureVendita(Test):
 
         self.navigateTo("Anagrafiche")
         self.get_element('//i[@class="deleteicon fa fa-times"]', By.XPATH).click()
-        sleep(1)
 
     def regole_pagamenti(self):
         wait = WebDriverWait(self.driver, 20)
         self.navigateTo("Anagrafiche")
         self.wait_loader() 
 
-        wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Ragione-sociale"]/input'))).send_keys("Cliente", Keys.ENTER)
-        sleep(1)
+        filter_input = self.find_filter_input("Ragione sociale")
+        filter_input.click()
+        filter_input.clear()
+        filter_input.send_keys("Cliente", Keys.ENTER)
+
+        self.wait_for_search_results()
 
         self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader() 
@@ -550,7 +589,7 @@ class FattureVendita(Test):
         self.get_element('//button[@id="save"]', By.XPATH).click()
         self.wait_loader()
 
-        wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@class="alert alert-warning"]')))
+        #wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@class="alert alert-warning"]')))
 
         element = self.get_element('//input[@id="data_concordata0"]', By.XPATH)
         element.clear()
@@ -573,8 +612,10 @@ class FattureVendita(Test):
         self.navigateTo("Fatture di vendita")
         self.wait_loader()
 
-        wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Tipo"]/input'))).send_keys("Fattura immediata di vendita", Keys.ENTER)
-        sleep(1) 
+        filter_input = self.find_filter_input("Tipo")
+        filter_input.click()
+        filter_input.clear()
+        filter_input.send_keys("Fattura immediata di vendita", Keys.ENTER)
 
         self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
@@ -583,22 +624,26 @@ class FattureVendita(Test):
         self.get_element('//a[@id="link-tab_42"]', By.XPATH).click()
         self.wait_loader()
 
-        wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@id="tab_42"]//tr[5]//td'))) 
-        sleep(1)
+        # A cosa serve?
+        #wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@id="tab_42"]//tr[5]//td'))) 
+        #sleep(1)
 
         self.navigateTo("Fatture di vendita")
         self.wait_loader()
 
         self.get_element('//i[@class="deleteicon fa fa-times"]', By.XPATH).click()
-        sleep(1)
 
     def controlla_allegati(self): 
         wait = WebDriverWait(self.driver, 20)
         self.navigateTo("Anagrafiche")
         self.wait_loader() 
 
-        wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Ragione-sociale"]/input'))).send_keys("Cliente", Keys.ENTER)
-        sleep(1)
+        filter_input = self.find_filter_input("Ragione sociale")
+        filter_input.click()
+        filter_input.clear()
+        filter_input.send_keys("Cliente", Keys.ENTER)
+
+        self.wait_for_search_results()
 
         self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader() 
@@ -607,11 +652,10 @@ class FattureVendita(Test):
         self.get_element('//div[@id="tab_30"]//a[@class="btn btn-info btn-lg"]', By.XPATH).click()
         self.wait_loader()
 
-        wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@id="tab_30"]//a[@class="btn btn-xs btn-primary"]')))
+        #wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@id="tab_30"]//a[@class="btn btn-xs btn-primary"]')))
 
         self.navigateTo("Anagrafiche")
         self.get_element('//i[@class="deleteicon fa fa-times"]', By.XPATH).click()
-        sleep(1)
 
         self.expandSidebar("Vendite")
 
@@ -622,8 +666,8 @@ class FattureVendita(Test):
 
         self.get_element('//tbody//tr//td', By.XPATH).click() 
         self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click()  
-        self.get_element('//a[@data-op="copy-bulk"]', By.XPATH).click()   
-        sleep(1)
+        self.get_element('//a[@data-op="copy_bulk"]', By.XPATH).click()
+        self.wait_swal2_popup()
         
         self.get_element('//button[@class="swal2-confirm btn btn-lg btn-warning"]', By.XPATH).click() 
         self.wait_loader()
@@ -635,13 +679,17 @@ class FattureVendita(Test):
         self.navigateTo("Fatture di vendita")
         self.wait_loader()
 
+        self.scroll_to_bottom()
+
         self.get_element('//tbody//tr//td', By.XPATH).click()
         self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click() 
-        self.get_element('//a[@data-op="cambia-sezionale"]', By.XPATH).click() 
-        sleep(1)
+        self.get_element('//a[@data-op="change_segment"]', By.XPATH).click() 
 
-        self.get_element('//span[@id="select2-id_segment-container"]', By.XPATH).click()
-        self.get_element('//ul[@id="select2-id_segment-results"]', By.XPATH).click()  
+        self.wait_swal2_popup()
+
+        results = self.get_select_search_results("Sezionale*")
+        if len(results) > 0: results[0].click()
+
         self.get_element('//button[@class="swal2-confirm btn btn-lg btn-warning"]', By.XPATH).click() 
         self.wait_loader()
 
@@ -656,8 +704,9 @@ class FattureVendita(Test):
 
         self.get_element('//tbody//tr//td', By.XPATH).click() 
         self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click() 
-        self.get_element('//a[@data-op="cambia-sezionale"]', By.XPATH).click() 
-        sleep(1)
+        self.get_element('//a[@data-op="change_segment"]', By.XPATH).click() 
+        
+        self.wait_swal2_popup()
 
         self.get_element('//span[@id="select2-id_segment-container"]', By.XPATH).click()   
         self.get_element('//ul[@id="select2-id_segment-results"]', By.XPATH).click() 
@@ -681,8 +730,9 @@ class FattureVendita(Test):
         self.get_element('//tbody//tr//td', By.XPATH).click() 
 
         self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click()
-        self.get_element('//a[@data-op="change-stato"]', By.XPATH).click() 
-        sleep(1)
+        self.get_element('//a[@data-op="change_status"]', By.XPATH).click()
+
+        self.wait_swal2_popup()
 
         self.get_element('//button[@class="swal2-confirm btn btn-lg btn-warning"]', By.XPATH).click() 
         self.wait_loader()
@@ -711,7 +761,7 @@ class FattureVendita(Test):
 
         self.get_element('//tbody//tr//td', By.XPATH).click() 
         self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click()  
-        self.get_element('//a[@data-op="check-bulk"]', By.XPATH).click()  
+        self.get_element('//a[@data-op="check_bulk"]', By.XPATH).click()  
         sleep(1)
 
         self.get_element('//button[@class="swal2-confirm btn btn-lg btn-warning"]', By.XPATH).click() 
@@ -733,7 +783,7 @@ class FattureVendita(Test):
 
         self.get_element('//tbody//tr//td', By.XPATH).click()
         self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click()
-        self.get_element('//a[@data-op="registrazione-contabile"]', By.XPATH).click() 
+        self.get_element('//a[@data-op="registrazione_contabile"]', By.XPATH).click() 
         sleep(1)
 
         totale=self.get_element('//th[@id="totale_dare"]', By.XPATH).text 
@@ -755,7 +805,7 @@ class FattureVendita(Test):
 
         self.get_element('//tbody//tr//td', By.XPATH).click()
         self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click()  
-        self.get_element('//a[@data-op="genera-xml"]', By.XPATH).click()
+        self.get_element('//a[@data-op="export_xml_bulk"]', By.XPATH).click()
         sleep(1)
 
         self.get_element('//button[@class="swal2-confirm btn btn-lg btn-warning"]', By.XPATH).click()
@@ -790,7 +840,7 @@ class FattureVendita(Test):
 
         self.get_element('//tbody//tr//td', By.XPATH).click()  
         self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click() 
-        self.get_element('//a[@data-op="delete-bulk"]', By.XPATH).click()  
+        self.get_element('//a[@data-op="delete_bulk"]', By.XPATH).click()  
         sleep(1)
 
         self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()   

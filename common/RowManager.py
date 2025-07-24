@@ -164,7 +164,7 @@ class RowManager:
 
         if os.path.exists(path):
             try:
-                with open(path, 'r') as json_file:
+                with open(path, 'r', encoding="utf-8") as json_file:
                     return json.load(json_file)
             except json.JSONDecodeError:
                 print(f"Error: Invalid JSON format in file {path}")
