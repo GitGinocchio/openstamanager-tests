@@ -45,14 +45,14 @@ class Scadenzario(Test):
 
         # Crea una nuova scadenza. 
         # Apre la schermata di nuovo elemento
-        self.find(By.XPATH,'//i[@class="fa fa-plus"]').click()
+        self.get_element('//i[@class="fa fa-plus"]', By.XPATH).click()
         modal = self.wait_modal()
 
         self.input(modal, 'Tipo').setByText(tipo)
         self.input(modal, 'Anagrafica').setByText(nome)
         self.input(modal, 'Importo').setValue(importo)
 
-        self.find(By.XPATH, '(//iframe[@class="cke_wysiwyg_frame cke_reset"])[1]').click()  
+        self.get_element('(//iframe[@class="cke_wysiwyg_frame cke_reset"])[1]', By.XPATH).click()  
         wait.until(EC.visibility_of_element_located((By.XPATH, '(//iframe[@class="cke_wysiwyg_frame cke_reset"])[1]'))).send_keys(descrizione)
 
         # Submit
@@ -67,12 +67,12 @@ class Scadenzario(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Descrizione-scadenza"]/input'))).send_keys('Scadenza di Prova', Keys.ENTER)
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
         
-        self.find(By.XPATH,'(//iframe[@class="cke_wysiwyg_frame cke_reset"])[2]').send_keys(modifica) 
+        self.get_element('(//iframe[@class="cke_wysiwyg_frame cke_reset"])[2]', By.XPATH).send_keys(modifica) 
 
-        self.find(By.XPATH, '//div[@id="tab_0"]//button[@id="save"]').click()
+        self.get_element('//div[@id="tab_0"]//button[@id="save"]', By.XPATH).click()
         sleep(1)
                 
         self.navigateTo("Scadenzario")
@@ -83,20 +83,20 @@ class Scadenzario(Test):
         self.navigateTo("Scadenzario")
         self.wait_loader()  
 
-        self.find(By.XPATH, '//th[@id="th_Descrizione-scadenza"]/i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//th[@id="th_Descrizione-scadenza"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Descrizione-scadenza"]/input'))).send_keys('Scadenza di Prova da Eliminare', Keys.ENTER)
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         sleep(1)
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@id="tab_0"]//a[@class="btn btn-danger ask"]'))).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-danger"]'))).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '//th[@id="th_Descrizione-scadenza"]/i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//th[@id="th_Descrizione-scadenza"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
     def verifica_scadenza(self):
@@ -110,7 +110,7 @@ class Scadenzario(Test):
 
         modificato=self.driver.find_element(By.XPATH,'//tbody//tr[1]//td[2]').text
         self.assertEqual("Scadenza di Prova",modificato)
-        self.find(By.XPATH, '//i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
         # Verifica elemento eliminato
@@ -119,7 +119,7 @@ class Scadenzario(Test):
         
         eliminato=self.driver.find_element(By.XPATH,'//tbody//tr[1]//td[@class="dataTables_empty"]').text
         self.assertEqual("La ricerca non ha portato alcun risultato.",eliminato)
-        self.find(By.XPATH, '(//i[@class="deleteicon fa fa-times"])[1]').click() 
+        self.get_element('(//i[@class="deleteicon fa fa-times"])[1]', By.XPATH).click() 
         sleep(1)
         
     def registrazione_contabile(self):
@@ -130,18 +130,18 @@ class Scadenzario(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Descrizione-scadenza"]/input'))).send_keys("Fattura immediata di acquisto numero 01", Keys.ENTER)  
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td').click() 
-        self.find(By.XPATH, '//button[@data-toggle="dropdown"]').click()
-        self.find(By.XPATH, '//a[@data-op="registrazione-contabile"]').click() 
+        self.get_element('//tbody//tr//td', By.XPATH).click() 
+        self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click()
+        self.get_element('//a[@data-op="registrazione-contabile"]', By.XPATH).click() 
         sleep(2)
 
         # TODO: fare la registrazione contabile
         
-        self.find(By.XPATH, '//button[@class="close"]').click() 
+        self.get_element('//button[@class="close"]', By.XPATH).click() 
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td').click() 
-        self.find(By.XPATH, '(//i[@class="deleteicon fa fa-times"])[1]').click() 
+        self.get_element('//tbody//tr//td', By.XPATH).click() 
+        self.get_element('(//i[@class="deleteicon fa fa-times"])[1]', By.XPATH).click() 
         sleep(1)
 
     def info_distinta(self):
@@ -152,20 +152,20 @@ class Scadenzario(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Descrizione-scadenza"]/input'))).send_keys("Fattura immediata di acquisto numero 01", Keys.ENTER)  
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td').click() 
-        self.find(By.XPATH, '//button[@data-toggle="dropdown"]').click() 
-        self.find(By.XPATH, '//a[@data-op="change_distinta"]').click() 
+        self.get_element('//tbody//tr//td', By.XPATH).click() 
+        self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click() 
+        self.get_element('//a[@data-op="change_distinta"]', By.XPATH).click() 
         sleep(1)
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@id="distinta"]'))).send_keys("Prova") 
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-warning"]').click() 
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-warning"]', By.XPATH).click() 
         self.wait_loader()
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click() 
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click() 
         self.wait_loader()
 
         self.navigateTo("Scadenzario")
         self.wait_loader()
 
-        self.find(By.XPATH, '(//i[@class="deleteicon fa fa-times"])[1]').click() 
+        self.get_element('(//i[@class="deleteicon fa fa-times"])[1]', By.XPATH).click() 
         sleep(1)

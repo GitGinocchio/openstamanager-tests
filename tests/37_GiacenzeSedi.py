@@ -35,23 +35,23 @@ class GiacenzeSedi(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Ragione-sociale"]/input'))).send_keys("Admin spa", Keys.ENTER)
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()    
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()    
         sleep(1) 
 
         #Aggiunta sede
         wait.until(EC.visibility_of_element_located((By.XPATH, '//a[@id="link-tab_4"]'))).click()
         sleep(1)
 
-        self.find(By.XPATH, '//div[@id="tab_4"]//i[@class="fa fa-plus"]').click()
+        self.get_element('//div[@id="tab_4"]//i[@class="fa fa-plus"]', By.XPATH).click()
         sleep(1)
 
         self.input(None, 'Nome sede').setValue("Sede di Roma")
-        self.find(By.XPATH, '(//input[@id="cap"])[2]').send_keys("35042")
-        self.find(By.XPATH, '(//input[@id="citta"])[2]').click()
-        self.find(By.XPATH, '(//input[@id="citta"])[2]').send_keys("Roma")
+        self.get_element('(//input[@id="cap"])[2]', By.XPATH).send_keys("35042")
+        self.get_element('(//input[@id="citta"])[2]', By.XPATH).click()
+        self.get_element('(//input[@id="citta"])[2]', By.XPATH).send_keys("Roma")
 
-        self.find(By.XPATH, '(//span[@id="select2-id_nazione-container"])[2]').click()
-        self.find(By.XPATH, '//li[@class="select2-results__option select2-results__option--highlighted"]').click()
+        self.get_element('(//span[@id="select2-id_nazione-container"])[2]', By.XPATH).click()
+        self.get_element('//li[@class="select2-results__option select2-results__option--highlighted"]', By.XPATH).click()
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '(//div[@id="form_2-4"]//i[@class="fa fa-plus"])[4]'))).click()
         sleep(1)
@@ -64,12 +64,12 @@ class GiacenzeSedi(Test):
 
         # Crea un nuovo ddt al cliente indicato. 
         # Apre la schermata di nuovo elemento
-        self.find(By.XPATH,'//i[@class="fa fa-plus"]').click()
+        self.get_element('//i[@class="fa fa-plus"]', By.XPATH).click()
         modal = self.wait_modal()
 
         select = self.input(modal, 'Destinatario')
         select.setByText(cliente)
-        self.find(By.XPATH, '//li[@class="select2-results__option select2-results__option--highlighted"]').click()
+        self.get_element('//li[@class="select2-results__option select2-results__option--highlighted"]', By.XPATH).click()
         sleep(1)
 
         select = self.input(modal, 'Causale trasporto')
@@ -83,32 +83,32 @@ class GiacenzeSedi(Test):
         row_manager = RowManager(self)
         self.valori=row_manager.compile(file_importi)
 
-        self.find(By.XPATH, '//span[@id="select2-idsede_destinazione-container"]').click()
-        self.find(By.XPATH, '//input[@class="select2-search__field"]').send_keys("Roma")
+        self.get_element('//span[@id="select2-idsede_destinazione-container"]', By.XPATH).click()
+        self.get_element('//input[@class="select2-search__field"]', By.XPATH).send_keys("Roma")
         sleep(1)
 
-        self.find(By.XPATH, '//input[@class="select2-search__field"]').send_keys(Keys.ENTER)
+        self.get_element('//input[@class="select2-search__field"]', By.XPATH).send_keys(Keys.ENTER)
         sleep(1)
 
-        self.find(By.XPATH, '//span[@id="select2-idstatoddt-container"]').click()
-        self.find(By.XPATH, '//input[@class="select2-search__field"]').send_keys("Evaso", Keys.ENTER)    
-        self.find(By.XPATH, '//button[@id="save"]').click()    
+        self.get_element('//span[@id="select2-idstatoddt-container"]', By.XPATH).click()
+        self.get_element('//input[@class="select2-search__field"]', By.XPATH).send_keys("Evaso", Keys.ENTER)    
+        self.get_element('//button[@id="save"]', By.XPATH).click()    
         sleep(1) 
 
     def trasporto(self):  
         self.navigateTo("Ddt in uscita")
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()    
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()    
         sleep(1) 
 
-        self.find(By.XPATH, '//button[@onclick="completaTrasporto()"]').click()
-        self.find(By.XPATH, '//span[@id="select2-id_segment-container"]').click()
-        self.find(By.XPATH, '//input[@class="select2-search__field"]').send_keys("Standard ddt in entrata")
+        self.get_element('//button[@onclick="completaTrasporto(, By.XPATH)"]').click()
+        self.get_element('//span[@id="select2-id_segment-container"]', By.XPATH).click()
+        self.get_element('//input[@class="select2-search__field"]', By.XPATH).send_keys("Standard ddt in entrata")
         sleep(1)
 
-        self.find(By.XPATH, '//li[@class="select2-results__option select2-results__option--highlighted"]').click()
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-success"]').click()  
+        self.get_element('//li[@class="select2-results__option select2-results__option--highlighted"]', By.XPATH).click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-success"]', By.XPATH).click()  
         sleep(1)
 
     def verifica_movimenti(self):

@@ -11,5 +11,3 @@ class Listini(Test):
     def test_listini(self):
         self.navigateTo("Magazzino")
         self.navigateTo("Listini")
-
-

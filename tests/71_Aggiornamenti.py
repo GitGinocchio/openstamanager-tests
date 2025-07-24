@@ -27,7 +27,7 @@ class Aggiornamenti(Test):
         sleep(1)
 
         WebDriverWait(self.driver, 5).until(EC.visibility_of_element_located((By.XPATH, '//button[@onclick="controlli(this)"]'))).click()
-        self.find(By.XPATH, '//button[@onclick="avviaControlli(this);"]').click()
+        self.get_element('//button[@onclick="avviaControlli(this, By.XPATH);"]').click()
         sleep(1)
 
         WebDriverWait(self.driver, 5).until(EC.visibility_of_element_located((By.XPATH, '//button[@class="close"]'))).click()

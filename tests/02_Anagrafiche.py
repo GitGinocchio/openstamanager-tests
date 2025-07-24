@@ -109,7 +109,7 @@ class Anagrafiche(Test):
         self.wait_for_search_results()
 
         context = self.get_element("tab_0")
-        entity_name = self.find_cell(row=1, col=4, context=context).text
+        entity_name = self.find_cell(row=1, col=3, context=context).text
         self.assertEqual("Cliente", entity_name)
 
         self.navigateTo("Anagrafiche")
@@ -148,9 +148,11 @@ class Anagrafiche(Test):
         description_field.send_keys("Test", Keys.ENTER)
         
         self.get_element('//div[@class="col-md-12 text-right"]//button[@type="button"]', By.XPATH).click()
+        self.wait_loader()
 
         self.navigateTo("Anagrafiche")
         self.wait_loader()
+
         self.search_entity("Cliente")
         self.click_first_result()
 
@@ -199,6 +201,7 @@ class Anagrafiche(Test):
         self.input(modal, 'Nome').setValue("Preventivo di prova anagrafica")
         
         self.get_element('(//div[@id="form_13-"]//button[@class="btn btn-primary"])', By.XPATH).click()
+        self.wait_loader()
 
         self.navigateTo("Anagrafiche")
         self.wait_loader()
@@ -217,8 +220,10 @@ class Anagrafiche(Test):
         
         self.get_element('(//div[@class="card-body"]//li//a)[5]', By.XPATH).click()
 
-        self.wait_driver.until(lambda driver: len(driver.window_handles) > 1)
-        self.driver.switch_to.window(self.driver.window_handles[1])
+        self.open_new_window_when_available()
+
+        self.wait_loader()
+        self.scroll_to_bottom()
         
         self.get_element('//div[@id="tab_0"]//a[@class="btn btn-danger ask"]', By.XPATH).click()
         self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()
@@ -226,6 +231,7 @@ class Anagrafiche(Test):
 
         self.driver.close()
         self.driver.switch_to.window(self.driver.window_handles[0])
+        self.wait_loader()
 
         self.navigateTo("Anagrafiche")
         self.clear_filters()
@@ -247,6 +253,8 @@ class Anagrafiche(Test):
         if len(results) > 0: results[0].click()
 
         self.get_element('(//div[@id="form_31-"]//button[@class="btn btn-primary"])', By.XPATH).click()
+
+        self.wait_loader()
 
         self.get_element('//div[@id="tab_0"]//a[@class="btn btn-danger ask"]', By.XPATH).click()
         self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()
@@ -272,18 +280,23 @@ class Anagrafiche(Test):
 
         self.navigateTo("Anagrafiche")
         self.wait_loader()
+
         self.search_entity("Cliente")
         self.click_first_result()
 
         self.get_element('//button[@class="btn btn-tool"]', By.XPATH).click()
 
         order_text = self.get_element('(//div[@class="card-body"]//li)[7]', By.XPATH).text
+
         self.assertEqual("Ordine cliente 01", order_text[0:17])
 
+        self.scroll_to_bottom()
         self.get_element('(//div[@class="card-body"]//li//a)[5]', By.XPATH).click()
 
-        self.wait_driver.until(lambda driver: len(driver.window_handles) > 1)
-        self.driver.switch_to.window(self.driver.window_handles[1])
+        self.open_new_window_when_available()
+        self.wait_loader()
+
+        self.scroll_to_bottom()
 
         self.get_element('//div[@id="tab_0"]//a[@class="btn btn-danger ask"]', By.XPATH).click()
         self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()

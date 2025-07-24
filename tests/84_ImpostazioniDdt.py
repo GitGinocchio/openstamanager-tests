@@ -23,14 +23,14 @@ class Impostazioni(Test):
         self.navigateTo("Ddt in entrata")
         self.wait_loader()
 
-        self.find(By.XPATH,'//i[@class="fa fa-plus"]').click()
+        self.get_element('//i[@class="fa fa-plus"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//span[@id="select2-idanagrafica_add-container"]').click() 
+        self.get_element('//span[@id="select2-idanagrafica_add-container"]', By.XPATH).click() 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys("Admin spa", Keys.ENTER)
-        self.find(By.XPATH, '//span[@id="select2-idcausalet-container"]').click()   
+        self.get_element('//span[@id="select2-idcausalet-container"]', By.XPATH).click()   
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys("Conto lavorazione", Keys.ENTER)
-        self.find(By.XPATH, '//button[@class="btn btn-primary"]').click() 
+        self.get_element('//button[@class="btn btn-primary"]', By.XPATH).click() 
         self.wait_loader()
 
 
@@ -38,66 +38,66 @@ class Impostazioni(Test):
         self.valori=row_manager.compile(file_importi)
         sleep(1)
 
-        self.find(By.XPATH, '//span[@id="select2-idstatoddt-container"]').click() 
+        self.get_element('//span[@id="select2-idstatoddt-container"]', By.XPATH).click() 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys("Evaso", Keys.ENTER)
-        self.find(By.XPATH, '//button[@id="save"]').click()
+        self.get_element('//button[@id="save"]', By.XPATH).click()
         self.wait_loader()
 
         self.navigateTo("Ddt in entrata")
         self.wait_loader()
 
-        self.find(By.XPATH, '//tbody//tr//td').click()   
-        self.find(By.XPATH, '//button[@data-toggle="dropdown"]').click() 
-        self.find(By.XPATH, '//a[@data-op="crea_fattura"]').click() 
+        self.get_element('//tbody//tr//td', By.XPATH).click()   
+        self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click() 
+        self.get_element('//a[@data-op="crea_fattura"]', By.XPATH).click() 
         sleep(1)
 
-        self.find(By.XPATH, '//span[@id="select2-raggruppamento-container"]').click()   
+        self.get_element('//span[@id="select2-raggruppamento-container"]', By.XPATH).click()   
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys("Cliente")
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys(Keys.ENTER)
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-warning"]').click() 
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-warning"]', By.XPATH).click() 
         self.wait_loader()
 
-        stato=self.find(By.XPATH, '//tbody//tr//td[11]').text 
+        stato=self.get_element('//tbody//tr//td[11]', By.XPATH).text 
         self.assertEqual(stato, "Fatturato")
-        self.find(By.XPATH, '//tbody//tr[1]//td[2]').click()
+        self.get_element('//tbody//tr[1]//td[2]', By.XPATH).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '//a[@class="btn btn-danger ask"]').click()
+        self.get_element('//a[@class="btn btn-danger ask"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-danger"]').click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()
         self.wait_loader()
 
         self.expandSidebar("Acquisti")
         self.navigateTo("Fatture di acquisto")
         self.wait_loader()
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click() 
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click() 
         self.wait_loader()
     
-        self.find(By.XPATH, '//a[@id="elimina"]').click()   
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-danger"]').click()  
+        self.get_element('//a[@id="elimina"]', By.XPATH).click()   
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()  
         self.wait_loader()
 
         self.expandSidebar("Magazzino")
         self.navigateTo("Ddt in uscita")
         self.wait_loader()
 
-        self.find(By.XPATH,'//i[@class="fa fa-plus"]').click() 
+        self.get_element('//i[@class="fa fa-plus"]', By.XPATH).click() 
         sleep(1)
 
-        self.find(By.XPATH, '//span[@id="select2-idanagrafica_add-container"]').click()
+        self.get_element('//span[@id="select2-idanagrafica_add-container"]', By.XPATH).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys("Admin spa")
         sleep(1)
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys(Keys.ENTER)
 
-        self.find(By.XPATH, '//span[@id="select2-idcausalet-container"]').click()
+        self.get_element('//span[@id="select2-idcausalet-container"]', By.XPATH).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys("Conto lavorazione")
         sleep(1)
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys(Keys.ENTER)
-        self.find(By.XPATH, '//button[@class="btn btn-primary"]').click()
+        self.get_element('//button[@class="btn btn-primary"]', By.XPATH).click()
         self.wait_loader()
 
         row_manager = RowManager(self)
@@ -105,43 +105,43 @@ class Impostazioni(Test):
         sleep(1)
 
         self.driver.execute_script('window.scrollTo(0,0)')
-        self.find(By.XPATH, '//span[@id="select2-idstatoddt-container"]').click() 
+        self.get_element('//span[@id="select2-idstatoddt-container"]', By.XPATH).click() 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys("Evaso", Keys.ENTER)
-        self.find(By.XPATH, '//button[@id="save"]').click()
+        self.get_element('//button[@id="save"]', By.XPATH).click()
         self.wait_loader()
 
         self.navigateTo("Ddt in uscita")
         self.wait_loader()
 
-        self.find(By.XPATH, '//tbody//tr//td').click()    
-        self.find(By.XPATH, '//button[@data-toggle="dropdown"]').click() 
-        self.find(By.XPATH, '//a[@data-op="crea_fattura"]').click()  
+        self.get_element('//tbody//tr//td', By.XPATH).click()    
+        self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click() 
+        self.get_element('//a[@data-op="crea_fattura"]', By.XPATH).click()  
         sleep(1)
 
-        self.find(By.XPATH, '//span[@id="select2-raggruppamento-container"]').click()   
+        self.get_element('//span[@id="select2-raggruppamento-container"]', By.XPATH).click()   
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys("Cliente")
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys(Keys.ENTER)
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-warning"]').click() 
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-warning"]', By.XPATH).click() 
         self.wait_loader()
 
-        stato2=self.find(By.XPATH, '//tbody//tr//td[11]').text  
+        stato2=self.get_element('//tbody//tr//td[11]', By.XPATH).text  
         self.assertEqual(stato2, "Fatturato")
-        self.find(By.XPATH, '//tbody//tr[1]//td[2]').click()
+        self.get_element('//tbody//tr[1]//td[2]', By.XPATH).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '//a[@class="btn btn-danger ask"]').click()
+        self.get_element('//a[@class="btn btn-danger ask"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-danger"]').click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()
         self.wait_loader()
 
         self.expandSidebar("Vendite")
         self.navigateTo("Fatture di vendita")
         self.wait_loader()
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()  
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()  
         self.wait_loader()
     
-        self.find(By.XPATH, '//a[@id="elimina"]').click()  
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-danger"]').click()  
+        self.get_element('//a[@id="elimina"]', By.XPATH).click()  
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()  
         self.wait_loader()

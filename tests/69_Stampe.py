@@ -25,4 +25,4 @@ class Stampe(Test):
         self.navigateTo("Stampe")
         self.wait_loader()
         
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()

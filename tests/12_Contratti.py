@@ -63,7 +63,7 @@ class Contratti(Test):
         self.wait_loader() 
 
         # Crea Contratto
-        self.find(By.XPATH,'//i[@class="fa fa-plus"]').click()
+        self.get_element('//i[@class="fa fa-plus"]', By.XPATH).click()
         modal = self.wait_modal()
 
         self.input(modal, 'Nome').setValue(nome)
@@ -80,17 +80,17 @@ class Contratti(Test):
         self.navigateTo("Contratti")
         self.wait_loader()
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         sleep(1)
         
         wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@id="pulsanti"]//button[@class="btn btn-primary ask"]'))).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-primary"]'))).click()
         self.wait_loader()
 
-        element=self.find(By.XPATH,'//input[@id="nome"]')
+        element=self.get_element('//input[@id="nome"]', By.XPATH)
         element.clear()
         element.send_keys("Contratto di Prova da Eliminare") 
-        self.find(By.XPATH, '//button[@id="save"]').click()
+        self.get_element('//button[@id="save"]', By.XPATH).click()
         self.wait_loader()
 
     def modifica_contratto(self, modifica=str):
@@ -101,20 +101,20 @@ class Contratti(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Nome"]/input'))).send_keys('=Contratto di Prova da Modificare', Keys.ENTER)
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
         
-        element=self.find(By.XPATH,'//input[@id="nome"]')
+        element=self.get_element('//input[@id="nome"]', By.XPATH)
         element.clear()
         element.send_keys(modifica) 
-        self.find(By.XPATH, '//div[@id="tab_0"]//button[@id="save"]').click()
+        self.get_element('//div[@id="tab_0"]//button[@id="save"]', By.XPATH).click()
         sleep(1)
 
         # Estrazione totali righe
-        sconto = self.find(By.XPATH, '//div[@id="righe"]//tbody[2]//tr[2]//td[2]').text
-        totale_imponibile = self.find(By.XPATH, '//div[@id="righe"]//tbody[2]//tr[3]//td[2]').text
-        iva = self.find(By.XPATH, '//div[@id="righe"]//tbody[2]//tr[4]//td[2]').text
-        totale = self.find(By.XPATH, '//div[@id="tab_0"]//div[@id="righe"]//tbody[2]//tr[5]//td[2]').text
+        sconto = self.get_element('//div[@id="righe"]//tbody[2]//tr[2]//td[2]', By.XPATH).text
+        totale_imponibile = self.get_element('//div[@id="righe"]//tbody[2]//tr[3]//td[2]', By.XPATH).text
+        iva = self.get_element('//div[@id="righe"]//tbody[2]//tr[4]//td[2]', By.XPATH).text
+        totale = self.get_element('//div[@id="tab_0"]//div[@id="righe"]//tbody[2]//tr[5]//td[2]', By.XPATH).text
 
         self.assertEqual(sconto, (self.valori["Sconto/maggiorazione"]+ ' €'))
         self.assertEqual(totale_imponibile, (self.valori["Totale imponibile"]+ ' €'))
@@ -124,7 +124,7 @@ class Contratti(Test):
         self.navigateTo("Contratti")
         self.wait_loader()
 
-        self.find(By.XPATH, '//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
     def elimina_contratto(self):
@@ -135,14 +135,14 @@ class Contratti(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Nome"]/input'))).send_keys('Contratto di Prova da Eliminare', Keys.ENTER)        
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         sleep(1)
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@id="tab_0"]//a[@class="btn btn-danger ask"]'))).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-danger"]'))).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
     def verifica_contratto(self):
@@ -156,7 +156,7 @@ class Contratti(Test):
 
         modificato=self.driver.find_element(By.XPATH,'//tbody//tr[1]//td[3]').text
         self.assertEqual("Contratto di Prova",modificato)
-        self.find(By.XPATH, '//i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
         # Verifica elemento eliminato
@@ -165,7 +165,7 @@ class Contratti(Test):
 
         eliminato=self.driver.find_element(By.XPATH,'//tbody//tr[1]//td[@class="dataTables_empty"]').text
         self.assertEqual("La ricerca non ha portato alcun risultato.",eliminato)
-        self.find(By.XPATH, '//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//th[@id="th_Nome"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
     def contratti_del_cliente(self):
@@ -176,10 +176,10 @@ class Contratti(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Ragione-sociale"]/input'))).send_keys("Cliente", Keys.ENTER)
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader() 
 
-        self.find(By.XPATH, '//a[@id="link-tab_35"]').click()
+        self.get_element('//a[@id="link-tab_35"]', By.XPATH).click()
         sleep(1)
         
         wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@id="tab_35"]//tbody//tr/td[2]')))
@@ -193,18 +193,18 @@ class Contratti(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Nome"]/input'))).send_keys("Contratto di Prova", Keys.ENTER)
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr/td[2]').click()
+        self.get_element('//tbody//tr/td[2]', By.XPATH).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '//a[@id="link-tab_13"]').click()
+        self.get_element('//a[@id="link-tab_13"]', By.XPATH).click()
 
-        budget=self.find(By.XPATH, '//div[@id="tab_13"]//span[@class="text-success"]').text
+        budget=self.get_element('//div[@id="tab_13"]//span[@class="text-success"]', By.XPATH).text
         self.assertEqual(budget, "+ 264,80 €")
 
         self.navigateTo("Contratti")
         self.wait_loader()
 
-        self.find(By.XPATH, '//i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
     def pianificazione_attivita(self):
@@ -212,55 +212,55 @@ class Contratti(Test):
         self.navigateTo("Contratti")
         self.wait_loader()
 
-        self.find(By.XPATH,'//i[@class="fa fa-plus"]').click()
+        self.get_element('//i[@class="fa fa-plus"]', By.XPATH).click()
         modal = self.wait_modal()
         
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@id="nome"]'))).send_keys("Manutenzione")
-        self.find(By.XPATH, '//span[@id="select2-idanagrafica-container"]').click()
+        self.get_element('//span[@id="select2-idanagrafica-container"]', By.XPATH).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys("Cliente", Keys.ENTER)
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@id="data_accettazione"]'))).send_keys("01/01/2025")
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@id="data_conclusione"]'))).send_keys("31/12/2025")
-        self.find(By.XPATH, '//button[@class="btn btn-primary"]').click()
+        self.get_element('//button[@class="btn btn-primary"]', By.XPATH).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '//a[@class="btn btn-primary"]').click()
+        self.get_element('//a[@class="btn btn-primary"]', By.XPATH).click()
         sleep(1)
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//textarea[@id="descrizione_riga"]'))).send_keys("Manutenzione")
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@id="qta"]'))).send_keys("12")
-        self.find(By.XPATH, '//span[@id="select2-um-container"]').click()
+        self.get_element('//span[@id="select2-um-container"]', By.XPATH).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '(//input[@class="select2-search__field"])[2]'))).send_keys("pz", Keys.ENTER)
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@id="prezzo_unitario"]'))).send_keys("50")
-        self.find(By.XPATH, '//button[@class="btn btn-primary pull-right"]').click()
+        self.get_element('//button[@class="btn btn-primary pull-right"]', By.XPATH).click()
         sleep(1)
 
         self.driver.execute_script('window.scrollTo(0,0)')
-        self.find(By.XPATH, '//span[@id="select2-idstato-container"]').click()
+        self.get_element('//span[@id="select2-idstato-container"]', By.XPATH).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '(//input[@class="select2-search__field"])[2]'))).send_keys("In lavorazione", Keys.ENTER)
-        self.find(By.XPATH, '//button[@id="save"]').click()
+        self.get_element('//button[@id="save"]', By.XPATH).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '//a[@id="link-tab_14"]').click()
+        self.get_element('//a[@id="link-tab_14"]', By.XPATH).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '//span[@id="select2-id_tipo_promemoria-container"]').click()
+        self.get_element('//span[@id="select2-id_tipo_promemoria-container"]', By.XPATH).click()
         sleep(1)
         
         wait.until(EC.visibility_of_element_located((By.XPATH, '//span[@class="select2-search select2-search--dropdown"]//input[@class="select2-search__field"]'))).send_keys("Generico", Keys.ENTER)
-        self.find(By.XPATH, '//button[@id="add_promemoria"]').click()
+        self.get_element('//button[@id="add_promemoria"]', By.XPATH).click()
         sleep(1)
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '(//iframe[@class="cke_wysiwyg_frame cke_reset"])[3]'))).click()  
         wait.until(EC.visibility_of_element_located((By.XPATH, '(//iframe[@class="cke_wysiwyg_frame cke_reset"])[3]'))).send_keys("Manutenzione")
-        self.find(By.XPATH, '//span[@id="select2-id_segment-container"]').click()
+        self.get_element('//span[@id="select2-id_segment-container"]', By.XPATH).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '//span[@class="select2-search select2-search--dropdown"]//input[@class="select2-search__field"]'))).send_keys("Standard attività", Keys.ENTER)
-        self.find(By.XPATH, '//div[@class="modal-content"]//button[@class="btn btn-primary"]').click()
+        self.get_element('//div[@class="modal-content"]//button[@class="btn btn-primary"]', By.XPATH).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '//button[@class="btn btn-primary btn-sm  "]').click()
+        self.get_element('//button[@class="btn btn-primary btn-sm  "]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '(//button[@class="btn btn-primary"])[3]').click()
+        self.get_element('(//button[@class="btn btn-primary"])[3]', By.XPATH).click()
         self.wait_loader()
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//tbody//tr[1]//a')))
@@ -273,53 +273,53 @@ class Contratti(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Nome"]/input'))).send_keys("Manutenzione", Keys.ENTER)
         sleep(1)
 
-        self.find(By.XPATH,'//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
  
-        self.find(By.XPATH, '//a[@id="link-tab_26"]').click()
+        self.get_element('//a[@id="link-tab_26"]', By.XPATH).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '//button[@id="pianifica"]').click()
+        self.get_element('//button[@id="pianifica"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '(//div[@class="nav-tabs-custom"]//a[@class="nav-link"])[2]').click()
-        self.find(By.XPATH, '//button[@id="btn_procedi"]').click()
+        self.get_element('(//div[@class="nav-tabs-custom"]//a[@class="nav-link"])[2]', By.XPATH).click()
+        self.get_element('//button[@id="btn_procedi"]', By.XPATH).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '(//button[@class="btn btn-primary btn-sm "])[1]').click()
+        self.get_element('(//button[@class="btn btn-primary btn-sm "])[1]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//span[@id="select2-idtipodocumento-container"]').click()
+        self.get_element('//span[@id="select2-idtipodocumento-container"]', By.XPATH).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '(//input[@class="select2-search__field"])[2]'))).send_keys("Fattura immediata di vendita", Keys.ENTER)
         
-        self.find(By.XPATH, '//button[@class="btn btn-primary pull-right"]').click()
+        self.get_element('//button[@class="btn btn-primary pull-right"]', By.XPATH).click()
         self.wait_loader()
 
         self.navigateTo("Dashboard")
         self.wait_loader() 
 
-        self.find(By.XPATH, '(//div[@id="widget_11"]//div)[2]').click()
+        self.get_element('(//div[@id="widget_11"]//div, By.XPATH)[2]').click()
         sleep(1)
 
-        self.find(By.XPATH, '//a[@data-month="2"]').click()
+        self.get_element('//a[@data-month="2"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '(//button[@class="btn btn-default btn-sm"])[1]').click()
+        self.get_element('(//button[@class="btn btn-default btn-sm"])[1]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//span[@id="select2-idtipodocumento-container"]').click()
+        self.get_element('//span[@id="select2-idtipodocumento-container"]', By.XPATH).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '(//input[@class="select2-search__field"])'))).send_keys("Fattura immediata di vendita", Keys.ENTER)
         
-        self.find(By.XPATH, '//button[@class="btn btn-primary pull-right"]').click()
+        self.get_element('//button[@class="btn btn-primary pull-right"]', By.XPATH).click()
         self.wait_loader()
 
         self.navigateTo("Contratti")
         self.wait_loader()
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
  
-        self.find(By.XPATH, '//a[@id="link-tab_26"]').click()
+        self.get_element('//a[@id="link-tab_26"]', By.XPATH).click()
         self.wait_loader()
 
         link=wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@id="tab_26"]//tbody//tr//td[2]'))).text
@@ -328,7 +328,7 @@ class Contratti(Test):
         self.navigateTo("Contratti")
         self.wait_loader()
 
-        self.find(By.XPATH, '//i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
         
     def rinnovi(self):
@@ -336,18 +336,18 @@ class Contratti(Test):
         self.navigateTo("Contratti")
         self.wait_loader()
 
-        self.find(By.XPATH,'//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '//span[@id="select2-idstato-container"]').click()
+        self.get_element('//span[@id="select2-idstato-container"]', By.XPATH).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '(//input[@class="select2-search__field"])[2]'))).send_keys("Bozza", Keys.ENTER)
-        self.find(By.XPATH, '//button[@id="save"]').click()
+        self.get_element('//button[@id="save"]', By.XPATH).click()
         self.wait_loader()
          
-        self.find(By.XPATH, '//a[@id="link-tab_23"]').click()
+        self.get_element('//a[@id="link-tab_23"]', By.XPATH).click()
 
-        self.find(By.XPATH, '(//label[@for="rinnovabile"])[2]').click()
-        self.find(By.XPATH, '//div[@id="tab_23"]//button[@type="submit"]').click()
+        self.get_element('(//label[@for="rinnovabile"])[2]', By.XPATH).click()
+        self.get_element('//div[@id="tab_23"]//button[@type="submit"]', By.XPATH).click()
         self.wait_loader()
 
 
@@ -359,25 +359,25 @@ class Contratti(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Numero"]/input'))).send_keys("2", Keys.ENTER)
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td').click()
+        self.get_element('//tbody//tr//td', By.XPATH).click()
 
-        self.find(By.XPATH, '//button[@data-toggle="dropdown"]').click()  
-        self.find(By.XPATH, '//a[@data-op="cambia_stato"]').click() 
+        self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click()  
+        self.get_element('//a[@data-op="cambia_stato"]', By.XPATH).click() 
         sleep(1)
 
-        self.find(By.XPATH, '//span[@id="select2-id_stato-container"]').click() 
+        self.get_element('//span[@id="select2-id_stato-container"]', By.XPATH).click() 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys("In lavorazione")
         sleep(2)
 
-        self.find(By.XPATH, '//ul[@id="select2-id_stato-results"]').click() 
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-warning"]').click() 
+        self.get_element('//ul[@id="select2-id_stato-results"]', By.XPATH).click() 
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-warning"]', By.XPATH).click() 
         self.wait_loader()
 
-        stato=self.find(By.XPATH, '//tbody//tr//td[5]').text
+        stato=self.get_element('//tbody//tr//td[5]', By.XPATH).text
         self.assertEqual(stato,"In lavorazione") 
 
-        self.find(By.XPATH, '//tbody//tr//td').click()
-        self.find(By.XPATH, '//i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//tbody//tr//td', By.XPATH).click()
+        self.get_element('//i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
 
@@ -389,26 +389,26 @@ class Contratti(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Numero"]/input'))).send_keys("2", Keys.ENTER)
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td').click()
-        self.find(By.XPATH, '//button[@data-toggle="dropdown"]').click() 
-        self.find(By.XPATH, '//a[@data-op="crea_fattura"]').click() 
+        self.get_element('//tbody//tr//td', By.XPATH).click()
+        self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click() 
+        self.get_element('//a[@data-op="crea_fattura"]', By.XPATH).click() 
         sleep(1)
 
-        self.find(By.XPATH, '//span[@id="select2-raggruppamento-container"]').click()   
+        self.get_element('//span[@id="select2-raggruppamento-container"]', By.XPATH).click()   
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys("Cliente")
         sleep(1)
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys(Keys.ENTER)
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-warning"]').click() 
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-warning"]', By.XPATH).click() 
         self.wait_loader()
         
         self.navigateTo("Fatture di vendita")
         self.wait_loader()
 
-        tipo=self.find(By.XPATH, '//tbody//tr[1]//td[5]').text
+        tipo=self.get_element('//tbody//tr[1]//td[5]', By.XPATH).text
         self.assertEqual(tipo, "Fattura immediata di vendita")
 
-        self.find(By.XPATH, '//tbody//tr[2]//td[4]').click()    
+        self.get_element('//tbody//tr[2]//td[4]', By.XPATH).click()    
         self.wait_loader()
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@id="tab_0"]//a[@class="btn btn-danger ask "]'))).click()
@@ -418,7 +418,7 @@ class Contratti(Test):
         self.navigateTo("Contratti")
         self.wait_loader()
 
-        self.find(By.XPATH, '//i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
 
@@ -430,43 +430,43 @@ class Contratti(Test):
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Numero"]/input'))).send_keys("1", Keys.ENTER)
         sleep(1)
 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@id="data_accettazione"]'))).send_keys("01/01/2025")
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@id="data_conclusione"]'))).send_keys("31/12/2025")
-        self.find(By.XPATH, '//span[@id="select2-idstato-container"]').click() 
+        self.get_element('//span[@id="select2-idstato-container"]', By.XPATH).click() 
         wait.until(EC.visibility_of_element_located((By.XPATH, '(//input[@class="select2-search__field"])[2]'))).send_keys("Accettato")
         sleep(1)
 
-        self.find(By.XPATH, '//ul[@id="select2-idstato-results"]').click()
-        self.find(By.XPATH, '//button[@id="save"]').click()
+        self.get_element('//ul[@id="select2-idstato-results"]', By.XPATH).click()
+        self.get_element('//button[@id="save"]', By.XPATH).click()
         self.wait_loader()
 
         self.navigateTo("Contratti")
         self.wait_loader()
 
-        self.find(By.XPATH, '//tbody//tr//td').click()
-        self.find(By.XPATH, '//button[@data-toggle="dropdown"]').click()  
-        self.find(By.XPATH, '//a[@data-op="renew_contratto"]').click() 
+        self.get_element('//tbody//tr//td', By.XPATH).click()
+        self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click()  
+        self.get_element('//a[@data-op="renew_contratto"]', By.XPATH).click() 
         sleep(2)
 
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-warning"]').click() 
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-warning"]', By.XPATH).click() 
         self.wait_loader()
 
-        self.find(By.XPATH, '(//i[@class="deleteicon fa fa-times"])[1]').click() 
+        self.get_element('(//i[@class="deleteicon fa fa-times"])[1]', By.XPATH).click() 
         sleep(1)
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Numero"]/input'))).send_keys("3", Keys.ENTER)
         sleep(1)
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//tbody//tr//td[2]'))) 
-        self.find(By.XPATH, '//tbody//tr//td[2]').click()
+        self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@id="tab_0"]//a[@class="btn btn-danger ask"]'))).click()  
         wait.until(EC.visibility_of_element_located((By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-danger"]'))).click()
         self.wait_loader()
 
-        self.find(By.XPATH, '(//i[@class="deleteicon fa fa-times"])[1]').click() 
+        self.get_element('(//i[@class="deleteicon fa fa-times"])[1]', By.XPATH).click() 
         sleep(1)

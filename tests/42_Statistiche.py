@@ -18,28 +18,28 @@ class GiacenzeSedi(Test):
         wait = WebDriverWait(self.driver, 20)
         self.navigateTo("Statistiche")
         self.wait_loader()
-
-        periodi = self.find(By.XPATH, '(//h4[@class="card-title"])[1]').text
+        
+        periodi = self.get_element('(//h4[@class="card-title"])[1]', By.XPATH).text
         self.assertEqual(periodi, "Vendite e acquisti")
 
-        vendite = self.find(By.XPATH, '(//h4[@class="card-title"])[2]').text
+        vendite = self.get_element('(//h4[@class="card-title"])[2]', By.XPATH).text
         self.assertEqual(vendite, "Periodi temporali")
 
-        clienti = self.find(By.XPATH, '(//h4[@class="card-title"])[3]').text
-        articoli = self.find(By.XPATH, '(//h4[@class="card-title"])[4]').text
+        clienti = self.get_element('(//h4[@class="card-title"])[3]', By.XPATH).text
+        articoli = self.get_element('(//h4[@class="card-title"])[4]', By.XPATH).text
         periodo = "01/01/2025 - 31/12/2025"
 
         self.assertEqual(clienti, "I 20 clienti TOP per il periodo: "+periodo)
         self.assertEqual(articoli, "I 20 articoli più venduti per il periodo: "+periodo)
 
-        numero_interventi = self.find(By.XPATH, '(//h4[@class="card-title"])[5]').text
+        numero_interventi = self.get_element('(//h4[@class="card-title"])[5]', By.XPATH).text
         self.assertEqual(numero_interventi, "Numero interventi per tipologia")
 
-        ore_interventi = self.find(By.XPATH, '(//h4[@class="card-title"])[6]').text
+        ore_interventi = self.get_element('(//h4[@class="card-title"])[6]', By.XPATH).text
         self.assertEqual(ore_interventi, "Ore interventi per tipologia")
 
-        ore_tecnico = self.find(By.XPATH, '(//h4[@class="card-title"])[7]').text
+        ore_tecnico = self.get_element('(//h4[@class="card-title"])[7]', By.XPATH).text
         self.assertEqual(ore_tecnico, "Ore di lavoro per tecnico")
 
-        anagrafiche = self.find(By.XPATH, '(//h4[@class="card-title"])[8]').text
+        anagrafiche = self.get_element('(//h4[@class="card-title"])[8]', By.XPATH).text
         self.assertEqual(anagrafiche, "Nuove anagrafiche")

@@ -15,7 +15,7 @@ class Movimenti(Test):
         self.expandSidebar("Magazzino")
         self.navigateTo("Movimenti")
         self.wait_loader()
-        self.find(By.XPATH,'//i[@class="fa fa-plus"]').click()
+        self.get_element('//i[@class="fa fa-plus"]', By.XPATH).click()
 
     def test_creazione_movimento(self, modifica="Movimento di Prova"):
         # Crea movimento *Required*
@@ -37,7 +37,7 @@ class Movimenti(Test):
         wait = WebDriverWait(self.driver, 20)
         modal = self.wait_modal()
 
-        self.find(By.XPATH,'//span[@id="select2-idarticolo-container"]').click()
+        self.get_element('//span[@id="select2-idarticolo-container"]', By.XPATH).click()
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@class="select2-search__field"]'))).send_keys(articolo, Keys.ENTER)
 
         self.input(modal, 'Quantità').setValue(qta)
@@ -64,7 +64,7 @@ class Movimenti(Test):
         self.navigateTo("Movimenti")
         self.wait_loader() 
 
-        self.find(By.XPATH, '//th[@id="th_Descrizione"]/i[@class="deleteicon fa fa-times"]').click()
+        self.get_element('//th[@id="th_Descrizione"]/i[@class="deleteicon fa fa-times"]', By.XPATH).click()
         sleep(1)
 
     def verifica_movimento(self):

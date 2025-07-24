@@ -23,69 +23,69 @@ class Impostazioni(Test):
     def cambio_formato_codice(self):
         wait = WebDriverWait(self.driver, 20)
 
-        self.find(By.XPATH,'//i[@class="fa fa-plus"]').click()
+        self.get_element('//i[@class="fa fa-plus"]', By.XPATH).click()
         sleep(1)
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@id="ragione_sociale_add"]'))).send_keys('Test')
-        self.find(By.XPATH, '//span[@class="select2-selection select2-selection--multiple"]').click()
+        self.get_element('//span[@class="select2-selection select2-selection--multiple"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//ul[@id="select2-idtipoanagrafica_add-results"]//li[5]').click()
-        self.find(By.XPATH, '//button[@class="btn btn-primary"]').click()
+        self.get_element('//ul[@id="select2-idtipoanagrafica_add-results"]//li[5]', By.XPATH).click()
+        self.get_element('//button[@class="btn btn-primary"]', By.XPATH).click()
         self.wait_loader()
 
-        codice_element = self.find(By.XPATH, '//input[@id="codice"]')
+        codice_element = self.get_element('//input[@id="codice"]', By.XPATH)
         codice = codice_element.get_attribute("value")
         self.assertEqual(codice, "00000010")
         
-        self.find(By.XPATH, '//a[@class="btn btn-danger ask"]').click()
+        self.get_element('//a[@class="btn btn-danger ask"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-danger"]').click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()
         self.wait_loader()
 
         self.expandSidebar("Strumenti") 
         self.navigateTo("Impostazioni")
         self.wait_loader()
 
-        self.find(By.XPATH, '//div[@data-title="Anagrafiche"]').click()
+        self.get_element('//div[@data-title="Anagrafiche"]', By.XPATH).click()
         sleep(1)
 
-        formato = self.find(By.XPATH, '//div[@class="form-group" and contains(., "Formato codice anagrafica")]//input')
+        formato = self.get_element('//div[@class="form-group" and contains(., "Formato codice anagrafica", By.XPATH)]//input')
         formato.clear()
         formato.send_keys("####", Keys.ENTER) 
 
         self.navigateTo("Anagrafiche")
         self.wait_loader()
 
-        self.find(By.XPATH,'//i[@class="fa fa-plus"]').click()
+        self.get_element('//i[@class="fa fa-plus"]', By.XPATH).click()
         sleep(1)
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@id="ragione_sociale_add"]'))).send_keys('Test')
-        self.find(By.XPATH, '//span[@class="select2-selection select2-selection--multiple"]').click()
+        self.get_element('//span[@class="select2-selection select2-selection--multiple"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//ul[@id="select2-idtipoanagrafica_add-results"]//li[5]').click()
-        self.find(By.XPATH, '//button[@class="btn btn-primary"]').click()
+        self.get_element('//ul[@id="select2-idtipoanagrafica_add-results"]//li[5]', By.XPATH).click()
+        self.get_element('//button[@class="btn btn-primary"]', By.XPATH).click()
         self.wait_loader()
 
-        codice_element = self.find(By.XPATH, '//input[@id="codice"]') 
+        codice_element = self.get_element('//input[@id="codice"]', By.XPATH) 
         codice = codice_element.get_attribute("value")
         self.assertEqual(codice, "0010")
-        self.find(By.XPATH, '//a[@class="btn btn-danger ask"]').click()
+        self.get_element('//a[@class="btn btn-danger ask"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-danger"]').click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()
         self.wait_loader()
 
         self.expandSidebar("Strumenti")
         self.navigateTo("Impostazioni")
         self.wait_loader()
 
-        self.find(By.XPATH, '//div[@data-title="Anagrafiche"]').click()
+        self.get_element('//div[@data-title="Anagrafiche"]', By.XPATH).click()
         sleep(1)
 
-        formato = self.find(By.XPATH, '//div[@class="form-group" and contains(., "Formato codice anagrafica")]//input')
+        formato = self.get_element('//div[@class="form-group" and contains(., "Formato codice anagrafica", By.XPATH)]//input')
         formato.clear()
         formato.send_keys("########", Keys.ENTER)
         sleep(1)

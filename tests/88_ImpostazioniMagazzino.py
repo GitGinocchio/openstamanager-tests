@@ -12,6 +12,7 @@ class Impostazioni(Test):
         super().setUp()
 
     def test_impostazioni_magazzino(self):
+        pass
         ## TODO: Movimenta il magazzino durante l'inserimento o eliminazione dei lotti/serial number
 
         # Serial number abilitato di default 
@@ -25,20 +26,20 @@ class Impostazioni(Test):
         self.navigateTo("Articoli")
         self.wait_loader()
 
-        self.find(By.XPATH,'//i[@class="fa fa-plus"]').click() #click su +
+        self.get_element('//i[@class="fa fa-plus"]', By.XPATH).click() #click su +
         sleep(1)
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//textarea[@id="descrizione"]'))).send_keys("test") #descrizione
-        self.find(By.XPATH, '//button[@class="btn btn-primary"]').click()   #click su aggiungi
+        self.get_element('//button[@class="btn btn-primary"]', By.XPATH).click()   #click su aggiungi
         self.wait_loader()
 
-        serial=self.find(By.XPATH, '(//label[@class="btn btn-default active"]//span)[2]').text
+        serial=self.get_element('(//label[@class="btn btn-default active"]//span, By.XPATH)[2]').text
         self.assertEqual(serial, "Disattivato")
         #elimino articolo
-        self.find(By.XPATH, '//a[@class="btn btn-danger ask"]').click()
+        self.get_element('//a[@class="btn btn-danger ask"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-danger"]').click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()
         self.wait_loader()
         sleep(1)
 
@@ -49,30 +50,30 @@ class Impostazioni(Test):
         self.navigateTo("Impostazioni")
         self.wait_loader()
 
-        self.find(By.XPATH, '//div[@id="impostazioni-12"]').click() #apro Magazzino
+        self.get_element('//div[@id="impostazioni-12"]', By.XPATH).click() #apro Magazzino
         sleep(1)
 
-        self.find(By.XPATH, '(//label[@class="btn btn-default active"])[2]').click()   #attiva impostazione
+        self.get_element('(//label[@class="btn btn-default active"])[2]', By.XPATH).click()   #attiva impostazione
         sleep(1)
 
         self.expandSidebar("Magazzino")
         self.navigateTo("Articoli")
         self.wait_loader()
 
-        self.find(By.XPATH,'//i[@class="fa fa-plus"]').click() #click su +
+        self.get_element('//i[@class="fa fa-plus"]', By.XPATH).click() #click su +
         sleep(1)
 
         wait.until(EC.visibility_of_element_located((By.XPATH, '//textarea[@id="descrizione"]'))).send_keys("test") #descrizione
-        self.find(By.XPATH, '//button[@class="btn btn-primary"]').click()   #click su aggiungi
+        self.get_element('//button[@class="btn btn-primary"]', By.XPATH).click()   #click su aggiungi
         self.wait_loader()
 
-        serial=self.find(By.XPATH, '(//label[@class="btn btn-default active"]//span)[1]').text
+        serial=self.get_element('(//label[@class="btn btn-default active"]//span, By.XPATH)[1]').text
         self.assertEqual(serial, "Attivato")
         #elimino articolo
-        self.find(By.XPATH, '//a[@class="btn btn-danger ask"]').click()
+        self.get_element('//a[@class="btn btn-danger ask"]', By.XPATH).click()
         sleep(1)
 
-        self.find(By.XPATH, '//button[@class="swal2-confirm btn btn-lg btn-danger"]').click()
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()
         self.wait_loader()
         #torno alle impostazioni di prima
         self.navigateTo("Impianti") #aggiunto perchè non riesce ad entrare in impostazioni dato che non è visibile quando il sidebar magazzino è aperto
@@ -82,8 +83,8 @@ class Impostazioni(Test):
         self.navigateTo("Impostazioni")
         self.wait_loader()
 
-        self.find(By.XPATH, '//div[@id="impostazioni-12"]').click() #apro Magazzino
+        self.get_element('//div[@id="impostazioni-12"]', By.XPATH).click() #apro Magazzino
         sleep(1)
 
-        self.find(By.XPATH, '(//label[@class="btn btn-default active"])[2]').click()   #disattiva impostazione
+        self.get_element('(//label[@class="btn btn-default active"])[2]', By.XPATH).click()   #disattiva impostazione
         sleep(1)

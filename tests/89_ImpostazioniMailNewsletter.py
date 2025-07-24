@@ -15,6 +15,7 @@ class Impostazioni(Test):
         self.navigateTo("Impostazioni")
 
     def test_impostazioni_mail_newsletter(self):
+        pass
         ## TODO: Numero di giorni mantenimento coda di invio
 
         ## TODO: numero massimo di tentativi
