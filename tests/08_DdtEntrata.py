@@ -52,10 +52,12 @@ class DdtEntrata(Test):
         self.get_element('//i[@class="fa fa-plus"]', By.XPATH).click()
         modal = self.wait_modal()
 
-        select = self.input(modal, 'Mittente')
-        select.setByText(fornitore)
-        select = self.input(modal, 'Causale trasporto')
-        select.setByIndex(causale)
+        results = self.get_select_search_results("Mittente*", fornitore)
+        if len(results) > 0: results[0].click()
+
+        results = self.get_select_search_results('Causale trasporto')
+        if len(results) > 0: results[1].click()
+
         modal.find_element(By.CSS_SELECTOR, 'button[type="submit"]').click()
         self.wait_loader()
 
@@ -71,6 +73,8 @@ class DdtEntrata(Test):
         filter_input.click()
         filter_input.clear()
         filter_input.send_keys("1", Keys.ENTER)
+
+        self.wait_for_search_results()
 
         self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
@@ -110,6 +114,8 @@ class DdtEntrata(Test):
         filter_input.click()
         filter_input.clear()
         filter_input.send_keys("2", Keys.ENTER)
+
+        self.wait_for_search_results()
 
         self.get_element('//tbody//tr//td[2]', By.XPATH).click()
         self.wait_loader()
