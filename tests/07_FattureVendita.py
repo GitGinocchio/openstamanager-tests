@@ -749,8 +749,7 @@ class FattureVendita(Test):
         self.wait_loader()
 
         self.get_element('//a[@id="link-tab_44"]', By.XPATH).click()
-        wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@id="tab_44"]//tbody//tr//td'))) 
-        sleep(1)
+        wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@id="tab_44"]//tbody//tr//td')))
 
         self.expandSidebar("Vendite")
 
@@ -761,11 +760,9 @@ class FattureVendita(Test):
 
         self.get_element('//tbody//tr//td', By.XPATH).click() 
         self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click()  
-        self.get_element('//a[@data-op="check_bulk"]', By.XPATH).click()  
-        sleep(1)
+        self.get_element('//a[@data-op="check_bulk"]', By.XPATH).click()
 
-        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-warning"]', By.XPATH).click() 
-        sleep(1)
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-warning"]', By.XPATH).click()
 
         # Verifica successo operazione
         self.driver.switch_to.window(self.driver.window_handles[1])
@@ -778,25 +775,24 @@ class FattureVendita(Test):
         self.navigateTo("Fatture di vendita")
         self.wait_loader()
 
-        wait.until(EC.visibility_of_element_located((By.XPATH, '//th[@id="th_Numero"]/input'))).send_keys("0001", Keys.ENTER)
-        sleep(1)
+        filter_input = self.find_filter_input("Numero")
+        filter_input.click()
+        filter_input.clear()
+        filter_input.send_keys("0001",Keys.ENTER)
 
         self.get_element('//tbody//tr//td', By.XPATH).click()
         self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click()
-        self.get_element('//a[@data-op="registrazione_contabile"]', By.XPATH).click() 
-        sleep(1)
+        self.get_element('//a[@data-op="registrazione_contabile"]', By.XPATH).click()
 
         totale=self.get_element('//th[@id="totale_dare"]', By.XPATH).text 
         self.assertEqual(totale, "323,06 €")
 
         # TODO aggiungere registrazione contabile e verificare importo in prima nota anzichè chiuderla
 
-        self.get_element('//button[@class="close"]', By.XPATH).click() 
-        sleep(1)
+        self.get_element('//button[@class="close"]', By.XPATH).click()
 
         self.get_element('//tbody//tr//td', By.XPATH).click() 
-        self.get_element('(//i[@class="deleteicon fa fa-times"])[1]', By.XPATH).click() 
-        sleep(1)
+        self.get_element('(//i[@class="deleteicon fa fa-times"])[1]', By.XPATH).click()
 
     def genera_fatture_elettroniche(self):
         wait = WebDriverWait(self.driver, 20)
@@ -806,32 +802,25 @@ class FattureVendita(Test):
         self.get_element('//tbody//tr//td', By.XPATH).click()
         self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click()  
         self.get_element('//a[@data-op="export_xml_bulk"]', By.XPATH).click()
-        sleep(1)
 
         self.get_element('//button[@class="swal2-confirm btn btn-lg btn-warning"]', By.XPATH).click()
-        sleep(1)
 
-        self.driver.switch_to.window(self.driver.window_handles[1]) 
-        sleep(1)
+        self.driver.switch_to.window(self.driver.window_handles[1])
 
         self.get_element('//tbody//tr//td[2]', By.XPATH).click() 
         self.wait_loader()
 
-        self.get_element('//button[@class="btn btn-xs btn-info"]', By.XPATH).click()  
-        sleep(1)
+        self.get_element('//button[@class="btn btn-xs btn-info"]', By.XPATH).click()
 
-        self.get_element('//button[@class="close"]', By.XPATH).click() 
-        sleep(1)
+        self.get_element('//button[@class="close"]', By.XPATH).click()
 
         self.driver.close()
         self.driver.switch_to.window(self.driver.window_handles[0])
-        sleep(1)
 
         self.navigateTo("Fatture di vendita")
         self.wait_loader()
 
-        self.get_element('//tbody//tr//td', By.XPATH).click()  
-        sleep(1)
+        self.get_element('//tbody//tr//td', By.XPATH).click()
 
     def elimina_selezionati(self):
         wait = WebDriverWait(self.driver, 20)
@@ -840,11 +829,9 @@ class FattureVendita(Test):
 
         self.get_element('//tbody//tr//td', By.XPATH).click()  
         self.get_element('//button[@data-toggle="dropdown"]', By.XPATH).click() 
-        self.get_element('//a[@data-op="delete_bulk"]', By.XPATH).click()  
-        sleep(1)
+        self.get_element('//a[@data-op="delete_bulk"]', By.XPATH).click()
 
-        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()   
-        sleep(1)
+        self.get_element('//button[@class="swal2-confirm btn btn-lg btn-danger"]', By.XPATH).click()
 
         test=self.get_element('//tbody//tr//td[2]', By.XPATH).text
         self.assertEqual(test, "0002/2025")
